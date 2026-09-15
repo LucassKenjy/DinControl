@@ -1,206 +1,55 @@
 /* =====================================================
-   RESET
-===================================================== */
+   DINCONTROL - REDEFINIR SENHA (NOVA SENHA)
 
-/* =====================================================
-   CONTEÚDO
+   O layout da página (fundo, cartão, tipografia, campos,
+   botões e a escala responsiva) vem de AuthCard.module.css,
+   compartilhado com a tela de e-mail/código. Aqui ficam
+   apenas o botão de olho e o espaço que ele ocupa.
 ===================================================== */
 
 .conteudo-redefinirsenha {
-    width: 100%;
-    min-height: 100vh;
-
-    background-image:
-        url("/assets/Background.png");
-
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    overflow-x: hidden;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    position: relative;
-
-    padding-top: 20px;
-    padding-bottom: 80px;
-
-    z-index: 5;
+    composes: pagina from '../../components/auth/AuthCard.module.css';
 }
 
-
-/* =====================================================
-   LOGO
-===================================================== */
-
-
-/* =====================================================
-   CARD
-===================================================== */
 
 .redefinirsenha {
-    width: 420px;
-
-    padding:
-        30px
-        40px
-        38px;
-
-    background-color: #ffffff;
-
-    border-radius: 15px;
-
-    position: relative;
-
-    z-index: 20;
+    composes: card from '../../components/auth/AuthCard.module.css';
 }
 
 
-/* =====================================================
-   TÍTULO
-===================================================== */
-
-.redefinirsenha .titulo {
-    width: 100%;
-
-    margin:
-        0
-        0
-        14px;
-
-    text-align: left;
-
-    font-size: 35px;
-    line-height: 1.1;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    font-weight: 700;
-
-    color: #000000;
+.titulo {
+    composes: titulo from '../../components/auth/AuthCard.module.css';
 }
 
-
-/* =====================================================
-   SUBTÍTULO / REGRAS
-===================================================== */
 
 .SubTitulo {
-    width: 100%;
-
-    margin-bottom: 40px;
-
-    color: #777777;
-
-    font-size: 14px;
-    line-height: 1.15;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    text-align: left;
+    composes: subtitulo from '../../components/auth/AuthCard.module.css';
 }
 
-
-/* =====================================================
-   FORM
-===================================================== */
 
 .formRedefinirSenha {
-    width: 100%;
-
-    display: flex;
-    flex-direction: column;
+    composes: form from '../../components/auth/AuthCard.module.css';
 }
 
-
-/* =====================================================
-   LABELS
-===================================================== */
-
-.formRedefinirSenha label {
-    display: block;
-
-    width: 100%;
-
-    margin-bottom: 3px;
-
-    color: #000000;
-
-    font-size: 12px;
-    font-weight: 600;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-}
-
-
-/* =====================================================
-   CAMPO SENHA
-===================================================== */
 
 .CampoSenha {
-    width: 100%;
-
-    position: relative;
-
-    margin-bottom: 5px;
+    composes: campo from '../../components/auth/AuthCard.module.css';
 }
 
 
-/* =====================================================
-   INPUT
-===================================================== */
-
-.CampoSenha input {
-    width: 100%;
-    height: 45px;
-
-    padding:
-        0
-        48px
-        0
-        14px;
-
-    border:
-        1px
-        solid
-        #cccccc;
-
-    border-radius: 10px;
-
-    background-color: #ffffff;
-
-    color: #333333;
-
-    font-size: 14px;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    outline: none;
+.campoSenhaInput {
+    composes: entrada from '../../components/auth/AuthCard.module.css';
+    composes: comOlho from '../../components/auth/AuthCard.module.css';
 }
 
 
-.CampoSenha input:focus {
-    border-color: #0d6efd;
+.btnRedefinirSenha {
+    composes: botao from '../../components/auth/AuthCard.module.css';
+}
+
+
+.mensagem {
+    composes: mensagem from '../../components/auth/AuthCard.module.css';
 }
 
 
@@ -244,125 +93,6 @@
 }
 
 
-/* =====================================================
-   BOTÃO REDEFINIR
-===================================================== */
-
-.btnRedefinirSenha {
-    width: 100%;
-    height: 45px;
-
-    margin-top: 12px;
-
-    padding: 0;
-
-    border: none;
-    border-radius: 10px;
-
-    background-color: #0d6efd;
-
-    color: #ffffff;
-
-    font-size: 12px;
-    font-weight: 500;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    cursor: pointer;
-
-    transition:
-        background-color 0.2s ease;
-}
-
-
-.btnRedefinirSenha:hover {
-    background-color: #095ed7;
-}
-
-
-/* =====================================================
-   MENSAGEM
-===================================================== */
-
-.mensagem {
-    width: 100%;
-
-    min-height: 15px;
-
-    margin-top: 10px;
-
-    text-align: center;
-
-    font-size: 11px;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-}
-
-
-/* =====================================================
-   COIN
-===================================================== */
-
-
-/* =========================================================
-   1600 x 900
-========================================================= */
-
-@media screen
-and (min-width: 1450px)
-and (max-width: 1699px) {
-
-    .conteudo-redefinirsenha {
-        padding-top: 12px;
-    }
-
-
-
-    .redefinirsenha {
-        width: 400px;
-
-        padding:
-            28px
-            37px
-            34px;
-    }
-
-
-    .redefinirsenha .titulo {
-        font-size: 32px;
-
-        margin-bottom: 13px;
-    }
-
-
-    .SubTitulo {
-        margin-bottom: 34px;
-
-        font-size: 13px;
-    }
-
-
-    .CampoSenha input {
-        height: 43px;
-
-        font-size: 13px;
-    }
-
-
-    .btnRedefinirSenha {
-        height: 43px;
-    }
-
-
-}
-
-
 /* =========================================================
    1280 x 800
 ========================================================= */
@@ -371,84 +101,6 @@ and (max-width: 1699px) {
 and (min-width: 1200px)
 and (max-width: 1449px)
 and (max-height: 899px) {
-
-    .conteudo-redefinirsenha {
-        min-height: 100vh;
-
-        padding-top: 5px;
-        padding-bottom: 30px;
-    }
-
-
-    /* LOGO */
-
-
-    /* CARD */
-
-    .redefinirsenha {
-        width: 360px;
-
-        padding:
-            24px
-            32px
-            28px;
-
-        border-radius: 13px;
-    }
-
-
-    /* TÍTULO */
-
-    .redefinirsenha .titulo {
-        margin-bottom: 10px;
-
-        font-size: 28px;
-    }
-
-
-    /* REGRAS */
-
-    .SubTitulo {
-        margin-bottom: 27px;
-
-        font-size: 11px;
-
-        line-height: 1.2;
-    }
-
-
-    /* LABEL */
-
-    .formRedefinirSenha label {
-        margin-bottom: 3px;
-
-        font-size: 10px;
-    }
-
-
-    /* CAMPOS */
-
-    .CampoSenha {
-        margin-bottom: 4px;
-    }
-
-
-    .CampoSenha input {
-        height: 38px;
-
-        padding:
-            0
-            40px
-            0
-            12px;
-
-        border-radius: 8px;
-
-        font-size: 11px;
-    }
-
-
-    /* OLHO */
 
     .botao-olho {
         width: 27px;
@@ -463,29 +115,6 @@ and (max-height: 899px) {
         height: 16px;
     }
 
-
-    /* BOTÃO */
-
-    .btnRedefinirSenha {
-        height: 38px;
-
-        margin-top: 10px;
-
-        border-radius: 8px;
-
-        font-size: 10px;
-    }
-
-
-    .mensagem {
-        margin-top: 6px;
-
-        font-size: 9px;
-    }
-
-
-    /* COIN */
-
 }
 
 
@@ -498,63 +127,6 @@ and (max-height: 899px) {
 and (min-width: 901px)
 and (max-width: 1199px)
 and (max-height: 899px) {
-
-    .conteudo-redefinirsenha {
-        min-height: 100vh;
-
-        padding-top: 5px;
-        padding-bottom: 30px;
-    }
-
-
-
-    .redefinirsenha {
-        width: 330px;
-
-        padding:
-            22px
-            28px
-            25px;
-
-        border-radius: 12px;
-    }
-
-
-    .redefinirsenha .titulo {
-        margin-bottom: 9px;
-
-        font-size: 25px;
-    }
-
-
-    .SubTitulo {
-        margin-bottom: 23px;
-
-        font-size: 9px;
-
-        line-height: 1.2;
-    }
-
-
-    .formRedefinirSenha label {
-        font-size: 9px;
-    }
-
-
-    .CampoSenha input {
-        height: 36px;
-
-        padding:
-            0
-            38px
-            0
-            11px;
-
-        border-radius: 8px;
-
-        font-size: 10px;
-    }
-
 
     .botao-olho {
         width: 25px;
@@ -569,160 +141,6 @@ and (max-height: 899px) {
         height: 15px;
     }
 
-
-    .btnRedefinirSenha {
-        height: 36px;
-
-        margin-top: 9px;
-
-        font-size: 9px;
-
-        border-radius: 8px;
-    }
-
-
-    .mensagem {
-        margin-top: 5px;
-
-        font-size: 8px;
-    }
-
-
-}
-
-
-/* =========================================================
-   TABLET EM PÉ
-   EX: 1024 x 1366
-========================================================= */
-
-@media screen
-and (min-width: 901px)
-and (max-width: 1100px)
-and (min-height: 900px) {
-
-    .conteudo-redefinirsenha {
-        min-height: 100vh;
-
-        padding-top: 25px;
-        padding-bottom: 270px;
-    }
-
-
-
-    .redefinirsenha {
-        width: 410px;
-
-        padding:
-            30px
-            36px
-            34px;
-    }
-
-
-    .redefinirsenha .titulo {
-        font-size: 30px;
-
-        margin-bottom: 12px;
-    }
-
-
-    .SubTitulo {
-        margin-bottom: 32px;
-
-        font-size: 12px;
-    }
-
-
-    .formRedefinirSenha label {
-        font-size: 11px;
-    }
-
-
-    .CampoSenha input {
-        height: 44px;
-
-        font-size: 13px;
-    }
-
-
-    .btnRedefinirSenha {
-        height: 44px;
-
-        font-size: 11px;
-    }
-
-
-}
-
-
-/* =========================================================
-   TABLET
-   601px - 900px
-========================================================= */
-
-@media screen
-and (min-width: 601px)
-and (max-width: 900px) {
-
-    .conteudo-redefinirsenha {
-        min-height: 100vh;
-
-        padding:
-            15px
-            20px
-            220px;
-    }
-
-
-
-    .redefinirsenha {
-        width:
-            min(
-                400px,
-                85vw
-            );
-
-        padding:
-            28px
-            34px
-            30px;
-    }
-
-
-    .redefinirsenha .titulo {
-        font-size: 28px;
-
-        margin-bottom: 11px;
-    }
-
-
-    .SubTitulo {
-        margin-bottom: 27px;
-
-        font-size: 11px;
-    }
-
-
-    .formRedefinirSenha label {
-        font-size: 10px;
-    }
-
-
-    .CampoSenha input {
-        height: 42px;
-
-        font-size: 12px;
-    }
-
-
-    .btnRedefinirSenha {
-        height: 42px;
-
-        font-size: 10px;
-    }
-
-
 }
 
 
@@ -734,87 +152,6 @@ and (max-width: 900px) {
 @media screen
 and (min-width: 401px)
 and (max-width: 600px) {
-
-    .conteudo-redefinirsenha {
-        min-height: 100vh;
-
-        padding:
-            5px
-            15px
-            170px;
-    }
-
-
-    /* LOGO */
-
-
-    /* CARD */
-
-    .redefinirsenha {
-        width: 100%;
-        max-width: 360px;
-
-        padding:
-            24px
-            25px
-            27px;
-
-        border-radius: 13px;
-    }
-
-
-    /* TÍTULO */
-
-    .redefinirsenha .titulo {
-        margin-bottom: 10px;
-
-        font-size: 25px;
-    }
-
-
-    /* REGRAS */
-
-    .SubTitulo {
-        margin-bottom: 24px;
-
-        font-size: 9px;
-
-        line-height: 1.25;
-    }
-
-
-    /* LABEL */
-
-    .formRedefinirSenha label {
-        margin-bottom: 3px;
-
-        font-size: 9px;
-    }
-
-
-    /* INPUT */
-
-    .CampoSenha {
-        margin-bottom: 5px;
-    }
-
-
-    .CampoSenha input {
-        height: 40px;
-
-        padding:
-            0
-            39px
-            0
-            12px;
-
-        font-size: 11px;
-
-        border-radius: 8px;
-    }
-
-
-    /* OLHO */
 
     .botao-olho {
         width: 26px;
@@ -829,27 +166,6 @@ and (max-width: 600px) {
         height: 15px;
     }
 
-
-    /* BOTÃO */
-
-    .btnRedefinirSenha {
-        height: 40px;
-
-        margin-top: 9px;
-
-        border-radius: 8px;
-
-        font-size: 10px;
-    }
-
-
-    .mensagem {
-        font-size: 9px;
-    }
-
-
-    /* COIN */
-
 }
 
 
@@ -860,71 +176,6 @@ and (max-width: 600px) {
 
 @media screen
 and (max-width: 400px) {
-
-    .conteudo-redefinirsenha {
-        min-height: 100vh;
-
-        padding:
-            2px
-            10px
-            145px;
-    }
-
-
-
-    .redefinirsenha {
-        width: 100%;
-        max-width: 330px;
-
-        padding:
-            21px
-            21px
-            24px;
-
-        border-radius: 12px;
-    }
-
-
-    .redefinirsenha .titulo {
-        margin-bottom: 8px;
-
-        font-size: 22px;
-    }
-
-
-    .SubTitulo {
-        margin-bottom: 20px;
-
-        font-size: 8px;
-
-        line-height: 1.25;
-    }
-
-
-    .formRedefinirSenha label {
-        font-size: 8px;
-    }
-
-
-    .CampoSenha {
-        margin-bottom: 4px;
-    }
-
-
-    .CampoSenha input {
-        height: 37px;
-
-        padding:
-            0
-            37px
-            0
-            10px;
-
-        border-radius: 7px;
-
-        font-size: 10px;
-    }
-
 
     .botao-olho {
         width: 24px;
@@ -938,24 +189,5 @@ and (max-width: 400px) {
         width: 14px;
         height: 14px;
     }
-
-
-    .btnRedefinirSenha {
-        height: 37px;
-
-        margin-top: 8px;
-
-        border-radius: 7px;
-
-        font-size: 9px;
-    }
-
-
-    .mensagem {
-        margin-top: 6px;
-
-        font-size: 8px;
-    }
-
 
 }

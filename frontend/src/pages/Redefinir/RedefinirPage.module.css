@@ -1,820 +1,93 @@
 /* =====================================================
-   RESET
-===================================================== */
+   DINCONTROL - REDEFINIR SENHA (E-MAIL + CÓDIGO)
 
-/* =====================================================
-   MODELO PRINCIPAL
-   DESKTOP GRANDE
-   Referência: 1920 x 1080
-===================================================== */
-
-/* =====================================================
-   CONTEÚDO CENTRAL
+   Primeiro passo do fluxo. Todo o layout (fundo, cartão,
+   tipografia, campos, botões e a escala responsiva) vem
+   de AuthCard.module.css, o mesmo arquivo usado pela tela
+   de nova senha. Aqui ficam só os espaços entre os dois
+   passos da tela.
 ===================================================== */
 
 .conteudo-redefinir {
-    width: 100%;
-    min-height: 100vh;
-
-    display: flex;
-    justify-content: flex-start;
-    flex-direction: column;
-    align-items: center;
-
-    padding-top: 20px;
-
-    background-image: url("/assets/Background.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    overflow-x: hidden;
-
-    position: relative;
-
-    z-index: 5;
+    composes: pagina from '../../components/auth/AuthCard.module.css';
 }
 
-
-/* =====================================================
-   LOGO
-===================================================== */
-
-/* =====================================================
-   BOX CADASTRO
-===================================================== */
 
 .redefinir {
-    width: 420px;
-
-    padding: 40px;
-
-    background-color: #ffffff;
-
-    border-radius: 15px;
+    composes: card from '../../components/auth/AuthCard.module.css';
 }
 
-/* =====================================================
-   TÍTULO
-===================================================== */
 
-.redefinir .titulo {
-    width: 100%;
-
-    margin: -10px 0 40px;
-
-    text-align: center;
-
-    font-size: 35px;
-    font-family: Arial, Helvetica, sans-serif;
-
-    color: #000000;
+.titulo {
+    composes: titulo from '../../components/auth/AuthCard.module.css';
 }
 
-/* =====================================================
-   FORMULÁRIO
-===================================================== */
 
 .formRedef {
-    width: 100%;
+    composes: form from '../../components/auth/AuthCard.module.css';
 
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-
-    gap: 8px;
+    margin-top: 34px;
 }
+
+
+.campo {
+    composes: campo from '../../components/auth/AuthCard.module.css';
+}
+
+
+.email,
+.codigo {
+    composes: entrada from '../../components/auth/AuthCard.module.css';
+}
+
+
+.btnEnviarCodigo,
+.btnVerificarCodigo {
+    composes: botao from '../../components/auth/AuthCard.module.css';
+}
+
+
+.mensagem {
+    composes: mensagem from '../../components/auth/AuthCard.module.css';
+}
+
 
 /* =====================================================
-   LABELS
-===================================================== */
-
-.formRedef label {
-    font-size: 13px;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-/* =====================================================
-   INPUTS
-===================================================== */
-
-.formRedef input {
-    width: 100%;
-    height: 45px;
-
-    padding: 0 15px;
-
-    border: 1px solid #cccccc;
-    border-radius: 10px;
-
-    outline: none;
-
-    font-size: 14px;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-.formRedef input:focus {
-    border-color: #0d6efd;
-}
-
-/* =====================================================
-   BOTÃO CÓDIGO
-===================================================== */
-
-.formRedef > button {
-    width: 100%;
-    height: 45px;
-
-    margin-top: 17px;
-
-    border: none;
-    border-radius: 10px;
-
-    background-color: #0d6efd;
-
-    color: #ffffff;
-
-    cursor: pointer;
-}
-
-/* =====================================================
-   CAMPO CÓDIGO
+   SEGUNDO PASSO (CÓDIGO)
+   Mesmo respiro que o bloco de regras da tela de nova senha.
 ===================================================== */
 
 .CampoC {
     width: 100%;
-    margin: 20px 0 40px;
+
+    margin-top: 26px;
+
     position: relative;
 }
 
-.CampoC label {
-
-    font-size: 13px;
-    font-family: Arial, Helvetica, sans-serif;
-
-}
-
-.CampoC input {
-    padding-right: 50px;
-    margin-top: 7px;
-}
-
-/* =====================================================
-   BOTÃO CRIAR CONTA
-===================================================== */
-
-.CampoC > button {
-    width: 100%;
-    height: 45px;
-
-    margin-top: 25px;
-
-    border: none;
-    border-radius: 10px;
-
-    background-color: #0d6efd;
-
-    color: #ffffff;
-
-    cursor: pointer;
-}
-
-.CampoC > button:hover {
-    background-color: #095ed7;
-}
-
-/* =====================================================
-   MENSAGEM
-===================================================== */
-
-.mensagem {
-    margin-top: 10px;
-
-    text-align: center;
-
-    font-size: 12px;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-/* =====================================================
-   COIN
-===================================================== */
 
 /* =========================================================
-   RESPONSIVIDADE - REDEFINIR SENHA
-   PRIMEIRA TELA: E-MAIL + CÓDIGO
-========================================================= */
-
-
-/* =========================================================
-   NOTEBOOK / 1024x600
+   1600 x 900
 ========================================================= */
 
 @media screen
-and (min-width: 901px)
-and (max-width: 1199px)
-and (max-height: 899px) {
-.conteudo-redefinir {
-        width: 100%;
-        min-height: 100vh;
-
-        position: relative;
-
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-
-        padding-top: 125px;
-        padding-bottom: 40px;
-
-        overflow-x: hidden;
-    }
-
-
-    /* LOGO */
-
-
-    /* CARD */
-
-    .redefinir {
-        position: relative !important;
-
-        top: auto !important;
-        left: auto !important;
-        right: auto !important;
-
-        width: 430px !important;
-
-        margin: 0 auto !important;
-
-        padding: 24px 28px !important;
-
-        transform: none !important;
-    }
-
-
-    .titulo {
-        font-size: 27px !important;
-
-        margin-bottom: 24px !important;
-
-        text-align: center !important;
-    }
-
-
-    /* FORM */
+and (min-width: 1450px)
+and (max-width: 1699px) {
 
     .formRedef {
-        width: 100% !important;
-    }
-
-
-    .formRedef label {
-        display: block !important;
-
-        width: 100% !important;
-
-        margin-bottom: 7px !important;
-
-        font-size: 13px !important;
-    }
-
-
-    .email,
-    .codigo {
-        width: 100% !important;
-        height: 42px !important;
-
-        padding: 0 13px !important;
-
-        font-size: 13px !important;
-    }
-
-
-    .btnEnviarCodigo,
-    .btnVerificarCodigo {
-        height: 40px !important;
-
-        padding: 0 18px !important;
-
-        font-size: 12px !important;
+        margin-top: 28px;
     }
 
 
     .CampoC {
-        width: 100% !important;
-
-        margin-top: 20px !important;
+        margin-top: 22px;
     }
-
-
-    .mensagem {
-        font-size: 12px !important;
-    }
-
-
-    /* COIN */
 
 }
 
 
 /* =========================================================
-   TABLET EM PÉ - 1024x1366
-========================================================= */
-
-@media screen
-and (min-width: 901px)
-and (max-width: 1100px)
-and (min-height: 900px) {
-.conteudo-redefinir {
-        width: 100%;
-        min-height: 100vh;
-
-        position: relative;
-
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-
-        padding-top: 250px;
-        padding-bottom: 260px;
-
-        overflow-x: hidden;
-    }
-
-
-    /* LOGO */
-
-
-    /* CARD */
-
-    .redefinir {
-        position: relative !important;
-
-        top: auto !important;
-        left: auto !important;
-        right: auto !important;
-
-        width: 520px !important;
-
-        margin: 0 auto !important;
-
-        padding: 32px 35px !important;
-
-        transform: none !important;
-    }
-
-
-    .titulo {
-        font-size: 30px !important;
-
-        margin-bottom: 30px !important;
-
-        text-align: center !important;
-    }
-
-
-    .formRedef {
-        width: 100% !important;
-    }
-
-
-    .formRedef label {
-        display: block !important;
-
-        width: 100% !important;
-
-        margin-bottom: 8px !important;
-
-        font-size: 14px !important;
-    }
-
-
-    .email,
-    .codigo {
-        width: 100% !important;
-
-        height: 47px !important;
-
-        padding: 0 15px !important;
-
-        font-size: 14px !important;
-    }
-
-
-    .btnEnviarCodigo,
-    .btnVerificarCodigo {
-        height: 43px !important;
-
-        padding: 0 20px !important;
-
-        font-size: 13px !important;
-    }
-
-
-    .CampoC {
-        width: 100% !important;
-
-        margin-top: 25px !important;
-    }
-
-
-    .mensagem {
-        font-size: 13px !important;
-    }
-
-
-    /* COIN */
-
-}
-
-
-/* =========================================================
-   TABLET - 601px até 900px
-========================================================= */
-
-@media screen
-and (min-width: 601px)
-and (max-width: 900px) {
-.conteudo-redefinir {
-        width: 100%;
-        min-height: 100vh;
-
-        position: relative;
-
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-
-        padding:
-            190px
-            25px
-            230px;
-
-        overflow-x: hidden;
-    }
-
-
-    /* LOGO */
-
-
-    /* CARD */
-
-    .redefinir {
-        position: relative !important;
-
-        top: auto !important;
-        left: auto !important;
-        right: auto !important;
-
-        width: min(520px, 90vw) !important;
-
-        margin: 0 auto !important;
-
-        padding: 30px 32px !important;
-
-        transform: none !important;
-    }
-
-
-    .titulo {
-        font-size: 28px !important;
-
-        margin-bottom: 28px !important;
-
-        text-align: center !important;
-    }
-
-
-    .formRedef {
-        width: 100% !important;
-    }
-
-
-    .formRedef label {
-        display: block !important;
-
-        width: 100% !important;
-
-        margin-bottom: 8px !important;
-
-        font-size: 14px !important;
-    }
-
-
-    .email,
-    .codigo {
-        width: 100% !important;
-
-        height: 46px !important;
-
-        padding: 0 14px !important;
-
-        font-size: 14px !important;
-    }
-
-
-    .btnEnviarCodigo,
-    .btnVerificarCodigo {
-        height: 42px !important;
-
-        padding: 0 19px !important;
-
-        font-size: 13px !important;
-    }
-
-
-    .CampoC {
-        width: 100% !important;
-
-        margin-top: 24px !important;
-    }
-
-
-    .mensagem {
-        font-size: 12px !important;
-    }
-
-
-    /* COIN */
-
-}
-
-
-/* =========================================================
-   CELULAR - 401px até 600px
-========================================================= */
-
-@media screen
-and (min-width: 401px)
-and (max-width: 600px) {
-.conteudo-redefinir {
-        min-height: 100vh;
-    }
-
-
-    .conteudo-redefinir {
-        width: 100%;
-        min-height: 100vh;
-
-        position: relative;
-
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-
-        padding:
-            145px
-            14px
-            190px;
-
-        overflow-x: hidden;
-    }
-
-
-    /* LOGO */
-
-
-    /* CARD */
-
-    .redefinir {
-        position: relative !important;
-
-        top: auto !important;
-        left: auto !important;
-        right: auto !important;
-
-        width: 100% !important;
-        max-width: 430px !important;
-
-        margin: 0 auto !important;
-
-        padding:
-            25px
-            22px
-            27px !important;
-
-        border-radius: 15px !important;
-
-        transform: none !important;
-    }
-
-
-    .titulo {
-        font-size: 25px !important;
-
-        margin-bottom: 25px !important;
-
-        text-align: center !important;
-    }
-
-
-    /* FORM */
-
-    .formRedef {
-        width: 100% !important;
-    }
-
-
-    .formRedef label {
-        display: block !important;
-
-        width: 100% !important;
-
-        margin-bottom: 7px !important;
-
-        font-size: 12px !important;
-    }
-
-
-    .email,
-    .codigo {
-        width: 100% !important;
-
-        height: 44px !important;
-
-        padding: 0 13px !important;
-
-        font-size: 13px !important;
-
-        border-radius: 8px !important;
-    }
-
-
-    .btnEnviarCodigo,
-    .btnVerificarCodigo {
-        width: 100% !important;
-        min-width: 0 !important;
-
-        height: 40px !important;
-
-        padding: 0 !important;
-
-        font-size: 12px !important;
-    }
-
-
-    .CampoC {
-        width: 100% !important;
-
-        margin-top: 22px !important;
-    }
-
-
-    .mensagem {
-        margin-top: 12px !important;
-
-        font-size: 11px !important;
-
-        text-align: center !important;
-    }
-
-
-    /* COIN */
-
-}
-
-
-/* =========================================================
-   CELULAR PEQUENO - ATÉ 400px
-========================================================= */
-
-@media screen
-and (max-width: 400px) {
-.conteudo-redefinir {
-        min-height: 100vh;
-    }
-
-
-    .conteudo-redefinir {
-        width: 100%;
-        min-height: 100vh;
-
-        position: relative;
-
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-
-        padding:
-            125px
-            10px
-            165px;
-
-        overflow-x: hidden;
-    }
-
-
-    /* LOGO */
-
-
-    /* CARD */
-
-    .redefinir {
-        position: relative !important;
-
-        top: auto !important;
-        left: auto !important;
-        right: auto !important;
-
-        width: 100% !important;
-
-        max-width: 370px !important;
-
-        margin: 0 auto !important;
-
-        padding:
-            22px
-            18px
-            24px !important;
-
-        border-radius: 13px !important;
-
-        transform: none !important;
-    }
-
-
-    .titulo {
-        font-size: 22px !important;
-
-        margin-bottom: 22px !important;
-
-        text-align: center !important;
-    }
-
-
-    /* FORM */
-
-    .formRedef {
-        width: 100% !important;
-    }
-
-
-    .formRedef label {
-        display: block !important;
-
-        width: 100% !important;
-
-        margin-bottom: 6px !important;
-
-        font-size: 11px !important;
-
-        line-height: 1.3 !important;
-    }
-
-
-    .email,
-    .codigo {
-        width: 100% !important;
-
-        height: 42px !important;
-
-        padding: 0 12px !important;
-
-        font-size: 12px !important;
-
-        border-radius: 8px !important;
-    }
-
-
-    .btnEnviarCodigo,
-    .btnVerificarCodigo {
-        width: 100% !important;
-        min-width: 0 !important;
-
-        height: 38px !important;
-
-        padding: 0 !important;
-
-        font-size: 11px !important;
-    }
-
-
-    .CampoC {
-        width: 100% !important;
-
-        margin-top: 20px !important;
-    }
-
-
-    .mensagem {
-        margin-top: 10px !important;
-
-        font-size: 10px !important;
-
-        text-align: center !important;
-    }
-
-
-    /* COIN */
-
-}
-
-/* =========================================================
-   CORREÇÃO 1280 x 800
-   NEST HUB MAX / NOTEBOOK
+   1280 x 800
 ========================================================= */
 
 @media screen
@@ -822,175 +95,119 @@ and (min-width: 1200px)
 and (max-width: 1449px)
 and (max-height: 899px) {
 
-    .conteudo-redefinir {
-        min-height: 100vh;
-
-        padding-top: 5px;
-
-        overflow: hidden;
-    }
-
-
-    /* =====================================================
-       CONTEÚDO
-    ===================================================== */
-
-    .conteudo-redefinir {
-        width: 100%;
-        min-height: 100vh;
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        position: relative;
-    }
-
-
-    /* =====================================================
-       LOGO
-    ===================================================== */
-
-
-    /* =====================================================
-       CARD
-    ===================================================== */
-
-    .redefinir {
-        width: 390px;
-
-        padding:
-            28px
-            35px
-            30px;
-
-        border-radius: 14px;
-    }
-
-
-    /* =====================================================
-       TÍTULO
-    ===================================================== */
-
-    .redefinir .titulo {
-        margin:
-            -3px
-            0
-            30px;
-
-        font-size: 30px;
-    }
-
-
-    /* =====================================================
-       FORM
-    ===================================================== */
-
     .formRedef {
-        gap: 7px;
+        margin-top: 22px;
     }
 
-
-    .formRedef label {
-        font-size: 12px;
-    }
-
-
-    /* =====================================================
-       INPUTS
-    ===================================================== */
-
-    .formRedef input {
-        width: 100%;
-        height: 42px;
-
-        padding:
-            0
-            14px;
-
-        font-size: 13px;
-
-        border-radius: 9px;
-    }
-
-
-    /* =====================================================
-       BOTÃO ENVIAR CÓDIGO
-    ===================================================== */
-
-    .formRedef > button {
-        width: 100%;
-        height: 42px;
-
-        margin-top: 15px;
-
-        border-radius: 9px;
-
-        font-size: 12px;
-    }
-
-
-    /* =====================================================
-       CAMPO CÓDIGO
-    ===================================================== */
 
     .CampoC {
-        width: 100%;
+        margin-top: 18px;
+    }
 
-        margin:
-            18px
-            0
-            25px;
+}
+
+
+/* =========================================================
+   NOTEBOOK
+   901px - 1199px
+========================================================= */
+
+@media screen
+and (min-width: 901px)
+and (max-width: 1199px)
+and (max-height: 899px) {
+
+    .formRedef {
+        margin-top: 18px;
     }
 
 
-    .CampoC label {
-        font-size: 12px;
+    .CampoC {
+        margin-top: 15px;
+    }
+
+}
+
+
+/* =========================================================
+   TABLET EM PÉ
+   EX: 1024 x 1366
+========================================================= */
+
+@media screen
+and (min-width: 901px)
+and (max-width: 1100px)
+and (min-height: 900px) {
+
+    .formRedef {
+        margin-top: 26px;
     }
 
 
-    .CampoC input {
-        width: 100%;
-
-        margin-top: 7px;
-
-        padding-right: 14px;
-    }
-
-
-    /* =====================================================
-       BOTÃO VERIFICAR
-       MESMO MODELO DO ENVIAR CÓDIGO
-    ===================================================== */
-
-    .CampoC > button {
-        width: 100%;
-        height: 42px;
-
+    .CampoC {
         margin-top: 20px;
+    }
 
-        padding: 0;
+}
 
-        border-radius: 9px;
 
-        font-size: 12px;
+/* =========================================================
+   TABLET
+   601px - 900px
+========================================================= */
+
+@media screen
+and (min-width: 601px)
+and (max-width: 900px) {
+
+    .formRedef {
+        margin-top: 22px;
     }
 
 
-    /* =====================================================
-       MENSAGEM
-    ===================================================== */
+    .CampoC {
+        margin-top: 18px;
+    }
 
-    .mensagem {
-        margin-top: 8px;
+}
 
-        font-size: 11px;
+
+/* =========================================================
+   CELULAR
+   401px - 600px
+========================================================= */
+
+@media screen
+and (min-width: 401px)
+and (max-width: 600px) {
+
+    .formRedef {
+        margin-top: 20px;
     }
 
 
-    /* =====================================================
-       COIN
-       NÃO INVADE MAIS O CARD
-    ===================================================== */
+    .CampoC {
+        margin-top: 16px;
+    }
+
+}
+
+
+/* =========================================================
+   CELULAR PEQUENO
+   ATÉ 400px
+========================================================= */
+
+@media screen
+and (max-width: 400px) {
+
+    .formRedef {
+        margin-top: 16px;
+    }
+
+
+    .CampoC {
+        margin-top: 13px;
+    }
 
 }

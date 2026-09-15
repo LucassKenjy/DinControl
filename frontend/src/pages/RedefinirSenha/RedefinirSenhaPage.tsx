@@ -120,6 +120,7 @@ export function RedefinirSenhaPage() {
             <input
               type={novaSenhaVisivel ? 'text' : 'password'}
               id="novaSenha"
+              className={styles.campoSenhaInput}
               inputMode="numeric"
               autoComplete="new-password"
               value={novaSenha}
@@ -141,6 +142,7 @@ export function RedefinirSenhaPage() {
             <input
               type={confirmarSenhaVisivel ? 'text' : 'password'}
               id="confirmarSenha"
+              className={styles.campoSenhaInput}
               inputMode="numeric"
               autoComplete="new-password"
               value={confirmarSenha}
