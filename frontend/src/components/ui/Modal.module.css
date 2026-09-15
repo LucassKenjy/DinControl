@@ -1,0 +1,262 @@
+/* =====================================================
+   DINCONTROL - MODAL
+   Segue o painel "Nova Transação" da tela Principal:
+   fundo #07598c, cantos arredondados e sombra escura.
+===================================================== */
+
+.fundo-modal {
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background-color:
+        rgba(0, 0, 0, 0.55);
+
+    z-index: 900;
+}
+
+
+.modal {
+    width: min(370px, 100%);
+
+    padding: 22px 22px 18px;
+
+    background-color: #07598c;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 6px 18px
+        rgba(0, 0, 0, 0.35);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: #ffffff;
+}
+
+
+.titulo-modal {
+    margin-bottom: 16px;
+
+    text-align: center;
+
+    font-size: 18px;
+    font-weight: 600;
+}
+
+
+.corpo-modal {
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+
+    margin-bottom: 18px;
+}
+
+
+/* =====================================================
+   CAMPOS
+===================================================== */
+
+.rotulo-modal {
+    font-size: 13px;
+
+    color:
+        rgba(255, 255, 255, 0.85);
+}
+
+
+.campo-modal {
+    width: 100%;
+
+    height: 40px;
+
+    padding: 0 12px;
+
+    border: none;
+    border-radius: 8px;
+
+    outline: none;
+
+    background-color: #e5e5e5;
+
+    color: #333333;
+
+    font-size: 15px;
+    font-family: inherit;
+}
+
+
+.texto-modal {
+    font-size: 14px;
+
+    line-height: 1.45;
+
+    color:
+        rgba(255, 255, 255, 0.9);
+
+    text-align: center;
+}
+
+
+.erro-modal {
+    font-size: 13px;
+
+    color: #ffb4b0;
+}
+
+
+/* =====================================================
+   OPÇÕES (O QUE DESEJA CRIAR?)
+===================================================== */
+
+.opcao-modal {
+    width: 100%;
+
+    padding: 13px 15px;
+
+    border: none;
+    border-radius: 10px;
+
+    background-color:
+        rgba(255, 255, 255, 0.12);
+
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.opcao-modal:hover {
+    background-color:
+        rgba(255, 255, 255, 0.22);
+
+    transform: translateY(-1px);
+}
+
+
+/* =====================================================
+   AÇÕES
+===================================================== */
+
+.acoes-modal {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+}
+
+
+.botao-cancelar,
+.botao-confirmar {
+    min-width: 96px;
+
+    height: 38px;
+
+    padding: 0 14px;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.botao-cancelar {
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.45);
+
+    background-color: transparent;
+
+    color: #ffffff;
+}
+
+
+.botao-cancelar:hover {
+    background-color:
+        rgba(255, 255, 255, 0.15);
+}
+
+
+.botao-confirmar {
+    border: none;
+
+    background-color: #ffffff;
+
+    color: #07598c;
+}
+
+
+.botao-confirmar:hover:not(:disabled) {
+    transform: scale(1.03);
+}
+
+
+.botao-confirmar:disabled {
+    opacity: 0.55;
+
+    cursor: not-allowed;
+}
+
+
+.botao-confirmar.perigo {
+    background-color: #d93a33;
+
+    color: #ffffff;
+}
+
+
+/* =====================================================
+   CELULAR
+===================================================== */
+
+@media screen
+and (max-width: 400px) {
+
+    .modal {
+        padding: 18px 16px 15px;
+    }
+
+
+    .titulo-modal {
+        font-size: 16px;
+    }
+
+
+    .botao-cancelar,
+    .botao-confirmar {
+        min-width: 0;
+
+        flex: 1;
+    }
+
+}

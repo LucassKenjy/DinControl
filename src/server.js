@@ -983,6 +983,1224 @@ app.delete(
 
 
 // =====================================================
+// LISTAS E ANOTAÇÕES
+// =====================================================
+
+
+// =====================================================
+// LIMITES E VALIDAÇÕES
+// =====================================================
+
+const LIMITE_NOME_LISTA = 120;
+const LIMITE_TEXTO_ITEM = 255;
+const LIMITE_TITULO_NOTA = 120;
+const LIMITE_CONTEUDO_NOTA = 20000;
+
+
+function textoObrigatorio(valor, limite) {
+    if (typeof valor !== "string") {
+        return null;
+    }
+
+    const limpo = valor.trim();
+
+    if (!limpo || limpo.length > limite) {
+        return null;
+    }
+
+    return limpo;
+}
+
+
+function idValido(valor) {
+    const numero = Number(valor);
+
+    if (
+        !Number.isInteger(numero) ||
+        numero <= 0
+    ) {
+        return null;
+    }
+
+    return numero;
+}
+
+
+// =====================================================
+// CONFERE SE A LISTA PERTENCE AO USUÁRIO LOGADO
+//
+// Toda operação com itens usa esta função antes de tocar
+// no banco, então um usuário nunca alcança a lista de
+// outro trocando o id da URL.
+// =====================================================
+
+async function buscarListaDoUsuario(listaId, usuarioId) {
+    const resultado =
+        await pool.query(
+            `
+            SELECT
+                id,
+                name,
+                created_at,
+                updated_at
+
+            FROM lists
+
+            WHERE id = $1
+            AND user_id = $2
+            `,
+            [
+                listaId,
+                usuarioId
+            ]
+        );
+
+    return resultado.rows[0] || null;
+}
+
+
+async function buscarItensDaLista(listaId) {
+    const resultado =
+        await pool.query(
+            `
+            SELECT
+                id,
+                list_id,
+                text,
+                completed,
+                created_at,
+                updated_at
+
+            FROM list_items
+
+            WHERE list_id = $1
+
+            ORDER BY id ASC
+            `,
+            [
+                listaId
+            ]
+        );
+
+    return resultado.rows;
+}
+
+
+// =====================================================
+// BUSCAR LISTAS DO USUÁRIO LOGADO
+// =====================================================
+
+app.get(
+    "/lists",
+    autenticarUsuario,
+    async (req, res) => {
+        try {
+            const resultado =
+                await pool.query(
+                    `
+                    SELECT
+                        id,
+                        name,
+                        created_at,
+                        updated_at
+
+                    FROM lists
+
+                    WHERE user_id = $1
+
+                    ORDER BY created_at ASC, id ASC
+                    `,
+                    [
+                        req.usuarioId
+                    ]
+                );
+
+            return res.status(200).json(
+                resultado.rows
+            );
+
+        } catch (error) {
+            console.error(
+                "Erro ao buscar listas:",
+                error
+            );
+
+            return res.status(500).json({
+                erro:
+                    "Erro ao buscar listas"
+            });
+        }
+    }
+);
+
+
+// =====================================================
+// BUSCAR UMA LISTA (COM OS ITENS)
+// =====================================================
+
+app.get(
+    "/lists/:id",
+    autenticarUsuario,
+    async (req, res) => {
+        try {
+            const listaId =
+                idValido(req.params.id);
+
+            if (!listaId) {
+                return res.status(404).json({
+                    erro:
+                        "Lista não encontrada"
+                });
+            }
+
+            const lista =
+                await buscarListaDoUsuario(
+                    listaId,
+                    req.usuarioId
+                );
+
+            if (!lista) {
+                return res.status(404).json({
+                    erro:
+                        "Lista não encontrada"
+                });
+            }
+
+            const itens =
+                await buscarItensDaLista(
+                    lista.id
+                );
+
+            return res.status(200).json({
+                lista,
+                itens
+            });
+
+        } catch (error) {
+            console.error(
+                "Erro ao buscar lista:",
+                error
+            );
+
+            return res.status(500).json({
+                erro:
+                    "Erro ao buscar lista"
+            });
+        }
+    }
+);
+
+
+// =====================================================
+// CRIAR LISTA
+// =====================================================
+
+app.post(
+    "/lists",
+    autenticarUsuario,
+    async (req, res) => {
+        try {
+            const nome =
+                textoObrigatorio(
+                    (req.body || {}).name,
+                    LIMITE_NOME_LISTA
+                );
+
+            if (!nome) {
+                return res.status(400).json({
+                    erro:
+                        "Digite um nome válido para a lista."
+                });
+            }
+
+            const resultado =
+                await pool.query(
+                    `
+                    INSERT INTO lists
+                    (
+                        user_id,
+                        name
+                    )
+
+                    VALUES
+                    ($1, $2)
+
+                    RETURNING
+                        id,
+                        name,
+                        created_at,
+                        updated_at
+                    `,
+                    [
+                        req.usuarioId,
+                        nome
+                    ]
+                );
+
+            return res.status(201).json({
+                mensagem:
+                    "Lista criada com sucesso",
+
+                lista:
+                    resultado.rows[0]
+            });
+
+        } catch (error) {
+            console.error(
+                "Erro ao criar lista:",
+                error
+            );
+
+            return res.status(500).json({
+                erro:
+                    "Erro ao criar lista"
+            });
+        }
+    }
+);
+
+
+// =====================================================
+// RENOMEAR LISTA
+// =====================================================
+
+app.put(
+    "/lists/:id",
+    autenticarUsuario,
+    async (req, res) => {
+        try {
+            const listaId =
+                idValido(req.params.id);
+
+            const nome =
+                textoObrigatorio(
+                    (req.body || {}).name,
+                    LIMITE_NOME_LISTA
+                );
+
+            if (!nome) {
+                return res.status(400).json({
+                    erro:
+                        "Digite um nome válido para a lista."
+                });
+            }
+
+            if (!listaId) {
+                return res.status(404).json({
+                    erro:
+                        "Lista não encontrada"
+                });
+            }
+
+            const resultado =
+                await pool.query(
+                    `
+                    UPDATE lists
+
+                    SET
+                        name = $1,
+                        updated_at = NOW()
+
+                    WHERE id = $2
+                    AND user_id = $3
+
+                    RETURNING
+                        id,
+                        name,
+                        created_at,
+                        updated_at
+                    `,
+                    [
+                        nome,
+                        listaId,
+                        req.usuarioId
+                    ]
+                );
+
+            if (
+                resultado.rowCount === 0
+            ) {
+                return res.status(404).json({
+                    erro:
+                        "Lista não encontrada"
+                });
+            }
+
+            return res.status(200).json({
+                mensagem:
+                    "Lista atualizada com sucesso",
+
+                lista:
+                    resultado.rows[0]
+            });
+
+        } catch (error) {
+            console.error(
+                "Erro ao atualizar lista:",
+                error
+            );
+
+            return res.status(500).json({
+                erro:
+                    "Erro ao atualizar lista"
+            });
+        }
+    }
+);
+
+
+// =====================================================
+// EXCLUIR LISTA
+//
+// Os itens saem junto por causa do ON DELETE CASCADE
+// declarado em list_items.list_id.
+// =====================================================
+
+app.delete(
+    "/lists/:id",
+    autenticarUsuario,
+    async (req, res) => {
+        try {
+            const listaId =
+                idValido(req.params.id);
+
+            if (!listaId) {
+                return res.status(404).json({
+                    erro:
+                        "Lista não encontrada"
+                });
+            }
+
+            const resultado =
+                await pool.query(
+                    `
+                    DELETE FROM lists
+
+                    WHERE id = $1
+                    AND user_id = $2
+
+                    RETURNING
+                        id,
+                        name
+                    `,
+                    [
+                        listaId,
+                        req.usuarioId
+                    ]
+                );
+
+            if (
+                resultado.rowCount === 0
+            ) {
+                return res.status(404).json({
+                    erro:
+                        "Lista não encontrada"
+                });
+            }
+
+            return res.status(200).json({
+                mensagem:
+                    "Lista excluída com sucesso",
+
+                lista:
+                    resultado.rows[0]
+            });
+
+        } catch (error) {
+            console.error(
+                "Erro ao excluir lista:",
+                error
+            );
+
+            return res.status(500).json({
+                erro:
+                    "Erro ao excluir lista"
+            });
+        }
+    }
+);
+
+
+// =====================================================
+// BUSCAR ITENS DE UMA LISTA
+// =====================================================
+
+app.get(
+    "/lists/:listId/items",
+    autenticarUsuario,
+    async (req, res) => {
+        try {
+            const listaId =
+                idValido(req.params.listId);
+
+            const lista =
+                listaId
+                    ? await buscarListaDoUsuario(
+                        listaId,
+                        req.usuarioId
+                    )
+                    : null;
+
+            if (!lista) {
+                return res.status(404).json({
+                    erro:
+                        "Lista não encontrada"
+                });
+            }
+
+            const itens =
+                await buscarItensDaLista(
+                    lista.id
+                );
+
+            return res.status(200).json(itens);
+
+        } catch (error) {
+            console.error(
+                "Erro ao buscar itens da lista:",
+                error
+            );
+
+            return res.status(500).json({
+                erro:
+                    "Erro ao buscar itens da lista"
+            });
+        }
+    }
+);
+
+
+// =====================================================
+// CRIAR ITEM DENTRO DE UMA LISTA
+// =====================================================
+
+app.post(
+    "/lists/:listId/items",
+    autenticarUsuario,
+    async (req, res) => {
+        try {
+            const listaId =
+                idValido(req.params.listId);
+
+            const texto =
+                textoObrigatorio(
+                    (req.body || {}).text,
+                    LIMITE_TEXTO_ITEM
+                );
+
+            if (!texto) {
+                return res.status(400).json({
+                    erro:
+                        "Digite um nome válido para o item."
+                });
+            }
+
+            const lista =
+                listaId
+                    ? await buscarListaDoUsuario(
+                        listaId,
+                        req.usuarioId
+                    )
+                    : null;
+
+            if (!lista) {
+                return res.status(404).json({
+                    erro:
+                        "Lista não encontrada"
+                });
+            }
+
+            const resultado =
+                await pool.query(
+                    `
+                    INSERT INTO list_items
+                    (
+                        list_id,
+                        text
+                    )
+
+                    VALUES
+                    ($1, $2)
+
+                    RETURNING
+                        id,
+                        list_id,
+                        text,
+                        completed,
+                        created_at,
+                        updated_at
+                    `,
+                    [
+                        lista.id,
+                        texto
+                    ]
+                );
+
+            return res.status(201).json({
+                mensagem:
+                    "Item adicionado com sucesso",
+
+                item:
+                    resultado.rows[0]
+            });
+
+        } catch (error) {
+            console.error(
+                "Erro ao adicionar item:",
+                error
+            );
+
+            return res.status(500).json({
+                erro:
+                    "Erro ao adicionar item"
+            });
+        }
+    }
+);
+
+
+// =====================================================
+// ATUALIZAR ITEM (TEXTO E/OU CONCLUÍDO)
+//
+// O item só é alcançado através da lista do usuário
+// logado (EXISTS abaixo), então trocar o id na URL não
+// dá acesso ao item de outra pessoa.
+// =====================================================
+
+app.put(
+    "/list-items/:id",
+    autenticarUsuario,
+    async (req, res) => {
+        try {
+            const itemId =
+                idValido(req.params.id);
+
+            const {
+                text,
+                completed
+            } = req.body || {};
+
+            const textoEnviado =
+                text !== undefined;
+
+            const concluidoEnviado =
+                completed !== undefined;
+
+            if (
+                !textoEnviado &&
+                !concluidoEnviado
+            ) {
+                return res.status(400).json({
+                    erro:
+                        "Nenhum dado enviado para atualizar."
+                });
+            }
+
+            const texto =
+                textoEnviado
+                    ? textoObrigatorio(
+                        text,
+                        LIMITE_TEXTO_ITEM
+                    )
+                    : null;
+
+            if (
+                textoEnviado &&
+                !texto
+            ) {
+                return res.status(400).json({
+                    erro:
+                        "Digite um nome válido para o item."
+                });
+            }
+
+            if (
+                concluidoEnviado &&
+                typeof completed !== "boolean"
+            ) {
+                return res.status(400).json({
+                    erro:
+                        "Estado do item inválido."
+                });
+            }
+
+            if (!itemId) {
+                return res.status(404).json({
+                    erro:
+                        "Item não encontrado"
+                });
+            }
+
+            const resultado =
+                await pool.query(
+                    `
+                    UPDATE list_items
+
+                    SET
+                        text =
+                            COALESCE($1, text),
+
+                        completed =
+                            COALESCE($2, completed),
+
+                        updated_at = NOW()
+
+                    WHERE id = $3
+
+                    AND EXISTS (
+                        SELECT 1
+
+                        FROM lists
+
+                        WHERE lists.id = list_items.list_id
+                        AND lists.user_id = $4
+                    )
+
+                    RETURNING
+                        id,
+                        list_id,
+                        text,
+                        completed,
+                        created_at,
+                        updated_at
+                    `,
+                    [
+                        textoEnviado ? texto : null,
+                        concluidoEnviado ? completed : null,
+                        itemId,
+                        req.usuarioId
+                    ]
+                );
+
+            if (
+                resultado.rowCount === 0
+            ) {
+                return res.status(404).json({
+                    erro:
+                        "Item não encontrado"
+                });
+            }
+
+            return res.status(200).json({
+                mensagem:
+                    "Item atualizado com sucesso",
+
+                item:
+                    resultado.rows[0]
+            });
+
+        } catch (error) {
+            console.error(
+                "Erro ao atualizar item:",
+                error
+            );
+
+            return res.status(500).json({
+                erro:
+                    "Erro ao atualizar item"
+            });
+        }
+    }
+);
+
+
+// =====================================================
+// EXCLUIR ITEM
+// =====================================================
+
+app.delete(
+    "/list-items/:id",
+    autenticarUsuario,
+    async (req, res) => {
+        try {
+            const itemId =
+                idValido(req.params.id);
+
+            if (!itemId) {
+                return res.status(404).json({
+                    erro:
+                        "Item não encontrado"
+                });
+            }
+
+            const resultado =
+                await pool.query(
+                    `
+                    DELETE FROM list_items
+
+                    WHERE id = $1
+
+                    AND EXISTS (
+                        SELECT 1
+
+                        FROM lists
+
+                        WHERE lists.id = list_items.list_id
+                        AND lists.user_id = $2
+                    )
+
+                    RETURNING
+                        id,
+                        list_id,
+                        text,
+                        completed
+                    `,
+                    [
+                        itemId,
+                        req.usuarioId
+                    ]
+                );
+
+            if (
+                resultado.rowCount === 0
+            ) {
+                return res.status(404).json({
+                    erro:
+                        "Item não encontrado"
+                });
+            }
+
+            return res.status(200).json({
+                mensagem:
+                    "Item excluído com sucesso",
+
+                item:
+                    resultado.rows[0]
+            });
+
+        } catch (error) {
+            console.error(
+                "Erro ao excluir item:",
+                error
+            );
+
+            return res.status(500).json({
+                erro:
+                    "Erro ao excluir item"
+            });
+        }
+    }
+);
+
+
+// =====================================================
+// BUSCAR ANOTAÇÕES DO USUÁRIO LOGADO
+//
+// A listagem não traz o conteúdo (pode ser grande);
+// ele vem em GET /notes/:id, ao abrir a anotação.
+// =====================================================
+
+app.get(
+    "/notes",
+    autenticarUsuario,
+    async (req, res) => {
+        try {
+            const resultado =
+                await pool.query(
+                    `
+                    SELECT
+                        id,
+                        title,
+                        created_at,
+                        updated_at
+
+                    FROM notes
+
+                    WHERE user_id = $1
+
+                    ORDER BY created_at ASC, id ASC
+                    `,
+                    [
+                        req.usuarioId
+                    ]
+                );
+
+            return res.status(200).json(
+                resultado.rows
+            );
+
+        } catch (error) {
+            console.error(
+                "Erro ao buscar anotações:",
+                error
+            );
+
+            return res.status(500).json({
+                erro:
+                    "Erro ao buscar anotações"
+            });
+        }
+    }
+);
+
+
+// =====================================================
+// BUSCAR UMA ANOTAÇÃO
+// =====================================================
+
+app.get(
+    "/notes/:id",
+    autenticarUsuario,
+    async (req, res) => {
+        try {
+            const notaId =
+                idValido(req.params.id);
+
+            if (!notaId) {
+                return res.status(404).json({
+                    erro:
+                        "Anotação não encontrada"
+                });
+            }
+
+            const resultado =
+                await pool.query(
+                    `
+                    SELECT
+                        id,
+                        title,
+                        content,
+                        created_at,
+                        updated_at
+
+                    FROM notes
+
+                    WHERE id = $1
+                    AND user_id = $2
+                    `,
+                    [
+                        notaId,
+                        req.usuarioId
+                    ]
+                );
+
+            if (
+                resultado.rowCount === 0
+            ) {
+                return res.status(404).json({
+                    erro:
+                        "Anotação não encontrada"
+                });
+            }
+
+            return res.status(200).json({
+                anotacao:
+                    resultado.rows[0]
+            });
+
+        } catch (error) {
+            console.error(
+                "Erro ao buscar anotação:",
+                error
+            );
+
+            return res.status(500).json({
+                erro:
+                    "Erro ao buscar anotação"
+            });
+        }
+    }
+);
+
+
+// =====================================================
+// CRIAR ANOTAÇÃO
+// =====================================================
+
+app.post(
+    "/notes",
+    autenticarUsuario,
+    async (req, res) => {
+        try {
+            const titulo =
+                textoObrigatorio(
+                    (req.body || {}).title,
+                    LIMITE_TITULO_NOTA
+                );
+
+            if (!titulo) {
+                return res.status(400).json({
+                    erro:
+                        "Digite um título válido para a anotação."
+                });
+            }
+
+            const conteudo =
+                typeof (req.body || {}).content === "string"
+                    ? (req.body || {}).content
+                    : "";
+
+            if (
+                conteudo.length > LIMITE_CONTEUDO_NOTA
+            ) {
+                return res.status(400).json({
+                    erro:
+                        "A anotação é muito longa."
+                });
+            }
+
+            const resultado =
+                await pool.query(
+                    `
+                    INSERT INTO notes
+                    (
+                        user_id,
+                        title,
+                        content
+                    )
+
+                    VALUES
+                    ($1, $2, $3)
+
+                    RETURNING
+                        id,
+                        title,
+                        content,
+                        created_at,
+                        updated_at
+                    `,
+                    [
+                        req.usuarioId,
+                        titulo,
+                        conteudo
+                    ]
+                );
+
+            return res.status(201).json({
+                mensagem:
+                    "Anotação criada com sucesso",
+
+                anotacao:
+                    resultado.rows[0]
+            });
+
+        } catch (error) {
+            console.error(
+                "Erro ao criar anotação:",
+                error
+            );
+
+            return res.status(500).json({
+                erro:
+                    "Erro ao criar anotação"
+            });
+        }
+    }
+);
+
+
+// =====================================================
+// ATUALIZAR ANOTAÇÃO (TÍTULO E/OU CONTEÚDO)
+// =====================================================
+
+app.put(
+    "/notes/:id",
+    autenticarUsuario,
+    async (req, res) => {
+        try {
+            const notaId =
+                idValido(req.params.id);
+
+            const {
+                title,
+                content
+            } = req.body || {};
+
+            const tituloEnviado =
+                title !== undefined;
+
+            const conteudoEnviado =
+                content !== undefined;
+
+            if (
+                !tituloEnviado &&
+                !conteudoEnviado
+            ) {
+                return res.status(400).json({
+                    erro:
+                        "Nenhum dado enviado para atualizar."
+                });
+            }
+
+            const titulo =
+                tituloEnviado
+                    ? textoObrigatorio(
+                        title,
+                        LIMITE_TITULO_NOTA
+                    )
+                    : null;
+
+            if (
+                tituloEnviado &&
+                !titulo
+            ) {
+                return res.status(400).json({
+                    erro:
+                        "Digite um título válido para a anotação."
+                });
+            }
+
+            if (
+                conteudoEnviado &&
+                typeof content !== "string"
+            ) {
+                return res.status(400).json({
+                    erro:
+                        "Conteúdo inválido."
+                });
+            }
+
+            if (
+                conteudoEnviado &&
+                content.length > LIMITE_CONTEUDO_NOTA
+            ) {
+                return res.status(400).json({
+                    erro:
+                        "A anotação é muito longa."
+                });
+            }
+
+            if (!notaId) {
+                return res.status(404).json({
+                    erro:
+                        "Anotação não encontrada"
+                });
+            }
+
+            const resultado =
+                await pool.query(
+                    `
+                    UPDATE notes
+
+                    SET
+                        title =
+                            COALESCE($1, title),
+
+                        content =
+                            COALESCE($2, content),
+
+                        updated_at = NOW()
+
+                    WHERE id = $3
+                    AND user_id = $4
+
+                    RETURNING
+                        id,
+                        title,
+                        content,
+                        created_at,
+                        updated_at
+                    `,
+                    [
+                        tituloEnviado ? titulo : null,
+                        conteudoEnviado ? content : null,
+                        notaId,
+                        req.usuarioId
+                    ]
+                );
+
+            if (
+                resultado.rowCount === 0
+            ) {
+                return res.status(404).json({
+                    erro:
+                        "Anotação não encontrada"
+                });
+            }
+
+            return res.status(200).json({
+                mensagem:
+                    "Anotação salva com sucesso",
+
+                anotacao:
+                    resultado.rows[0]
+            });
+
+        } catch (error) {
+            console.error(
+                "Erro ao atualizar anotação:",
+                error
+            );
+
+            return res.status(500).json({
+                erro:
+                    "Erro ao atualizar anotação"
+            });
+        }
+    }
+);
+
+
+// =====================================================
+// EXCLUIR ANOTAÇÃO
+// =====================================================
+
+app.delete(
+    "/notes/:id",
+    autenticarUsuario,
+    async (req, res) => {
+        try {
+            const notaId =
+                idValido(req.params.id);
+
+            if (!notaId) {
+                return res.status(404).json({
+                    erro:
+                        "Anotação não encontrada"
+                });
+            }
+
+            const resultado =
+                await pool.query(
+                    `
+                    DELETE FROM notes
+
+                    WHERE id = $1
+                    AND user_id = $2
+
+                    RETURNING
+                        id,
+                        title
+                    `,
+                    [
+                        notaId,
+                        req.usuarioId
+                    ]
+                );
+
+            if (
+                resultado.rowCount === 0
+            ) {
+                return res.status(404).json({
+                    erro:
+                        "Anotação não encontrada"
+                });
+            }
+
+            return res.status(200).json({
+                mensagem:
+                    "Anotação excluída com sucesso",
+
+                anotacao:
+                    resultado.rows[0]
+            });
+
+        } catch (error) {
+            console.error(
+                "Erro ao excluir anotação:",
+                error
+            );
+
+            return res.status(500).json({
+                erro:
+                    "Erro ao excluir anotação"
+            });
+        }
+    }
+);
+
+
+// =====================================================
 // RECUPERAÇÃO DE SENHA
 // =====================================================
 
@@ -1524,13 +2742,17 @@ app.post(
 // das rotas de API acima serve o index.html do build do React,
 // que assume o roteamento no cliente (inclusive "/").
 //
-// Só "/me" e "/transactions" precisam ficar de fora: são as
-// únicas rotas de API que respondem a GET. As demais (/users,
-// /login, /logout, /forgot-password/*) só existem como POST, então
-// um GET nesses mesmos caminhos é sempre navegação de página.
+// Só "/me", "/transactions", "/lists", "/list-items" e "/notes"
+// precisam ficar de fora: são as únicas rotas de API que respondem
+// a GET. As demais (/users, /login, /logout, /forgot-password/*) só
+// existem como POST, então um GET nesses mesmos caminhos é sempre
+// navegação de página.
+//
+// As telas do front usam caminhos em português (/listas, /anotacoes),
+// então não colidem com as rotas de API acima.
 
 app.get(
-    /^(?!\/(me|transactions)(\/|$)).*/,
+    /^(?!\/(me|transactions|lists|list-items|notes)(\/|$)).*/,
     (req, res) => {
         res.sendFile(
             path.join(
