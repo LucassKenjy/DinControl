@@ -1,0 +1,1591 @@
+/* =====================================================
+   DINCONTROL - LISTAS E ANOTAÇÕES
+
+   Módulo compartilhado pelas três telas da seção:
+   visão geral, lista aberta e anotação aberta.
+
+   Base visual: card azul (#396f9f), tipografia branca e
+   divisórias rgba(255,255,255,0.25) — os mesmos valores
+   já usados no Histórico.
+===================================================== */
+
+
+/* =====================================================
+   PÁGINA
+===================================================== */
+
+.pagina-anotacoes {
+    width: 100%;
+    min-height: 100vh;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background-image:
+        url("/assets/Background.png");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    color: #ffffff;
+
+    overflow-x: hidden;
+
+    position: relative;
+
+    padding-bottom: 70px;
+}
+
+
+/* =====================================================
+   PERFIL
+===================================================== */
+
+.area-perfil {
+    position: absolute;
+
+    top: 35px;
+    right: 45px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    z-index: 30;
+}
+
+
+.nome-usuario {
+    font-size: 18px;
+    font-weight: 400;
+
+    color: #ffffff;
+
+    white-space: nowrap;
+}
+
+
+.botao-perfil {
+    width: 55px;
+    height: 55px;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    overflow: hidden;
+}
+
+
+.botao-perfil img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+}
+
+
+/* =====================================================
+   CONTEÚDO
+   Cards à esquerda, botões (+ e menu) à direita.
+===================================================== */
+
+.conteudo {
+    position: relative;
+
+    top: 220px;
+    left: 6%;
+
+    width: min(1180px, 74vw);
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 26px;
+
+    z-index: 20;
+}
+
+
+.area-cards {
+    flex: 1;
+
+    min-width: 0;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 26px;
+}
+
+
+.area-cards.unica {
+    grid-template-columns:
+        minmax(0, 1fr);
+}
+
+
+/* =====================================================
+   BOTÕES DE AÇÃO (+ E MENU)
+===================================================== */
+
+.area-acoes {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 18px;
+
+    flex-shrink: 0;
+}
+
+
+.botao-acao,
+.botao-menu {
+    width: 58px;
+    height: 58px;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 13px;
+
+    background-color: #ffffff;
+
+    color: #555555;
+
+    font-size: 26px;
+    font-family: inherit;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease;
+}
+
+
+.botao-acao:hover,
+.botao-menu:hover {
+    transform: scale(1.05);
+
+    background-color: #f2f2f2;
+}
+
+
+.botao-acao:active,
+.botao-menu:active {
+    transform: scale(0.96);
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+.area-menu {
+    position: relative;
+
+    z-index: 300;
+}
+
+
+.menu-paginas {
+    position: absolute;
+
+    top: 72px;
+    right: 0;
+
+    width: 190px;
+
+    padding: 9px;
+
+    display: none;
+    flex-direction: column;
+
+    gap: 5px;
+
+    background-color: #07598c;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 6px 18px
+        rgba(0, 0, 0, 0.35);
+
+    z-index: 400;
+}
+
+
+.menu-paginas.ativo {
+    display: flex;
+}
+
+
+.menu-paginas::before {
+    content: "";
+
+    position: absolute;
+
+    top: -11px;
+    right: 18px;
+
+    width: 22px;
+    height: 12px;
+
+    background-color: #07598c;
+
+    clip-path:
+        polygon(
+            50% 0,
+            0 100%,
+            100% 100%
+        );
+}
+
+
+.menu-paginas a {
+    width: 100%;
+
+    padding: 11px 13px;
+
+    border-radius: 8px;
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    transition:
+        background-color 0.2s ease;
+}
+
+
+.menu-paginas a:hover {
+    background-color:
+        rgba(255, 255, 255, 0.15);
+}
+
+
+.menu-paginas .pagina-ativa {
+    background-color:
+        rgba(255, 255, 255, 0.18);
+}
+
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.card {
+    display: flex;
+    flex-direction: column;
+
+    min-height: 540px;
+
+    background-color: #396f9f;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+}
+
+
+.cabecalho-card {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    min-height: 62px;
+
+    padding: 12px 20px;
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.25);
+}
+
+
+.titulo-card {
+    flex: 1;
+
+    min-width: 0;
+
+    font-size: 28px;
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    color: #ffffff;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* CAMPO DE RENOMEAR (TÍTULO EM EDIÇÃO) */
+
+.campo-titulo {
+    flex: 1;
+
+    min-width: 0;
+
+    height: 40px;
+
+    padding: 0 10px;
+
+    border: none;
+    border-radius: 8px;
+
+    outline: none;
+
+    background-color:
+        rgba(255, 255, 255, 0.92);
+
+    color: #1c3f5e;
+
+    font-size: 24px;
+    font-weight: 700;
+    font-family: inherit;
+}
+
+
+/* =====================================================
+   BOTÕES DENTRO DO CARD
+===================================================== */
+
+.botao-icone {
+    width: 30px;
+    height: 30px;
+
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border: none;
+    border-radius: 50%;
+
+    background: transparent;
+
+    color:
+        rgba(255, 255, 255, 0.45);
+
+    cursor: pointer;
+
+    transition:
+        color 0.15s ease,
+        background-color 0.15s ease;
+}
+
+
+.botao-icone svg {
+    width: 17px;
+    height: 17px;
+
+    pointer-events: none;
+}
+
+
+.botao-icone:hover,
+.botao-icone:focus-visible {
+    color: #ffffff;
+
+    background-color:
+        rgba(255, 255, 255, 0.12);
+}
+
+
+.botao-icone.excluir:hover,
+.botao-icone.excluir:focus-visible {
+    color: #ff4b45;
+}
+
+
+.botao-icone.marcado {
+    color: #ffffff;
+}
+
+
+.botao-icone.check svg {
+    width: 23px;
+    height: 23px;
+}
+
+
+/* =====================================================
+   LISTA DE REGISTROS
+===================================================== */
+
+.corpo-card {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 0;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+
+.corpo-card::-webkit-scrollbar {
+    width: 6px;
+}
+
+
+.corpo-card::-webkit-scrollbar-thumb {
+    background:
+        rgba(255, 255, 255, 0.30);
+
+    border-radius: 20px;
+}
+
+
+.corpo-card::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+.linha-registro {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    min-height: 58px;
+
+    padding: 6px 16px 6px 20px;
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.25);
+
+    transition:
+        background-color 0.15s ease;
+}
+
+
+.linha-registro:hover {
+    background-color:
+        rgba(255, 255, 255, 0.06);
+}
+
+
+.nome-registro {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 8px 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #ffffff;
+
+    font-size: 22px;
+    font-weight: 700;
+    font-family: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    overflow-wrap: anywhere;
+}
+
+
+.nome-registro:hover {
+    text-decoration: underline;
+}
+
+
+/* ITEM DE LISTA CONCLUÍDO */
+
+.texto-item {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 8px 0;
+
+    font-size: 21px;
+    font-weight: 700;
+
+    overflow-wrap: anywhere;
+}
+
+
+.texto-item.concluido {
+    color:
+        rgba(255, 255, 255, 0.55);
+
+    text-decoration: line-through;
+}
+
+
+/* CAMPO DE EDIÇÃO DO ITEM */
+
+.campo-item {
+    flex: 1;
+
+    min-width: 0;
+
+    height: 38px;
+
+    padding: 0 10px;
+
+    border: none;
+    border-radius: 8px;
+
+    outline: none;
+
+    background-color:
+        rgba(255, 255, 255, 0.92);
+
+    color: #1c3f5e;
+
+    font-size: 18px;
+    font-weight: 600;
+    font-family: inherit;
+}
+
+
+/* =====================================================
+   ESTADO VAZIO
+===================================================== */
+
+.mensagem-vazia {
+    padding: 34px 22px;
+
+    text-align: center;
+
+    color:
+        rgba(255, 255, 255, 0.75);
+
+    font-size: 15px;
+}
+
+
+/* =====================================================
+   PAUTA (LINHAS DO CARD VAZIO)
+===================================================== */
+
+.pauta {
+    flex: 1;
+
+    min-height: 120px;
+
+    background-image:
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 57px,
+            rgba(255, 255, 255, 0.25) 57px,
+            rgba(255, 255, 255, 0.25) 58px
+        );
+}
+
+
+/* =====================================================
+   ANOTAÇÃO (TEXTO LIVRE)
+===================================================== */
+
+.editor-nota {
+    flex: 1;
+
+    width: 100%;
+
+    min-height: 420px;
+
+    padding: 18px 22px 22px;
+
+    border: none;
+
+    outline: none;
+
+    resize: none;
+
+    background-color: transparent;
+
+    background-image:
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 35px,
+            rgba(255, 255, 255, 0.25) 35px,
+            rgba(255, 255, 255, 0.25) 36px
+        );
+
+    background-origin: content-box;
+    background-clip: content-box;
+
+    color: #ffffff;
+
+    font-size: 17px;
+    font-family: inherit;
+
+    line-height: 36px;
+
+    overflow-y: auto;
+}
+
+
+.editor-nota::placeholder {
+    color:
+        rgba(255, 255, 255, 0.45);
+}
+
+
+.editor-nota::-webkit-scrollbar {
+    width: 6px;
+}
+
+
+.editor-nota::-webkit-scrollbar-thumb {
+    background:
+        rgba(255, 255, 255, 0.30);
+
+    border-radius: 20px;
+}
+
+
+.editor-nota::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+/* =====================================================
+   RODAPÉ DA ANOTAÇÃO (SALVAR)
+===================================================== */
+
+.rodape-nota {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 14px;
+
+    padding: 12px 20px;
+
+    border-top:
+        1px solid
+        rgba(255, 255, 255, 0.25);
+}
+
+
+.situacao-nota {
+    font-size: 13px;
+
+    color:
+        rgba(255, 255, 255, 0.75);
+}
+
+
+.botao-salvar {
+    min-width: 110px;
+
+    height: 38px;
+
+    padding: 0 16px;
+
+    border: none;
+    border-radius: 9px;
+
+    background-color: #ffffff;
+
+    color: #07598c;
+
+    font-size: 14px;
+    font-weight: 700;
+    font-family: inherit;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+.botao-salvar:hover:not(:disabled) {
+    transform: scale(1.03);
+}
+
+
+.botao-salvar:disabled {
+    opacity: 0.55;
+
+    cursor: not-allowed;
+}
+
+
+/* =====================================================
+   FEEDBACK
+===================================================== */
+
+.feedback {
+    position: fixed;
+
+    top: 22px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    max-width: calc(100vw - 32px);
+
+    padding: 11px 18px;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 6px 18px
+        rgba(0, 0, 0, 0.35);
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-align: center;
+
+    z-index: 800;
+}
+
+
+.feedback-sucesso {
+    background-color: #0f7a3d;
+
+    color: #ffffff;
+}
+
+
+.feedback-erro {
+    background-color: #b3322c;
+
+    color: #ffffff;
+}
+
+
+/* =====================================================
+   1600x900
+===================================================== */
+
+@media screen
+and (min-width: 1450px)
+and (max-width: 1699px) {
+
+    .conteudo {
+        top: 220px;
+
+        width: min(1000px, 70vw);
+    }
+
+
+    .card {
+        min-height: 480px;
+    }
+
+}
+
+
+/* =====================================================
+   1280x800
+===================================================== */
+
+@media screen
+and (min-width: 1150px)
+and (max-width: 1449px) {
+
+    .area-perfil {
+        top: 28px;
+        right: 30px;
+    }
+
+
+    .nome-usuario {
+        font-size: 15px;
+    }
+
+
+    .botao-perfil {
+        width: 48px;
+        height: 48px;
+    }
+
+
+    .conteudo {
+        top: 190px;
+        left: 5%;
+
+        width: min(880px, 76vw);
+
+        gap: 20px;
+    }
+
+
+    .area-cards {
+        gap: 20px;
+    }
+
+
+    .card {
+        min-height: 430px;
+    }
+
+
+    .titulo-card {
+        font-size: 24px;
+    }
+
+
+    .campo-titulo {
+        font-size: 20px;
+    }
+
+
+    .nome-registro,
+    .texto-item {
+        font-size: 19px;
+    }
+
+
+    .linha-registro {
+        min-height: 52px;
+    }
+
+
+    .pauta {
+        background-image:
+            repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 51px,
+                rgba(255, 255, 255, 0.25) 51px,
+                rgba(255, 255, 255, 0.25) 52px
+            );
+    }
+
+
+    .botao-acao,
+    .botao-menu {
+        width: 52px;
+        height: 52px;
+
+        font-size: 23px;
+    }
+
+}
+
+
+/* =====================================================
+   1024x600
+===================================================== */
+
+@media screen
+and (min-width: 901px)
+and (max-width: 1149px)
+and (max-height: 899px) {
+
+    .pagina-anotacoes {
+        min-height: 600px;
+    }
+
+
+    .area-perfil {
+        top: 20px;
+        right: 20px;
+
+        gap: 7px;
+    }
+
+
+    .nome-usuario {
+        font-size: 11px;
+    }
+
+
+    .botao-perfil {
+        width: 42px;
+        height: 42px;
+    }
+
+
+    .conteudo {
+        top: 145px;
+        left: 40px;
+
+        width: min(700px, calc(100% - 80px));
+
+        gap: 14px;
+    }
+
+
+    .area-cards {
+        gap: 14px;
+    }
+
+
+    .card {
+        min-height: 340px;
+
+        border-radius: 15px;
+    }
+
+
+    .cabecalho-card {
+        min-height: 48px;
+
+        padding: 9px 14px;
+    }
+
+
+    .titulo-card {
+        font-size: 19px;
+    }
+
+
+    .campo-titulo {
+        height: 34px;
+
+        font-size: 16px;
+    }
+
+
+    .linha-registro {
+        min-height: 42px;
+
+        padding: 4px 10px 4px 14px;
+    }
+
+
+    .nome-registro,
+    .texto-item {
+        font-size: 15px;
+    }
+
+
+    .campo-item {
+        height: 32px;
+
+        font-size: 14px;
+    }
+
+
+    .botao-icone {
+        width: 26px;
+        height: 26px;
+    }
+
+
+    .botao-icone.check svg {
+        width: 20px;
+        height: 20px;
+    }
+
+
+    .pauta {
+        background-image:
+            repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 41px,
+                rgba(255, 255, 255, 0.25) 41px,
+                rgba(255, 255, 255, 0.25) 42px
+            );
+    }
+
+
+    .editor-nota {
+        min-height: 230px;
+
+        padding: 12px 14px 14px;
+
+        font-size: 14px;
+
+        line-height: 28px;
+
+        background-image:
+            repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 27px,
+                rgba(255, 255, 255, 0.25) 27px,
+                rgba(255, 255, 255, 0.25) 28px
+            );
+    }
+
+
+    .rodape-nota {
+        padding: 9px 14px;
+    }
+
+
+    .mensagem-vazia {
+        padding: 24px 16px;
+
+        font-size: 13px;
+    }
+
+
+    .botao-acao,
+    .botao-menu {
+        width: 44px;
+        height: 44px;
+
+        border-radius: 9px;
+
+        font-size: 20px;
+    }
+
+
+    .menu-paginas {
+        top: 55px;
+
+        width: 160px;
+    }
+
+
+    .menu-paginas a {
+        padding: 8px 10px;
+
+        font-size: 11px;
+    }
+
+}
+
+
+/* =====================================================
+   TABLET EM PÉ
+   901px - 1100px (altura grande)
+===================================================== */
+
+@media screen
+and (min-width: 901px)
+and (max-width: 1100px)
+and (min-height: 900px) {
+
+    .area-perfil {
+        top: 40px;
+        right: 35px;
+    }
+
+
+    .conteudo {
+        top: 240px;
+        left: 50%;
+
+        width: calc(100% - 100px);
+
+        transform: translateX(-50%);
+    }
+
+
+    .card {
+        min-height: 470px;
+    }
+
+
+    .titulo-card {
+        font-size: 24px;
+    }
+
+
+    .nome-registro,
+    .texto-item {
+        font-size: 19px;
+    }
+
+}
+
+
+/* =====================================================
+   TABLET
+   601px - 900px
+===================================================== */
+
+@media screen
+and (min-width: 601px)
+and (max-width: 900px) {
+
+    /* O conteúdo entra no fluxo (padding no lugar de "top"), para a
+       página não ficar com uma sobra vazia embaixo dos cards. */
+
+    .pagina-anotacoes {
+        padding:
+            255px
+            20px
+            310px;
+    }
+
+
+    .area-perfil {
+        top: 145px;
+        left: 50%;
+        right: auto;
+
+        transform:
+            translateX(-50%);
+
+        flex-direction: column-reverse;
+
+        gap: 6px;
+    }
+
+
+    .botao-perfil {
+        width: 75px;
+        height: 75px;
+    }
+
+
+    .nome-usuario {
+        font-size: 14px;
+    }
+
+
+    /* BOTÕES ACIMA DOS CARDS, CARDS EMPILHADOS */
+
+    .conteudo {
+        top: 0;
+        left: auto;
+
+        width: 100%;
+
+        flex-direction: column-reverse;
+
+        gap: 18px;
+    }
+
+
+    .area-cards {
+        width: 100%;
+
+        grid-template-columns:
+            minmax(0, 1fr);
+
+        gap: 18px;
+    }
+
+
+    .area-acoes {
+        width: 100%;
+
+        justify-content: flex-end;
+    }
+
+
+    .card {
+        min-height: 330px;
+    }
+
+
+    .titulo-card {
+        font-size: 24px;
+    }
+
+
+    .nome-registro,
+    .texto-item {
+        font-size: 19px;
+    }
+
+}
+
+
+/* =====================================================
+   CELULAR
+   401px - 600px
+===================================================== */
+
+@media screen
+and (min-width: 401px)
+and (max-width: 600px) {
+
+    .pagina-anotacoes {
+        padding:
+            232px
+            10px
+            210px;
+    }
+
+
+    .area-perfil {
+        top: 120px;
+        left: 50%;
+        right: auto;
+
+        transform:
+            translateX(-50%);
+
+        flex-direction: column-reverse;
+    }
+
+
+    .botao-perfil {
+        width: 68px;
+        height: 68px;
+    }
+
+
+    .nome-usuario {
+        font-size: 13px;
+    }
+
+
+    .conteudo {
+        top: 0;
+        left: auto;
+
+        width: 100%;
+
+        flex-direction: column-reverse;
+
+        gap: 15px;
+    }
+
+
+    .area-cards {
+        width: 100%;
+
+        grid-template-columns:
+            minmax(0, 1fr);
+
+        gap: 15px;
+    }
+
+
+    .area-acoes {
+        width: 100%;
+
+        justify-content: flex-end;
+
+        gap: 14px;
+    }
+
+
+    .botao-acao,
+    .botao-menu {
+        width: 48px;
+        height: 48px;
+
+        font-size: 22px;
+    }
+
+
+    .menu-paginas {
+        top: 60px;
+
+        width: 170px;
+    }
+
+
+    .card {
+        min-height: 300px;
+
+        border-radius: 14px;
+    }
+
+
+    .cabecalho-card {
+        min-height: 52px;
+
+        padding: 10px 14px;
+    }
+
+
+    .titulo-card {
+        font-size: 21px;
+    }
+
+
+    .campo-titulo {
+        height: 36px;
+
+        font-size: 17px;
+    }
+
+
+    .linha-registro {
+        min-height: 48px;
+
+        padding: 5px 10px 5px 14px;
+    }
+
+
+    .nome-registro,
+    .texto-item {
+        font-size: 17px;
+    }
+
+
+    .pauta {
+        background-image:
+            repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 47px,
+                rgba(255, 255, 255, 0.25) 47px,
+                rgba(255, 255, 255, 0.25) 48px
+            );
+    }
+
+
+    .editor-nota {
+        min-height: 280px;
+
+        padding: 14px 14px 16px;
+
+        font-size: 15px;
+
+        line-height: 30px;
+
+        background-image:
+            repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 29px,
+                rgba(255, 255, 255, 0.25) 29px,
+                rgba(255, 255, 255, 0.25) 30px
+            );
+    }
+
+
+    .rodape-nota {
+        padding: 10px 14px;
+    }
+
+}
+
+
+/* =====================================================
+   CELULAR PEQUENO
+   até 400px
+===================================================== */
+
+@media screen
+and (max-width: 400px) {
+
+    .pagina-anotacoes {
+        padding:
+            214px
+            8px
+            185px;
+    }
+
+
+    .area-perfil {
+        top: 115px;
+        left: 50%;
+        right: auto;
+
+        transform:
+            translateX(-50%);
+
+        flex-direction: column-reverse;
+
+        gap: 5px;
+    }
+
+
+    .botao-perfil {
+        width: 62px;
+        height: 62px;
+    }
+
+
+    .nome-usuario {
+        font-size: 12px;
+    }
+
+
+    .conteudo {
+        top: 0;
+        left: auto;
+
+        width: 100%;
+
+        flex-direction: column-reverse;
+
+        gap: 14px;
+    }
+
+
+    .area-cards {
+        width: 100%;
+
+        grid-template-columns:
+            minmax(0, 1fr);
+
+        gap: 14px;
+    }
+
+
+    .area-acoes {
+        width: 100%;
+
+        justify-content: flex-end;
+
+        gap: 12px;
+    }
+
+
+    .botao-acao,
+    .botao-menu {
+        width: 44px;
+        height: 44px;
+
+        border-radius: 9px;
+
+        font-size: 20px;
+    }
+
+
+    .menu-paginas {
+        top: 55px;
+
+        width: 165px;
+    }
+
+
+    .menu-paginas a {
+        padding: 9px 10px;
+
+        font-size: 11px;
+    }
+
+
+    .card {
+        min-height: 280px;
+
+        border-radius: 13px;
+    }
+
+
+    .cabecalho-card {
+        min-height: 48px;
+
+        padding: 9px 12px;
+    }
+
+
+    .titulo-card {
+        font-size: 19px;
+    }
+
+
+    .campo-titulo {
+        height: 34px;
+
+        font-size: 16px;
+    }
+
+
+    .linha-registro {
+        min-height: 44px;
+
+        padding: 4px 8px 4px 12px;
+    }
+
+
+    .nome-registro,
+    .texto-item {
+        font-size: 15px;
+    }
+
+
+    .campo-item {
+        height: 32px;
+
+        font-size: 14px;
+    }
+
+
+    .botao-icone {
+        width: 26px;
+        height: 26px;
+    }
+
+
+    .botao-icone.check svg {
+        width: 20px;
+        height: 20px;
+    }
+
+
+    .pauta {
+        background-image:
+            repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 43px,
+                rgba(255, 255, 255, 0.25) 43px,
+                rgba(255, 255, 255, 0.25) 44px
+            );
+    }
+
+
+    .mensagem-vazia {
+        padding: 26px 14px;
+
+        font-size: 13px;
+    }
+
+
+    .editor-nota {
+        min-height: 250px;
+
+        padding: 12px 12px 14px;
+
+        font-size: 14px;
+
+        line-height: 28px;
+
+        background-image:
+            repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 27px,
+                rgba(255, 255, 255, 0.25) 27px,
+                rgba(255, 255, 255, 0.25) 28px
+            );
+    }
+
+
+    .rodape-nota {
+        padding: 9px 12px;
+
+        gap: 10px;
+    }
+
+
+    .botao-salvar {
+        min-width: 96px;
+
+        height: 36px;
+    }
+
+}

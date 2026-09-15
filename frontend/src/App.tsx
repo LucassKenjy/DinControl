@@ -8,6 +8,9 @@ import { RedefinirSenhaPage } from './pages/RedefinirSenha/RedefinirSenhaPage'
 import { PrincipalPage } from './pages/Principal/PrincipalPage'
 import { HistoricoPage } from './pages/Historico/HistoricoPage'
 import { PerfilPage } from './pages/Perfil/PerfilPage'
+import { AnotacoesPage } from './pages/Anotacoes/AnotacoesPage'
+import { ListaPage } from './pages/Anotacoes/ListaPage'
+import { NotaPage } from './pages/Anotacoes/NotaPage'
 
 function App() {
   return (
@@ -24,6 +27,10 @@ function App() {
             <Route path="/principal" element={<PrincipalPage />} />
             <Route path="/historico" element={<HistoricoPage />} />
             <Route path="/perfil" element={<PerfilPage />} />
+            <Route path="/anotacoes" element={<AnotacoesPage />} />
+            <Route path="/anotacoes/:id" element={<NotaPage />} />
+            <Route path="/listas" element={<Navigate to="/anotacoes" replace />} />
+            <Route path="/listas/:id" element={<ListaPage />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />

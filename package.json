@@ -5,6 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
+    "migrate": "node src/database/migrate.js",
     "build": "npm install --prefix frontend && npm run build --prefix frontend",
     "postinstall": "npm run build"
   },

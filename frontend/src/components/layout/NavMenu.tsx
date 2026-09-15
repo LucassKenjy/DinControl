@@ -4,11 +4,12 @@ import { Link } from 'react-router-dom'
 interface NavMenuProps {
   /** CSS module map from the page that renders this menu. */
   styles: Record<string, string>
-  paginaAtiva: 'principal' | 'historico'
+  paginaAtiva: 'principal' | 'historico' | 'anotacoes'
 }
 
 /**
- * Hamburger nav shared by the Principal and Historico headers. Each page
+ * Hamburger nav shared by the Principal, Historico and Listas/Anotações
+ * headers. Each page
  * supplies its own CSS module so the menu renders with that page's exact
  * original styling (including the fact that only Historico's stylesheet
  * defines a "pagina-ativa" highlight).
@@ -70,6 +71,18 @@ export function NavMenu({ styles, paginaAtiva }: NavMenuProps) {
             .join(' ')}
         >
           Histórico
+        </Link>
+
+        <Link
+          to="/anotacoes"
+          className={[
+            styles['item-menu'],
+            paginaAtiva === 'anotacoes' && styles['pagina-ativa'],
+          ]
+            .filter(Boolean)
+            .join(' ')}
+        >
+          Listas e Anotações
         </Link>
       </div>
     </div>
