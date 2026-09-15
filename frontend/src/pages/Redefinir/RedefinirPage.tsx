@@ -115,15 +115,17 @@ export function RedefinirPage() {
         >
           <label htmlFor="email">Você receberá um código neste e-mail</label>
 
-          <input
-            type="email"
-            id="email"
-            className={styles.email}
-            placeholder="Digite seu e-mail"
-            value={email}
-            readOnly={emailBloqueado}
-            onChange={(event) => setEmail(event.target.value)}
-          />
+          <div className={styles.campo}>
+            <input
+              type="email"
+              id="email"
+              className={styles.email}
+              placeholder="Digite seu e-mail"
+              value={email}
+              readOnly={emailBloqueado}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+          </div>
 
           <button
             type="button"
@@ -138,16 +140,18 @@ export function RedefinirPage() {
           <div className={styles.CampoC}>
             <label htmlFor="codigo">Digite o código recebido no e-mail</label>
 
-            <input
-              type="text"
-              id="codigo"
-              className={styles.codigo}
-              placeholder="Digite o código"
-              maxLength={6}
-              inputMode="numeric"
-              value={codigo}
-              onChange={(event) => setCodigo(event.target.value.replace(/\D/g, '').slice(0, 6))}
-            />
+            <div className={styles.campo}>
+              <input
+                type="text"
+                id="codigo"
+                className={styles.codigo}
+                placeholder="Digite o código"
+                maxLength={6}
+                inputMode="numeric"
+                value={codigo}
+                onChange={(event) => setCodigo(event.target.value.replace(/\D/g, '').slice(0, 6))}
+              />
+            </div>
 
             <button
               type="button"
