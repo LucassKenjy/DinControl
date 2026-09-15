@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import { Modal } from '../ui/Modal'
+import modalStyles from '../ui/Modal.module.css'
+import formStyles from './TransactionForm.module.css'
 import { CategorySelector } from './CategorySelector'
 import { CustomCategoryInput } from './CustomCategoryInput'
 import { CATEGORIAS_ENTRADA, CATEGORIAS_SAIDA, CATEGORIA_PERSONALIZADA } from '../../types/category'
@@ -41,6 +44,19 @@ export function TransactionForm({ styles, onTransactionCreated }: TransactionFor
   function limparMensagem() {
     setMensagem('')
     setErro(null)
+  }
+
+  /** Fecha o modal sem criar nem alterar nenhuma transação. */
+  function fechar() {
+    setAberto(false)
+    setDados(ESTADO_INICIAL)
+    limparMensagem()
+  }
+
+  function abrir() {
+    setDados(ESTADO_INICIAL)
+    limparMensagem()
+    setAberto(true)
   }
 
   function mostrarErro(texto: string) {
@@ -143,62 +159,63 @@ export function TransactionForm({ styles, onTransactionCreated }: TransactionFor
         className={styles['botao-adicionar']}
         id="abrirTransacao"
         type="button"
-        onClick={() => setAberto((valor) => !valor)}
+        onClick={() => (aberto ? fechar() : abrir())}
       >
         +
       </button>
 
-      <div
-        className={[styles['painel-transacao'], aberto && styles.ativo].filter(Boolean).join(' ')}
-        id="painelTransacao"
-      >
-        <p className={styles['titulo-transacao']}>Nova Transação</p>
+      {aberto ? (
+        <Modal
+          titulo="Nova Transação"
+          textoConfirmar="CONFIRMAR"
+          textoCancelar="Cancelar"
+          onConfirmar={aoConfirmar}
+          onCancelar={fechar}
+        >
+          <div className={formStyles['linha-transacao']}>
+            <span className={[formStyles.bolinha, formStyles['entrada-cor']].join(' ')}></span>
+            <span className={formStyles.cifrao}>R$:</span>
 
-        <div className={[styles['linha-transacao'], styles.entrada].join(' ')}>
-          <span className={[styles.bolinha, styles['entrada-cor']].join(' ')}></span>
-          <span className={styles.cifrao}>R$:</span>
+            <input
+              type="number"
+              id="valorEntrada"
+              step="0.01"
+              min="0"
+              placeholder="0,00"
+              value={dados.valorEntrada}
+              onChange={(event) => atualizar('valorEntrada', event.target.value)}
+            />
 
-          <input
-            type="number"
-            id="valorEntrada"
-            step="0.01"
-            min="0"
-            placeholder="0,00"
-            value={dados.valorEntrada}
-            onChange={(event) => atualizar('valorEntrada', event.target.value)}
+            <CategorySelector
+              id="categoriaEntrada"
+              value={dados.categoriaEntrada}
+              options={CATEGORIAS_ENTRADA}
+              onChange={(valor) => atualizar('categoriaEntrada', valor)}
+            />
+          </div>
+
+          <CustomCategoryInput
+            id="categoriaEntradaPersonalizada"
+            className={formStyles['campo-categoria-personalizada']}
+            visible={dados.categoriaEntrada === CATEGORIA_PERSONALIZADA}
+            value={dados.categoriaEntradaPersonalizada}
+            onChange={(valor) => atualizar('categoriaEntradaPersonalizada', valor)}
           />
 
-          <CategorySelector
-            id="categoriaEntrada"
-            value={dados.categoriaEntrada}
-            options={CATEGORIAS_ENTRADA}
-            onChange={(valor) => atualizar('categoriaEntrada', valor)}
-          />
-        </div>
+          <div className={formStyles['linha-transacao']}>
+            <span className={[formStyles.bolinha, formStyles['saida-cor']].join(' ')}></span>
+            <span className={formStyles.cifrao}>R$:</span>
 
-        <CustomCategoryInput
-          id="categoriaEntradaPersonalizada"
-          className={styles['campo-categoria-personalizada']}
-          visible={dados.categoriaEntrada === CATEGORIA_PERSONALIZADA}
-          value={dados.categoriaEntradaPersonalizada}
-          onChange={(valor) => atualizar('categoriaEntradaPersonalizada', valor)}
-        />
+            <input
+              type="number"
+              id="valorSaida"
+              step="0.01"
+              min="0"
+              placeholder="0,00"
+              value={dados.valorSaida}
+              onChange={(event) => atualizar('valorSaida', event.target.value)}
+            />
 
-        <div className={styles['linha-transacao']}>
-          <span className={[styles.bolinha, styles['saida-cor']].join(' ')}></span>
-          <span className={styles.cifrao}>R$:</span>
-
-          <input
-            type="number"
-            id="valorSaida"
-            step="0.01"
-            min="0"
-            placeholder="0,00"
-            value={dados.valorSaida}
-            onChange={(event) => atualizar('valorSaida', event.target.value)}
-          />
-
-          <div className={styles['area-seta']}>
             <CategorySelector
               id="categoriaSaida"
               value={dados.categoriaSaida}
@@ -206,38 +223,31 @@ export function TransactionForm({ styles, onTransactionCreated }: TransactionFor
               onChange={(valor) => atualizar('categoriaSaida', valor)}
             />
           </div>
-        </div>
 
-        <CustomCategoryInput
-          id="categoriaSaidaPersonalizada"
-          className={styles['campo-categoria-personalizada']}
-          visible={dados.categoriaSaida === CATEGORIA_PERSONALIZADA}
-          value={dados.categoriaSaidaPersonalizada}
-          onChange={(valor) => atualizar('categoriaSaidaPersonalizada', valor)}
-        />
+          <CustomCategoryInput
+            id="categoriaSaidaPersonalizada"
+            className={formStyles['campo-categoria-personalizada']}
+            visible={dados.categoriaSaida === CATEGORIA_PERSONALIZADA}
+            value={dados.categoriaSaidaPersonalizada}
+            onChange={(valor) => atualizar('categoriaSaidaPersonalizada', valor)}
+          />
 
-        <button
-          id="confirmarTransacao"
-          className={styles['confirmar-transacao']}
-          type="button"
-          onClick={aoConfirmar}
-        >
-          CONFIRMAR
-        </button>
-
-        <p
-          id="mensagemTransacao"
-          className={[
-            styles.mensagemTransacao,
-            erro === true && styles['mensagem-erro'],
-            erro === false && styles['mensagem-sucesso'],
-          ]
-            .filter(Boolean)
-            .join(' ')}
-        >
-          {mensagem}
-        </p>
-      </div>
+          {mensagem ? (
+            <p
+              id="mensagemTransacao"
+              className={[
+                formStyles['mensagem-transacao'],
+                erro === true && modalStyles['erro-modal'],
+                erro === false && formStyles['mensagem-sucesso'],
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            >
+              {mensagem}
+            </p>
+          ) : null}
+        </Modal>
+      ) : null}
     </>
   )
 }
