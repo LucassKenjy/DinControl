@@ -1,7 +1,9 @@
 /* =====================================================
    DINCONTROL - MODAL
-   Segue o painel "Nova Transação" da tela Principal:
-   fundo #07598c, cantos arredondados e sombra escura.
+   Caixa padrão do app: fundo #07598c, cantos
+   arredondados e sombra escura sobre um fundo escurecido.
+   Usada nas telas de Listas/Anotações e no
+   "Nova Transação" da tela Principal.
 ===================================================== */
 
 .fundo-modal {

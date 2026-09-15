@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import type { ReactNode } from 'react'
 import styles from './Modal.module.css'
 
@@ -16,9 +17,12 @@ interface ModalProps {
 }
 
 /**
- * Caixa de diálogo do DinControl: mesmo azul, mesmo raio de borda e
- * mesma sombra do painel "Nova Transação" da tela Principal. Usada no
- * lugar de alert()/confirm() nas telas de Listas e Anotações.
+ * Caixa de diálogo do DinControl: fundo escurecido, caixa azul
+ * centralizada na tela e botões Cancelar/confirmar. Usada nas telas de
+ * Listas e Anotações e no "Nova Transação" da tela Principal.
+ *
+ * É renderizada em um portal no <body> para que a centralização não
+ * dependa de ancestrais com transform/position.
  */
 export function Modal({
   titulo,
@@ -42,7 +46,7 @@ export function Modal({
     return () => document.removeEventListener('keydown', aoTeclar)
   }, [onCancelar])
 
-  return (
+  return createPortal(
     <div
       className={styles['fundo-modal']}
       onMouseDown={(evento) => {
@@ -75,6 +79,7 @@ export function Modal({
           ) : null}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
