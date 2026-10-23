@@ -5,19 +5,7 @@
 let usuarioAtual = null;
 let usuarioId = null;
 
-
-// =====================================================
-// LOADING
-// =====================================================
-
-window.addEventListener("load", () => {
-    const loadingScreen =
-        document.querySelector("#loading-screen");
-
-    setTimeout(() => {
-        loadingScreen?.classList.add("esconder");
-    }, 1500);
-});
+const TAMANHO_FOTO = 256;
 
 
 // =====================================================
@@ -27,14 +15,17 @@ window.addEventListener("load", () => {
 const nome = document.querySelector("#nome");
 const email = document.querySelector("#email");
 const senha = document.querySelector("#senha");
+const emailResumo = document.querySelector("#emailResumo");
 
 const formulario = document.querySelector("#formPerfil");
 const mensagem = document.querySelector("#mensagemPerfil");
+const botaoSalvar = document.querySelector("#botaoSalvar");
 
 const botaoSair = document.querySelector("#sairConta");
-const botaoVoltar = document.querySelector("#voltarDashboard");
+const modalSair = document.querySelector("#modalSair");
+const cancelarSair = document.querySelector("#cancelarSair");
+const confirmarSair = document.querySelector("#confirmarSair");
 
-const fotoPerfil = document.querySelector("#fotoPerfil");
 const inputFoto = document.querySelector("#inputFoto");
 
 
@@ -42,60 +33,16 @@ const inputFoto = document.querySelector("#inputFoto");
 // BUSCAR USUÁRIO LOGADO
 // =====================================================
 
-async function carregarUsuario() {
-    try {
-        const resposta = await fetch("/me", {
-            credentials: "same-origin"
-        });
+function preencherDados(usuario) {
+    usuarioAtual = usuario;
+    usuarioId = usuario.id;
 
-        if (!resposta.ok) {
-            window.location.href =
-                "/login/login.html";
+    nome.value = usuario.nome || "";
+    email.value = usuario.email || "";
+    emailResumo.textContent = usuario.email || "";
 
-            return false;
-        }
-
-        const resultado =
-            await resposta.json();
-
-        usuarioAtual =
-            resultado.usuario;
-
-        usuarioId =
-            usuarioAtual.id;
-
-        nome.value =
-            usuarioAtual.nome || "";
-
-        email.value =
-            usuarioAtual.email || "";
-
-        carregarFotoSalva();
-
-        return true;
-
-    } catch (erro) {
-        console.error(
-            "Erro ao verificar sessão:",
-            erro
-        );
-
-        window.location.href =
-            "/login/login.html";
-
-        return false;
-    }
+    atualizarNomeUsuario(usuario.nome);
 }
-
-
-// =====================================================
-// VOLTAR PARA DASHBOARD
-// =====================================================
-
-botaoVoltar.addEventListener("click", () => {
-    window.location.href =
-        "/Principal/principal.html";
-});
 
 
 // =====================================================
@@ -115,20 +62,28 @@ formulario.addEventListener("submit", async (event) => {
         senha.value.trim();
 
     if (!novoNome || !novoEmail) {
-        mostrarErro(
-            "Nome e e-mail são obrigatórios."
+        mostrarMensagem(
+            mensagem,
+            "Nome e e-mail são obrigatórios.",
+            "erro"
         );
 
         return;
     }
 
     if (!senhaAtual) {
-        mostrarErro(
-            "Digite sua senha para salvar as alterações."
+        mostrarMensagem(
+            mensagem,
+            "Digite sua senha para salvar as alterações.",
+            "erro"
         );
 
+        senha.focus();
         return;
     }
+
+    limparMensagem(mensagem);
+    definirCarregando(botaoSalvar, true, "Salvando...");
 
     try {
         const resposta = await fetch(
@@ -157,49 +112,51 @@ formulario.addEventListener("submit", async (event) => {
                 resultado.erro ===
                 "Senha incorreta."
             ) {
-                mostrarErro(
-                    resultado.erro
+                mostrarMensagem(
+                    mensagem,
+                    resultado.erro,
+                    "erro"
                 );
 
                 return;
             }
 
-            window.location.href =
-                "/login/login.html";
-
+            irParaLogin();
             return;
         }
 
         if (!resposta.ok) {
-            mostrarErro(
+            mostrarMensagem(
+                mensagem,
                 resultado.erro ||
-                "Erro ao atualizar perfil."
+                "Erro ao atualizar perfil.",
+                "erro"
             );
 
             return;
         }
 
-        usuarioAtual =
-            resultado.usuario;
-
-        nome.value =
-            usuarioAtual.nome;
-
-        email.value =
-            usuarioAtual.email;
+        preencherDados(resultado.usuario);
 
         senha.value = "";
 
-        mostrarSucesso(
-            "Perfil atualizado com sucesso!"
+        mostrarMensagem(
+            mensagem,
+            "Perfil atualizado com sucesso!",
+            "sucesso"
         );
 
     } catch (erro) {
         console.error(erro);
 
-        mostrarErro(
-            "Erro ao conectar com o servidor."
+        mostrarMensagem(
+            mensagem,
+            "Erro ao conectar com o servidor.",
+            "erro"
         );
+
+    } finally {
+        definirCarregando(botaoSalvar, false);
     }
 });
 
@@ -208,13 +165,18 @@ formulario.addEventListener("submit", async (event) => {
 // SAIR DA CONTA
 // =====================================================
 
-botaoSair.addEventListener("click", async () => {
-    const confirmarSaida =
-        confirm("Deseja realmente sair da conta?");
+botaoSair.addEventListener("click", () => {
+    modalSair.showModal();
+});
 
-    if (!confirmarSaida) {
-        return;
-    }
+cancelarSair.addEventListener("click", () => {
+    modalSair.close();
+});
+
+fecharModalAoClicarFora(modalSair);
+
+confirmarSair.addEventListener("click", async () => {
+    definirCarregando(confirmarSair, true, "Saindo...");
 
     try {
         await fetch("/logout", {
@@ -235,111 +197,109 @@ botaoSair.addEventListener("click", async () => {
     localStorage.removeItem("usuarioNome");
     localStorage.removeItem("usuarioEmail");
 
-    window.location.href =
-        "/login/login.html";
+    irParaLogin();
 });
 
 
 // =====================================================
-// MENSAGENS
-// =====================================================
-
-function mostrarErro(texto) {
-    mensagem.textContent = texto;
-
-    mensagem.classList.remove(
-        "mensagem-sucesso"
-    );
-
-    mensagem.classList.add(
-        "mensagem-erro"
-    );
-}
-
-
-function mostrarSucesso(texto) {
-    mensagem.textContent = texto;
-
-    mensagem.classList.remove(
-        "mensagem-erro"
-    );
-
-    mensagem.classList.add(
-        "mensagem-sucesso"
-    );
-}
-
-
-// =====================================================
-// FOTO SALVA DO USUÁRIO
-// =====================================================
-
-function carregarFotoSalva() {
-    if (!usuarioId) {
-        return;
-    }
-
-    const fotoSalva =
-        localStorage.getItem(
-            `fotoPerfil_${usuarioId}`
-        );
-
-    if (fotoSalva) {
-        fotoPerfil.src =
-            fotoSalva;
-    }
-}
-
-
-// =====================================================
 // ESCOLHER NOVA FOTO
+// A imagem é reduzida antes de salvar para não
+// estourar o limite do localStorage.
 // =====================================================
 
-inputFoto.addEventListener("change", () => {
+function reduzirImagem(arquivo) {
+    return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(arquivo);
+        const imagem = new Image();
+
+        imagem.onload = () => {
+            const lado = Math.min(imagem.width, imagem.height);
+            const canvas = document.createElement("canvas");
+
+            canvas.width = TAMANHO_FOTO;
+            canvas.height = TAMANHO_FOTO;
+
+            // Recorte quadrado central
+            canvas.getContext("2d").drawImage(
+                imagem,
+                (imagem.width - lado) / 2,
+                (imagem.height - lado) / 2,
+                lado,
+                lado,
+                0,
+                0,
+                TAMANHO_FOTO,
+                TAMANHO_FOTO
+            );
+
+            URL.revokeObjectURL(url);
+            resolve(canvas.toDataURL("image/jpeg", 0.88));
+        };
+
+        imagem.onerror = () => {
+            URL.revokeObjectURL(url);
+            reject(new Error("Imagem inválida"));
+        };
+
+        imagem.src = url;
+    });
+}
+
+inputFoto.addEventListener("change", async () => {
     const arquivo =
         inputFoto.files[0];
+
+    inputFoto.value = "";
 
     if (!arquivo) {
         return;
     }
 
     if (!arquivo.type.startsWith("image/")) {
-        mostrarErro(
-            "Selecione uma imagem válida."
+        mostrarMensagem(
+            mensagem,
+            "Selecione uma imagem válida.",
+            "erro"
         );
 
         return;
     }
 
     if (!usuarioId) {
-        mostrarErro(
-            "Não foi possível identificar o usuário."
+        mostrarMensagem(
+            mensagem,
+            "Não foi possível identificar o usuário.",
+            "erro"
         );
 
         return;
     }
 
-    const leitor =
-        new FileReader();
-
-    leitor.onload = () => {
-        const imagem =
-            leitor.result;
-
-        fotoPerfil.src =
-            imagem;
+    try {
+        const imagem = await reduzirImagem(arquivo);
 
         localStorage.setItem(
-            `fotoPerfil_${usuarioId}`,
+            chaveFotoPerfil(usuarioId),
             imagem
         );
 
-        mostrarSucesso(
-            "Foto atualizada!"
-        );
-    };
+        aplicarFotoPerfil(usuarioId);
 
-    leitor.readAsDataURL(arquivo);
+        mostrarMensagem(
+            mensagem,
+            "Foto atualizada!",
+            "sucesso"
+        );
+
+    } catch (erro) {
+        console.error("Erro ao salvar foto:", erro);
+
+        mostrarMensagem(
+            mensagem,
+            "Não foi possível usar esta imagem.",
+            "erro"
+        );
+    }
 });
 
 
@@ -347,4 +307,17 @@ inputFoto.addEventListener("change", () => {
 // INICIALIZAÇÃO
 // =====================================================
 
-carregarUsuario();
+async function inicializarPerfil() {
+    const usuario = await carregarUsuarioLogado();
+
+    if (!usuario) {
+        return;
+    }
+
+    preencherDados(usuario);
+    configurarMenu();
+    configurarOlhosSenha();
+    esconderLoading();
+}
+
+inicializarPerfil();

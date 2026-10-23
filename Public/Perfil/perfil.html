@@ -3,177 +3,247 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Perfil - DinControl</title>
-    <link rel="icon" type="image/png" href="../Assets/favicon.png">
-    <link
-        rel="stylesheet"
-        href="perfil.css"
-    >
+    <title>Meu perfil | DinControl</title>
+    <meta name="theme-color" content="#040b1f">
+
+    <link rel="icon" type="image/png" href="/shared/img/favicon.png">
+    <link rel="apple-touch-icon" href="/shared/img/apple-touch-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+    <link rel="stylesheet" href="/shared/css/base.css">
+    <link rel="stylesheet" href="perfil.css">
 </head>
 
-<body>
+<body class="tema-escuro">
 
     <div id="loading-screen">
+        <img src="/shared/img/logo.png" alt="DinControl">
         <div class="loader"></div>
     </div>
 
-    <div class="pagina-perfil">
+    <!-- =========================================
+         CABEÇALHO
+    ========================================== -->
 
-        <!-- =========================================
-             LOGO
-        ========================================== -->
+    <header class="cabecalho-app">
+        <div class="container cabecalho-app__conteudo">
 
-        <img
-            src="../Principal/Assets/Logo.png"
-            alt="DinControl"
-            class="logo-dincontrol"
-        >
+            <a href="/Principal/principal.html" class="cabecalho-app__logo">
+                <img src="/shared/img/logo.png" alt="DinControl">
+            </a>
 
-        <!-- =========================================
-             VOLTAR
-        ========================================== -->
+            <nav class="navegacao" id="menuPaginas" aria-label="Páginas">
+                <a href="/Principal/principal.html" class="navegacao__link">
+                    <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#inicio"></use></svg>
+                    Início
+                </a>
 
-        <button
-            type="button"
-            class="botao-voltar"
-            id="voltarDashboard"
-            aria-label="Voltar para o dashboard"
-        >
-            ←
-        </button>
+                <a href="/Historico/historico.html" class="navegacao__link">
+                    <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#historico"></use></svg>
+                    Histórico
+                </a>
+            </nav>
 
-        <!-- =========================================
-             CARD PERFIL
-        ========================================== -->
+            <div class="cabecalho-app__acoes">
+                <a href="/Perfil/perfil.html" class="usuario" title="Meu perfil" aria-current="page">
+                    <span class="usuario__nome" data-usuario-nome>Usuário</span>
+                    <img src="/shared/img/avatar.png" alt="Foto de perfil" class="avatar" data-usuario-foto>
+                </a>
 
-        <main class="card-perfil">
+                <button
+                    type="button"
+                    class="botao-icone botao-menu"
+                    id="botaoMenu"
+                    aria-label="Abrir menu"
+                    aria-controls="menuPaginas"
+                    aria-expanded="false"
+                >
+                    <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#menu"></use></svg>
+                </button>
+            </div>
 
-            <!-- TÍTULO -->
-            <h1>Meu Perfil</h1>
+        </div>
+    </header>
 
-            <div class="linha-titulo"></div>
+    <!-- =========================================
+         CONTEÚDO
+    ========================================== -->
+
+    <main class="container principal-app">
+
+        <div class="cabecalho-pagina">
+            <div>
+                <a href="/Principal/principal.html" class="voltar" id="voltarDashboard">
+                    <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#seta-esquerda"></use></svg>
+                    Voltar para o dashboard
+                </a>
+
+                <h1 class="cabecalho-pagina__titulo">Meu perfil</h1>
+                <p class="cabecalho-pagina__subtitulo">Gerencie suas informações pessoais e sua foto.</p>
+            </div>
+        </div>
+
+        <div class="perfil-grid">
 
             <!-- =====================================
                  FOTO
             ====================================== -->
 
-            <div class="foto-perfil">
+            <aside class="cartao perfil-resumo">
 
-                <img
-                    src="../Principal/Assets/perfil.png"
-                    alt="Foto de perfil"
-                    id="fotoPerfil"
-                >
+                <div class="foto-perfil">
+                    <img
+                        src="/shared/img/avatar.png"
+                        alt="Foto de perfil"
+                        id="fotoPerfil"
+                        data-usuario-foto
+                    >
 
-                <label
-                    for="inputFoto"
-                    class="botao-foto"
-                >
+                    <label for="inputFoto" class="foto-perfil__botao" title="Escolher foto">
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#camera"></use></svg>
+                        <span class="sr-only">Escolher foto</span>
+                    </label>
+
+                    <input
+                        type="file"
+                        id="inputFoto"
+                        accept="image/png, image/jpeg, image/webp"
+                        hidden
+                    >
+                </div>
+
+                <h2 class="perfil-resumo__nome" data-usuario-nome>Usuário</h2>
+                <p class="perfil-resumo__email" id="emailResumo"></p>
+
+                <label for="inputFoto" class="botao botao--secundario botao--sm botao--bloco">
+                    <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#camera"></use></svg>
                     Escolher foto
                 </label>
 
-                <input
-                    type="file"
-                    id="inputFoto"
-                    accept="image/png, image/jpeg, image/webp"
-                    hidden
-                >
+                <p class="perfil-resumo__dica">
+                    <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#info"></use></svg>
+                    A foto fica salva neste dispositivo.
+                </p>
 
-            </div>
+                <div class="perfil-resumo__divisor"></div>
+
+                <button type="button" class="botao botao--perigo botao--bloco" id="sairConta">
+                    <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#sair"></use></svg>
+                    Sair da conta
+                </button>
+
+            </aside>
 
             <!-- =====================================
                  FORMULÁRIO
             ====================================== -->
 
-            <form id="formPerfil">
+            <section class="cartao perfil-dados">
 
-                <!-- NOME -->
-                <label for="nome">
-                    Nome
-                </label>
+                <div class="cartao__cabecalho">
+                    <div>
+                        <h2 class="cartao__titulo">Dados da conta</h2>
+                        <p class="cartao__descricao">Para salvar alterações, confirme com a sua senha.</p>
+                    </div>
+                </div>
 
-                <input
-                    type="text"
-                    id="nome"
-                    autocomplete="name"
-                    required
-                >
+                <form id="formPerfil" novalidate>
 
-                <!-- EMAIL -->
-                <label for="email">
-                    E-mail
-                </label>
+                    <div class="perfil-dados__linha">
+                        <div class="campo">
+                            <label for="nome" class="campo__rotulo">Nome</label>
 
-                <input
-                    type="email"
-                    id="email"
-                    autocomplete="email"
-                    required
-                >
+                            <input
+                                type="text"
+                                id="nome"
+                                class="entrada"
+                                autocomplete="name"
+                                required
+                            >
+                        </div>
 
-                <!-- SENHA -->
-                <label for="senha">
-                    Senha necessária para alteração
-                </label>
+                        <div class="campo">
+                            <label for="email" class="campo__rotulo">E-mail</label>
 
-                <input
-                    type="password"
-                    id="senha"
-                    placeholder="Digite sua senha"
-                    autocomplete="new-password"
-                >
+                            <input
+                                type="email"
+                                id="email"
+                                class="entrada"
+                                autocomplete="email"
+                                required
+                            >
+                        </div>
+                    </div>
 
-                <!-- SALVAR -->
-                <button
-                    type="submit"
-                    class="botao-salvar"
-                >
-                    SALVAR ALTERAÇÕES
-                </button>
+                    <div class="campo">
+                        <label for="senha" class="campo__rotulo">Senha necessária para alteração</label>
 
-            </form>
+                        <div class="entrada-grupo">
+                            <input
+                                type="password"
+                                id="senha"
+                                class="entrada"
+                                placeholder="Digite sua senha atual"
+                                autocomplete="current-password"
+                            >
 
-            <!-- =====================================
-                 MENSAGEM
-            ====================================== -->
+                            <button
+                                type="button"
+                                class="entrada-grupo__acao"
+                                data-alternar-senha="senha"
+                            ></button>
+                        </div>
+                    </div>
 
-            <p id="mensagemPerfil"></p>
+                    <p id="mensagemPerfil" class="alerta"></p>
 
-            <!-- =====================================
-                 SAIR
-            ====================================== -->
+                    <div class="perfil-dados__acoes">
+                        <button type="submit" class="botao botao--primario" id="botaoSalvar">
+                            Salvar alterações
+                        </button>
+                    </div>
 
-            <button
-                type="button"
-                class="botao-sair"
-                id="sairConta"
-            >
-                SAIR DA CONTA
-            </button>
+                </form>
 
-        </main>
+                <div class="perfil-dica">
+                    <img src="/shared/img/coin.png" alt="Mascote DinControl" class="perfil-dica__mascote">
 
-        <!-- =========================================
-             COIN
-        ========================================== -->
+                    <div>
+                        <p class="perfil-dica__titulo">Esqueceu a senha?</p>
+                        <p class="perfil-dica__texto">
+                            Saia da conta e use “Esqueceu sua senha?” na tela de login para receber um código por e-mail.
+                        </p>
+                    </div>
+                </div>
 
-        <img
-            src="../Principal/Assets/Coin.png"
-            alt="Mascote DinControl"
-            class="Coin"
-        >
+            </section>
 
-    </div>
+        </div>
+
+    </main>
 
     <!-- =========================================
-         JAVASCRIPT
+         MODAL: SAIR DA CONTA
     ========================================== -->
 
+    <dialog class="modal" id="modalSair" aria-labelledby="tituloSair">
+        <div class="modal__conteudo">
+            <h2 class="modal__titulo" id="tituloSair">Sair da conta?</h2>
+            <p class="modal__texto">Deseja realmente sair da conta? Você precisará fazer login novamente.</p>
+
+            <div class="modal__acoes">
+                <button type="button" class="botao botao--secundario" id="cancelarSair">Cancelar</button>
+                <button type="button" class="botao botao--perigo-solido" id="confirmarSair">Sair da conta</button>
+            </div>
+        </div>
+    </dialog>
+
+    <script src="/shared/js/ui.js"></script>
     <script src="perfil.js"></script>
 
 </body>

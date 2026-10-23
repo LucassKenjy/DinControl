@@ -1,20 +1,11 @@
 // =====================================================
-// USUÁRIO
-// =====================================================
-
-let usuarioAtual = null;
-let usuarioId = null;
-
-
-// =====================================================
 // ELEMENTOS
 // =====================================================
 
-const nomeUsuario = document.getElementById("nomeUsuario");
-const fotoPerfilHistorico = document.getElementById("fotoPerfilHistorico");
-
 const listaTransacoes = document.getElementById("listaTransacoes");
 const semTransacoes = document.getElementById("semTransacoes");
+const semTransacoesTitulo = document.getElementById("semTransacoesTitulo");
+const semTransacoesTexto = document.getElementById("semTransacoesTexto");
 
 const resumoEntrada = document.getElementById("resumoEntrada");
 const resumoSaida = document.getElementById("resumoSaida");
@@ -23,10 +14,6 @@ const resumoSaldo = document.getElementById("resumoSaldo");
 const filtroTipo = document.getElementById("filtroTipo");
 const filtroMes = document.getElementById("filtroMes");
 const filtroCategoria = document.getElementById("filtroCategoria");
-
-const botaoMenu = document.getElementById("botaoMenu");
-const menuPaginas = document.getElementById("menuPaginas");
-const botaoPerfil = document.getElementById("botaoPerfil");
 
 
 // =====================================================
@@ -37,97 +24,8 @@ let transacoes = [];
 
 
 // =====================================================
-// USUÁRIO / PERFIL
-// =====================================================
-
-async function carregarUsuario() {
-    try {
-        const resposta = await fetch("/me", {
-            credentials: "same-origin"
-        });
-
-        if (!resposta.ok) {
-            window.location.href =
-                "/login/login.html";
-
-            return false;
-        }
-
-        const resultado =
-            await resposta.json();
-
-        usuarioAtual =
-            resultado.usuario;
-
-        usuarioId =
-            usuarioAtual.id;
-
-        nomeUsuario.textContent =
-            usuarioAtual.nome;
-
-        const fotoSalva =
-            localStorage.getItem(
-                `fotoPerfil_${usuarioId}`
-            );
-
-        if (fotoSalva) {
-            fotoPerfilHistorico.src =
-                fotoSalva;
-        }
-
-        return true;
-
-    } catch (erro) {
-        console.error(
-            "Erro ao verificar sessão:",
-            erro
-        );
-
-        window.location.href =
-            "/login/login.html";
-
-        return false;
-    }
-}
-
-botaoPerfil.addEventListener("click", () => {
-    window.location.href =
-        "/Perfil/perfil.html";
-});
-
-
-// =====================================================
-// MENU
-// =====================================================
-
-botaoMenu.addEventListener("click", (event) => {
-    event.stopPropagation();
-
-    menuPaginas.classList.toggle("ativo");
-});
-
-menuPaginas.addEventListener("click", (event) => {
-    event.stopPropagation();
-});
-
-document.addEventListener("click", () => {
-    menuPaginas.classList.remove("ativo");
-});
-
-
-// =====================================================
 // FORMATAÇÃO
 // =====================================================
-
-function formatarDinheiro(valor) {
-    return Number(valor).toLocaleString(
-        "pt-BR",
-        {
-            style: "currency",
-            currency: "BRL"
-        }
-    );
-}
 
 function normalizarTipo(tipo) {
     return String(tipo || "")
@@ -151,23 +49,6 @@ function nomeTipo(tipo) {
 
     return tipo;
 }
-
-function formatarCategoria(categoria) {
-    const categorias = {
-        Salario: "Salário",
-        Alimentacao: "Alimentação",
-        Locomocao: "Locomoção",
-        Educacao: "Educação",
-        Investimento: "Investimento",
-        Lazer: "Lazer",
-        Outros: "Outros"
-    };
-
-    return categorias[categoria]
-        || categoria
-        || "Sem categoria";
-}
-
 
 // =====================================================
 // DATA E HORÁRIO
@@ -211,14 +92,17 @@ function tituloDaData(data) {
         return "Ontem";
     }
 
-    return dataTransacao.toLocaleDateString(
+    const texto = dataTransacao.toLocaleDateString(
         "pt-BR",
         {
+            weekday: "long",
             day: "2-digit",
-            month: "2-digit",
+            month: "long",
             year: "numeric"
         }
     );
+
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
 }
 
 function chaveData(data) {
@@ -269,9 +153,7 @@ async function carregarTransacoes() {
         );
 
         if (resposta.status === 401) {
-            window.location.href =
-                "/login/login.html";
-
+            irParaLogin();
             return;
         }
 
@@ -301,11 +183,9 @@ async function carregarTransacoes() {
 
         listaTransacoes.innerHTML = "";
 
-        semTransacoes.style.display =
-            "block";
-
-        semTransacoes.textContent =
-            "Erro ao carregar o histórico.";
+        semTransacoes.hidden = false;
+        semTransacoesTitulo.textContent = "Erro ao carregar o histórico.";
+        semTransacoesTexto.textContent = "Verifique sua conexão e recarregue a página.";
     }
 }
 
@@ -334,11 +214,8 @@ function montarCategorias() {
 
     categorias.sort();
 
-    filtroCategoria.innerHTML = `
-        <option value="todos">
-            Categoria
-        </option>
-    `;
+    filtroCategoria.innerHTML =
+        `<option value="todos">Todas as categorias</option>`;
 
     categorias.forEach(categoria => {
         const option =
@@ -428,18 +305,16 @@ function atualizarResumo(transacoesFiltradas) {
     const saldo = entrada - saida;
 
     resumoEntrada.textContent =
-        formatarDinheiro(entrada);
+        formatarMoeda(entrada);
 
     resumoSaida.textContent =
-        formatarDinheiro(saida);
+        formatarMoeda(saida);
 
     resumoSaldo.textContent =
-        formatarDinheiro(saldo);
+        formatarMoeda(saldo);
 
-    resumoSaldo.style.color =
-        saldo >= 0
-            ? "#00ff26"
-            : "#ff0000";
+    resumoSaldo.classList.toggle("texto-entrada", saldo >= 0);
+    resumoSaldo.classList.toggle("texto-saida", saldo < 0);
 }
 
 
@@ -451,14 +326,11 @@ function renderizarHistorico(transacoesFiltradas) {
     listaTransacoes.innerHTML = "";
 
     if (transacoesFiltradas.length === 0) {
-        semTransacoes.style.display =
-            "block";
-
+        semTransacoes.hidden = false;
         return;
     }
 
-    semTransacoes.style.display =
-        "none";
+    semTransacoes.hidden = true;
 
     const grupos = {};
 
@@ -539,35 +411,33 @@ function criarLinha(transacao) {
         : "saida";
 
     linha.innerHTML = `
-        <span
-            class="
-                valor-transacao
-                ${classe}
-            "
-        >
-            ${sinal}${formatarDinheiro(
-                transacao.valor
-            )}
+        <span class="linha-historico__categoria">
+            <span class="linha-historico__icone linha-historico__icone--${classe}">
+                ${icone(entrada ? "seta-entrada" : "seta-saida")}
+            </span>
+            <span></span>
         </span>
 
-        <span>
-            ${nomeTipo(
-                transacao.tipo
-            )}
+        <span class="linha-historico__tipo">
+            <span class="selo selo--${classe}"></span>
         </span>
 
-        <span>
-            ${formatarCategoria(
-                transacao.categoria
-            )}
-        </span>
+        <span class="linha-historico__horario numero"></span>
 
-        <span>
-            ${formatarHorario(
-                transacao.data
-            )}
-        </span>
+        <span class="valor-transacao valor-transacao--${classe} numero"></span>
     `;
+
+    linha.querySelector(".linha-historico__categoria span:last-child").textContent =
+        formatarCategoria(transacao.categoria);
+
+    linha.querySelector(".selo").textContent =
+        nomeTipo(transacao.tipo);
+
+    linha.querySelector(".linha-historico__horario").textContent =
+        formatarHorario(transacao.data);
+
+    linha.querySelector(".valor-transacao").textContent =
+        `${sinal} ${formatarMoeda(transacao.valor)}`;
 
     return linha;
 }
@@ -594,34 +464,22 @@ filtroCategoria.addEventListener(
 
 
 // =====================================================
-// LOADING
-// =====================================================
-
-window.addEventListener("load", () => {
-    const loading =
-        document.getElementById(
-            "loading-screen"
-        );
-
-    if (loading) {
-        loading.style.display = "none";
-    }
-});
-
-
-// =====================================================
 // INICIALIZAÇÃO
 // =====================================================
 
 async function inicializarHistorico() {
-    const autenticado =
-        await carregarUsuario();
+    const usuario =
+        await carregarUsuarioLogado();
 
-    if (!autenticado) {
+    if (!usuario) {
         return;
     }
 
+    configurarMenu();
+
     await carregarTransacoes();
+
+    esconderLoading();
 }
 
 inicializarHistorico();

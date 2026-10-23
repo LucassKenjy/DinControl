@@ -5,108 +5,141 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Login | DinControl</title>
+    <title>Entrar | DinControl</title>
+    <meta name="description" content="DinControl - controle financeiro pessoal. Seu dinheiro, seu controle.">
+    <meta name="theme-color" content="#040b1f">
 
-    <link rel="stylesheet" href="login.css">
-    <link rel="icon" type="image/png" href="Assets/favicon.png">
+    <link rel="icon" type="image/png" href="/shared/img/favicon.png">
+    <link rel="apple-touch-icon" href="/shared/img/apple-touch-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+    <link rel="stylesheet" href="/shared/css/base.css">
 </head>
 
 <body>
 
-    <div id="loading-screen">
-        <div class="loader"></div>
-    </div>
+    <div class="auth">
 
-    <div class="conteudo-login">
+        <!-- =========================================
+             MARCA
+        ========================================== -->
 
-        <img
-            src="Assets/Logo.png"
-            alt="DinControl"
-            class="logo-dincontrol"
-        >
+        <aside class="auth__marca">
 
-        <div class="login">
+            <img src="/shared/img/logo.png" alt="DinControl" class="auth__logo">
 
-            <h1 class="T">
-                Seja Bem Vindo(a)
-            </h1>
+            <div class="auth__chamada">
+                <span class="auth__selo">Controle financeiro pessoal</span>
 
-            <p class="SBT">
-                Faça login para continuar
-            </p>
+                <h2 class="auth__titulo">
+                    Seu dinheiro,<br>
+                    <span>seu controle.</span>
+                </h2>
 
-            <form id="formLogin">
-
-                <label for="email">
-                    Email
-                </label>
-
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Digite seu email"
-                    required
-                >
-
-                <div class="linha-senha">
-
-                    <label for="senha">
-                        Senha
-                    </label>
-
-                    <div class="Esqueci">
-                        <a href="/Redefinir/redefinir.html">
-                            Esqueceu sua senha?
-                        </a>
-                    </div>
-
-                </div>
-
-                <div class="CampoSenha">
-
-                    <input
-                        type="password"
-                        id="senha"
-                        placeholder="Digite sua senha"
-                    >
-
-                    <button
-                        type="button"
-                        class="botao-olho"
-                    >
-                        <img src="Assets/olho.png">
-                    </button>
-
-                </div>
-
-                <button
-                    class="botao-entrar"
-                    type="submit"
-                >
-                    Entrar
-                </button>
-
-                <p class="login-link">
-                    Não possui uma conta?
-                    <a href="/Cadastro/cadastro.html">
-                        Cadastre-se
-                    </a>
+                <p class="auth__texto">
+                    Acompanhe entradas, saídas e investimentos em um só lugar.
                 </p>
 
-            </form>
+                <ul class="auth__recursos">
+                    <li>
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#grafico"></use></svg>
+                        Saldo e gráficos sempre atualizados
+                    </li>
+                    <li>
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#historico"></use></svg>
+                        Histórico organizado por dia
+                    </li>
+                    <li>
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#escudo"></use></svg>
+                        Senha criptografada e sessão segura
+                    </li>
+                </ul>
+            </div>
 
-            <p id="mensagem"></p>
+            <img src="/shared/img/coin.png" alt="" class="auth__mascote">
 
-        </div>
+        </aside>
+
+        <!-- =========================================
+             FORMULÁRIO
+        ========================================== -->
+
+        <main class="auth__painel">
+
+            <img src="/shared/img/logo.png" alt="DinControl" class="auth__logo">
+
+            <div class="auth-cartao">
+
+                <h1 class="auth-cartao__titulo">Seja bem-vindo(a)</h1>
+                <p class="auth-cartao__subtitulo">Faça login para continuar</p>
+
+                <form id="formLogin" novalidate>
+
+                    <div class="campo">
+                        <label for="email" class="campo__rotulo">E-mail</label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            class="entrada"
+                            placeholder="voce@email.com"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+
+                    <div class="campo">
+                        <div class="campo__topo">
+                            <label for="senha" class="campo__rotulo">Senha</label>
+
+                            <a href="/Redefinir/redefinir.html" class="campo__link">
+                                Esqueceu sua senha?
+                            </a>
+                        </div>
+
+                        <div class="entrada-grupo">
+                            <input
+                                type="password"
+                                id="senha"
+                                class="entrada"
+                                placeholder="Digite sua senha"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="entrada-grupo__acao"
+                                data-alternar-senha="senha"
+                            ></button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="botao botao--primario botao--bloco" id="botaoEntrar">
+                        Entrar
+                    </button>
+
+                    <p id="mensagem" class="alerta"></p>
+
+                </form>
+
+                <p class="auth-cartao__rodape">
+                    Não possui uma conta?
+                    <a href="/Cadastro/cadastro.html">Cadastre-se</a>
+                </p>
+
+            </div>
+
+            <p class="auth__creditos">© DinControl · Seu dinheiro, seu controle.</p>
+
+        </main>
 
     </div>
 
-    <img
-        src="Assets/Coin.png"
-        alt="Coin1"
-        class="Coin"
-    >
-
+    <script src="/shared/js/ui.js"></script>
     <script src="login.js"></script>
 
 </body>

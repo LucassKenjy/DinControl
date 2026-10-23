@@ -3,8 +3,10 @@ const formulario = document.querySelector("#formLogin");
 const campoEmail = document.querySelector("#email");
 const campoSenha = document.querySelector("#senha");
 
-const botaoOlho = document.querySelector(".botao-olho");
+const botaoEntrar = document.querySelector("#botaoEntrar");
 const mensagem = document.querySelector("#mensagem");
+
+configurarOlhosSenha();
 
 
 // =====================================================
@@ -16,6 +18,15 @@ formulario.addEventListener("submit", async (event) => {
 
     const email = campoEmail.value.trim();
     const senha = campoSenha.value.trim();
+
+    if (!email || !senha) {
+        mostrarMensagem(mensagem, "Preencha e-mail e senha.", "erro");
+        (email ? campoSenha : campoEmail).focus();
+        return;
+    }
+
+    limparMensagem(mensagem);
+    definirCarregando(botaoEntrar, true, "Entrando...");
 
     try {
         const resposta = await fetch("/login", {
@@ -47,26 +58,21 @@ formulario.addEventListener("submit", async (event) => {
             return;
         }
 
-        mensagem.textContent =
-            resultado.erro ||
-            "E-mail ou senha incorretos.";
+        mostrarMensagem(
+            mensagem,
+            resultado.erro || "E-mail ou senha incorretos.",
+            "erro"
+        );
 
     } catch (error) {
         console.error(error);
 
-        mensagem.textContent =
-            "Erro ao conectar com o servidor.";
+        mostrarMensagem(
+            mensagem,
+            "Erro ao conectar com o servidor.",
+            "erro"
+        );
     }
-});
 
-
-// =====================================================
-// MOSTRAR / ESCONDER SENHA
-// =====================================================
-
-botaoOlho.addEventListener("click", () => {
-    campoSenha.type =
-        campoSenha.type === "password"
-            ? "text"
-            : "password";
+    definirCarregando(botaoEntrar, false);
 });

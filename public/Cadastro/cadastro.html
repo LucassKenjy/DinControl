@@ -5,110 +5,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Cadastro | DinControl</title>
-    <link rel="icon" type="image/png" href="../Assets/favicon.png">
-    <link rel="stylesheet" href="cadastro.css">
+    <title>Criar conta | DinControl</title>
+    <meta name="description" content="Crie sua conta no DinControl e comece a controlar suas finanças.">
+    <meta name="theme-color" content="#040b1f">
+
+    <link rel="icon" type="image/png" href="/shared/img/favicon.png">
+    <link rel="apple-touch-icon" href="/shared/img/apple-touch-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+    <link rel="stylesheet" href="/shared/css/base.css">
 </head>
 
 <body>
 
-    <div class="conteudo-cadastro">
+    <div class="auth">
 
-        <img
-            src="Assets/Logo.png"
-            alt="DinControl"
-            class="logo-dincontrol"
-        >
+        <!-- =========================================
+             MARCA
+        ========================================== -->
 
-        <div class="cadastro">
+        <aside class="auth__marca">
 
-            <h1 class="titulo">
-                Crie sua conta
-            </h1>
+            <img src="/shared/img/logo.png" alt="DinControl" class="auth__logo">
 
-            <p class="SubTitulo">
-                Comece a controlar suas finanças
-            </p>
+            <div class="auth__chamada">
+                <span class="auth__selo">Gratuito e simples</span>
 
-            <form id="formCadastro">
+                <h2 class="auth__titulo">
+                    Comece a controlar<br>
+                    <span>suas finanças.</span>
+                </h2>
 
-                <label for="nome">
-                    Nome completo
-                </label>
-
-                <input
-                    type="text"
-                    id="nome"
-                    placeholder="Digite seu nome"
-                    required
-                >
-
-                <label for="email">
-                    Email
-                </label>
-
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Digite seu email"
-                    required
-                >
-
-                <label for="senha">
-                    Senha
-                </label>
-
-                <div class="CampoSenha">
-
-                    <input
-                        type="password"
-                        id="senha"
-                        placeholder="Digite sua senha"
-                        required
-                        minlength="5"
-                        maxlength="10"
-                        inputmode="numeric"
-                        pattern="[0-9]+"
-                    >
-
-                    <button
-                        type="button"
-                        id="toggleSenha"
-                        class="botao-olho"
-                    >
-                        <img
-                            src="Assets/olho.png"
-                            alt="Mostrar senha"
-                        >
-                    </button>
-
-                </div>
-
-                <button type="submit">
-                    Criar conta
-                </button>
-
-                <p class="login-link">
-                    Já possui uma conta?
-                    <a href="/login/login.html">
-                        Faça login
-                    </a>
+                <p class="auth__texto">
+                    Registre cada entrada e saída e entenda para onde vai o seu dinheiro.
                 </p>
 
-            </form>
+                <ul class="auth__recursos">
+                    <li>
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#carteira"></use></svg>
+                        Saldo atual calculado automaticamente
+                    </li>
+                    <li>
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#grafico"></use></svg>
+                        Gráficos mensais, de saída e de investimento
+                    </li>
+                    <li>
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#escudo"></use></svg>
+                        Senha criptografada e sessão segura
+                    </li>
+                </ul>
+            </div>
 
-            <p id="mensagem"></p>
+            <img src="/shared/img/coin.png" alt="" class="auth__mascote">
 
-        </div>
+        </aside>
+
+        <!-- =========================================
+             FORMULÁRIO
+        ========================================== -->
+
+        <main class="auth__painel">
+
+            <img src="/shared/img/logo.png" alt="DinControl" class="auth__logo">
+
+            <div class="auth-cartao">
+
+                <h1 class="auth-cartao__titulo">Crie sua conta</h1>
+                <p class="auth-cartao__subtitulo">Comece a controlar suas finanças</p>
+
+                <form id="formCadastro" novalidate>
+
+                    <div class="campo">
+                        <label for="nome" class="campo__rotulo">Nome completo</label>
+
+                        <input
+                            type="text"
+                            id="nome"
+                            class="entrada"
+                            placeholder="Digite seu nome"
+                            autocomplete="name"
+                            required
+                        >
+                    </div>
+
+                    <div class="campo">
+                        <label for="email" class="campo__rotulo">E-mail</label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            class="entrada"
+                            placeholder="voce@email.com"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+
+                    <div class="campo">
+                        <label for="senha" class="campo__rotulo">Senha</label>
+
+                        <div class="entrada-grupo">
+                            <input
+                                type="password"
+                                id="senha"
+                                class="entrada"
+                                placeholder="Crie uma senha numérica"
+                                autocomplete="new-password"
+                                inputmode="numeric"
+                                minlength="5"
+                                maxlength="10"
+                                aria-describedby="regrasSenha"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="entrada-grupo__acao"
+                                data-alternar-senha="senha"
+                            ></button>
+                        </div>
+
+                        <ul class="regras-senha" id="regrasSenha">
+                            <li data-regra="numeros">Somente números</li>
+                            <li data-regra="tamanho">No mínimo 5 números</li>
+                            <li data-regra="unicos">Sem números repetidos</li>
+                        </ul>
+                    </div>
+
+                    <button type="submit" class="botao botao--primario botao--bloco" id="botaoCriar">
+                        Criar conta
+                    </button>
+
+                    <p id="mensagem" class="alerta"></p>
+
+                </form>
+
+                <p class="auth-cartao__rodape">
+                    Já possui uma conta?
+                    <a href="/login/login.html">Faça login</a>
+                </p>
+
+            </div>
+
+            <p class="auth__creditos">© DinControl · Seu dinheiro, seu controle.</p>
+
+        </main>
 
     </div>
 
-    <img
-        src="Assets/Coin.png"
-        alt="Coin1"
-        class="Coin"
-    >
-
+    <script src="/shared/js/ui.js"></script>
     <script src="cadastro.js"></script>
 
 </body>

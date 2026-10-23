@@ -19,11 +19,20 @@ const regexCodigo = /^\d{6}$/;
 // DEIXA O CAMPO CÓDIGO SOMENTE COM NÚMEROS
 // =====================================================
 
-codigoInput.addEventListener("input", () => {
-    codigoInput.value = codigoInput.value
-        .replace(/\D/g, "")
-        .slice(0, 6);
-});
+permitirSomenteNumeros(codigoInput, 6);
+
+
+// =====================================================
+// MENSAGENS
+// =====================================================
+
+function mostrar(texto, tipo) {
+    mostrarMensagem(
+        mensagem,
+        texto,
+        tipo === "normal" ? "info" : tipo
+    );
+}
 
 
 // =====================================================
@@ -36,7 +45,7 @@ btnEnviarCodigo.addEventListener("click", async () => {
         .toLowerCase();
 
     if (!email) {
-        mostrarMensagem(
+        mostrar(
             "Digite seu e-mail.",
             "erro"
         );
@@ -46,7 +55,7 @@ btnEnviarCodigo.addEventListener("click", async () => {
     }
 
     if (!regexEmail.test(email)) {
-        mostrarMensagem(
+        mostrar(
             "Digite um e-mail válido.",
             "erro"
         );
@@ -56,13 +65,8 @@ btnEnviarCodigo.addEventListener("click", async () => {
     }
 
     try {
-        btnEnviarCodigo.disabled = true;
-        btnEnviarCodigo.textContent = "Enviando...";
-
-        mostrarMensagem(
-            "Enviando código...",
-            "normal"
-        );
+        definirCarregando(btnEnviarCodigo, true, "Enviando...");
+        limparMensagem(mensagem);
 
         const resposta = await fetch(
             "/forgot-password/send-code",
@@ -82,7 +86,7 @@ btnEnviarCodigo.addEventListener("click", async () => {
         const resultado = await resposta.json();
 
         if (!resposta.ok) {
-            mostrarMensagem(
+            mostrar(
                 resultado.erro ||
                 "Erro ao enviar código.",
                 "erro"
@@ -91,7 +95,7 @@ btnEnviarCodigo.addEventListener("click", async () => {
             return;
         }
 
-        mostrarMensagem(
+        mostrar(
             resultado.mensagem ||
             "Código enviado para o seu e-mail.",
             "sucesso"
@@ -108,14 +112,13 @@ btnEnviarCodigo.addEventListener("click", async () => {
             erro
         );
 
-        mostrarMensagem(
+        mostrar(
             "Erro ao conectar com o servidor.",
             "erro"
         );
 
     } finally {
-        btnEnviarCodigo.disabled = false;
-        btnEnviarCodigo.textContent = "Enviar Código";
+        definirCarregando(btnEnviarCodigo, false);
     }
 });
 
@@ -132,7 +135,7 @@ btnVerificarCodigo.addEventListener("click", async () => {
     const codigo = codigoInput.value.trim();
 
     if (!email) {
-        mostrarMensagem(
+        mostrar(
             "Digite seu e-mail.",
             "erro"
         );
@@ -142,7 +145,7 @@ btnVerificarCodigo.addEventListener("click", async () => {
     }
 
     if (!codigo) {
-        mostrarMensagem(
+        mostrar(
             "Digite o código recebido no e-mail.",
             "erro"
         );
@@ -152,7 +155,7 @@ btnVerificarCodigo.addEventListener("click", async () => {
     }
 
     if (!regexCodigo.test(codigo)) {
-        mostrarMensagem(
+        mostrar(
             "O código deve possuir 6 números.",
             "erro"
         );
@@ -162,13 +165,8 @@ btnVerificarCodigo.addEventListener("click", async () => {
     }
 
     try {
-        btnVerificarCodigo.disabled = true;
-        btnVerificarCodigo.textContent = "Verificando...";
-
-        mostrarMensagem(
-            "Verificando código...",
-            "normal"
-        );
+        definirCarregando(btnVerificarCodigo, true, "Verificando...");
+        limparMensagem(mensagem);
 
         const resposta = await fetch(
             "/forgot-password/verify-code",
@@ -189,7 +187,7 @@ btnVerificarCodigo.addEventListener("click", async () => {
         const resultado = await resposta.json();
 
         if (!resposta.ok) {
-            mostrarMensagem(
+            mostrar(
                 resultado.erro ||
                 "Código inválido.",
                 "erro"
@@ -199,9 +197,7 @@ btnVerificarCodigo.addEventListener("click", async () => {
             return;
         }
 
-        console.log("CÓDIGO FOI VALIDADO!");
-
-        mostrarMensagem(
+        mostrar(
             "Código verificado com sucesso!",
             "sucesso"
         );
@@ -225,34 +221,12 @@ btnVerificarCodigo.addEventListener("click", async () => {
             erro
         );
 
-        mostrarMensagem(
+        mostrar(
             "Erro ao conectar com o servidor.",
             "erro"
         );
 
     } finally {
-        btnVerificarCodigo.disabled = false;
-        btnVerificarCodigo.textContent = "Verificar código";
+        definirCarregando(btnVerificarCodigo, false);
     }
 });
-
-
-// =====================================================
-// MOSTRAR MENSAGENS
-// =====================================================
-
-function mostrarMensagem(texto, tipo) {
-    mensagem.textContent = texto;
-
-    if (tipo === "erro") {
-        mensagem.style.color = "#e63946";
-        return;
-    }
-
-    if (tipo === "sucesso") {
-        mensagem.style.color = "#159447";
-        return;
-    }
-
-    mensagem.style.color = "#555555";
-}

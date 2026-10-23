@@ -3,121 +3,137 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Nova senha | DinControl</title>
-    <link rel="icon" type="image/png" href="../Assets/favicon.png">
-    <link
-        rel="stylesheet"
-        href="redefinirsenha.css"
-    >
+    <meta name="theme-color" content="#040b1f">
+
+    <link rel="icon" type="image/png" href="/shared/img/favicon.png">
+    <link rel="apple-touch-icon" href="/shared/img/apple-touch-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+    <link rel="stylesheet" href="/shared/css/base.css">
 </head>
 
 <body>
 
-    <div class="conteudo-redefinirsenha">
+    <div class="auth">
 
-        <!-- LOGO -->
-        <img
-            src="Assets/Logo.png"
-            alt="DinControl"
-            class="logo-dincontrol"
-        >
+        <!-- =========================================
+             MARCA
+        ========================================== -->
 
-        <!-- CAIXA REDEFINIR -->
-        <div class="redefinirsenha">
+        <aside class="auth__marca">
 
-            <h1 class="titulo">
-                Redefina sua senha
-            </h1>
+            <img src="/shared/img/logo.png" alt="DinControl" class="auth__logo">
 
-            <p class="SubTitulo">
-                • A senha deve conter somente números <br>
-                • Deve conter no mínimo 5 números <br>
-                • Não use números repetidos
-            </p>
+            <div class="auth__chamada">
+                <span class="auth__selo">Código verificado</span>
 
-            <form id="formRedefinirSenha">
+                <h2 class="auth__titulo">
+                    Quase lá!<br>
+                    <span>Crie sua nova senha.</span>
+                </h2>
 
-                <!-- NOVA SENHA -->
-                <label for="novaSenha">
-                    Insira sua nova senha
-                </label>
+                <p class="auth__texto">
+                    Depois de redefinir, você será levado ao login para entrar com a nova senha.
+                </p>
+            </div>
 
-                <div class="CampoSenha">
+            <img src="/shared/img/coin.png" alt="" class="auth__mascote">
 
-                    <input
-                        type="password"
-                        id="novaSenha"
-                        inputmode="numeric"
-                        autocomplete="new-password"
-                    >
+        </aside>
+
+        <!-- =========================================
+             FORMULÁRIO
+        ========================================== -->
+
+        <main class="auth__painel">
+
+            <img src="/shared/img/logo.png" alt="DinControl" class="auth__logo">
+
+            <div class="auth-cartao">
+
+                <h1 class="auth-cartao__titulo">Redefina sua senha</h1>
+                <p class="auth-cartao__subtitulo">Escolha uma nova senha para acessar sua conta.</p>
+
+                <form id="formRedefinirSenha" novalidate>
+
+                    <!-- NOVA SENHA -->
+                    <div class="campo">
+                        <label for="novaSenha" class="campo__rotulo">Insira sua nova senha</label>
+
+                        <div class="entrada-grupo">
+                            <input
+                                type="password"
+                                id="novaSenha"
+                                class="entrada"
+                                placeholder="Nova senha numérica"
+                                inputmode="numeric"
+                                autocomplete="new-password"
+                                aria-describedby="regrasSenha"
+                            >
+
+                            <button
+                                type="button"
+                                class="entrada-grupo__acao"
+                                data-alternar-senha="novaSenha"
+                            ></button>
+                        </div>
+
+                        <ul class="regras-senha" id="regrasSenha">
+                            <li data-regra="numeros">Somente números</li>
+                            <li data-regra="tamanho">No mínimo 5 números</li>
+                            <li data-regra="unicos">Sem números repetidos</li>
+                        </ul>
+                    </div>
+
+                    <!-- CONFIRMAR SENHA -->
+                    <div class="campo">
+                        <label for="confirmarSenha" class="campo__rotulo">Confirme sua senha</label>
+
+                        <div class="entrada-grupo">
+                            <input
+                                type="password"
+                                id="confirmarSenha"
+                                class="entrada"
+                                placeholder="Repita a nova senha"
+                                inputmode="numeric"
+                                autocomplete="new-password"
+                            >
+
+                            <button
+                                type="button"
+                                class="entrada-grupo__acao"
+                                data-alternar-senha="confirmarSenha"
+                            ></button>
+                        </div>
+                    </div>
 
                     <button
-                        type="button"
-                        class="botao-olho"
-                        id="olhoNovaSenha"
+                        type="submit"
+                        id="btnRedefinirSenha"
+                        class="botao botao--primario botao--bloco"
                     >
-                        <img
-                            src="Assets/olho.png"
-                            alt="Mostrar senha"
-                        >
+                        Redefinir senha
                     </button>
 
-                </div>
+                    <p id="mensagem" class="alerta"></p>
 
-                <!-- CONFIRMAR SENHA -->
-                <label for="confirmarSenha">
-                    Confirme sua senha
-                </label>
+                </form>
 
-                <div class="CampoSenha">
+            </div>
 
-                    <input
-                        type="password"
-                        id="confirmarSenha"
-                        inputmode="numeric"
-                        autocomplete="new-password"
-                    >
+            <p class="auth__creditos">© DinControl · Seu dinheiro, seu controle.</p>
 
-                    <button
-                        type="button"
-                        class="botao-olho"
-                        id="olhoConfirmarSenha"
-                    >
-                        <img
-                            src="Assets/olho.png"
-                            alt="Mostrar senha"
-                        >
-                    </button>
-
-                </div>
-
-                <button
-                    type="button"
-                    id="btnRedefinirSenha"
-                >
-                    Redefinir sua senha
-                </button>
-
-                <p id="mensagem"></p>
-
-            </form>
-
-        </div>
-
-        <!-- MASCOTE -->
-        <img
-            src="Assets/Coin.png"
-            alt="Coin"
-            class="Coin"
-        >
+        </main>
 
     </div>
 
+    <script src="/shared/js/ui.js"></script>
     <script src="redefinirsenha.js"></script>
 
 </body>

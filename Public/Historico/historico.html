@@ -3,235 +3,161 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Histórico | DinControl</title>
-    <link rel="icon" type="image/png" href="../Assets/favicon.png">
-    <link
-        rel="stylesheet"
-        href="historico.css"
-    >
+    <meta name="theme-color" content="#040b1f">
+
+    <link rel="icon" type="image/png" href="/shared/img/favicon.png">
+    <link rel="apple-touch-icon" href="/shared/img/apple-touch-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+    <link rel="stylesheet" href="/shared/css/base.css">
+    <link rel="stylesheet" href="historico.css">
 </head>
 
-<body>
+<body class="tema-escuro">
 
     <div id="loading-screen">
+        <img src="/shared/img/logo.png" alt="DinControl">
         <div class="loader"></div>
     </div>
 
-    <div class="pagina-historico">
+    <!-- =========================================
+         CABEÇALHO
+    ========================================== -->
 
-        <!-- =========================================
-             LOGO
-        ========================================== -->
+    <header class="cabecalho-app">
+        <div class="container cabecalho-app__conteudo">
 
-        <img
-            src="../Principal/Assets/Logo.png"
-            alt="DinControl"
-            class="logo-dincontrol"
-        >
+            <a href="/Principal/principal.html" class="cabecalho-app__logo">
+                <img src="/shared/img/logo.png" alt="DinControl">
+            </a>
 
-        <!-- =========================================
-             PERFIL
-        ========================================== -->
-
-        <div class="area-perfil">
-
-            <span
-                id="nomeUsuario"
-                class="nome-usuario"
-            >
-                Usuário
-            </span>
-
-            <button
-                type="button"
-                class="botao-perfil"
-                id="botaoPerfil"
-            >
-                <img
-                    src="../Principal/Assets/perfil.png"
-                    alt="Perfil"
-                    id="fotoPerfilHistorico"
-                >
-            </button>
-
-        </div>
-
-        <!-- =========================================
-             MENU
-        ========================================== -->
-
-        <div class="area-menu">
-
-            <button
-                type="button"
-                class="botao-menu"
-                id="botaoMenu"
-            >
-                ☰
-            </button>
-
-            <div
-                class="menu-paginas"
-                id="menuPaginas"
-            >
-                <a href="/Principal/principal.html">
+            <nav class="navegacao" id="menuPaginas" aria-label="Páginas">
+                <a href="/Principal/principal.html" class="navegacao__link">
+                    <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#inicio"></use></svg>
                     Início
                 </a>
 
-                <a
-                    href="/Historico/historico.html"
-                    class="pagina-ativa"
-                >
+                <a href="/Historico/historico.html" class="navegacao__link ativo" aria-current="page">
+                    <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#historico"></use></svg>
                     Histórico
                 </a>
+            </nav>
+
+            <div class="cabecalho-app__acoes">
+                <a href="/Perfil/perfil.html" class="usuario" title="Meu perfil">
+                    <span class="usuario__nome" data-usuario-nome>Usuário</span>
+                    <img src="/shared/img/avatar.png" alt="Foto de perfil" class="avatar" data-usuario-foto>
+                </a>
+
+                <button
+                    type="button"
+                    class="botao-icone botao-menu"
+                    id="botaoMenu"
+                    aria-label="Abrir menu"
+                    aria-controls="menuPaginas"
+                    aria-expanded="false"
+                >
+                    <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#menu"></use></svg>
+                </button>
             </div>
 
         </div>
+    </header>
 
-        <!-- =========================================
-             CARD HISTÓRICO
-        ========================================== -->
+    <!-- =========================================
+         CONTEÚDO
+    ========================================== -->
 
-        <main class="card-historico">
+    <main class="container principal-app">
 
-            <!-- =====================================
-                 CABEÇALHO
-            ====================================== -->
-
-            <div class="cabecalho-historico">
-
-                <h1>HISTÓRICO</h1>
-
-                <div class="filtros">
-
-                    <!-- TIPO -->
-                    <select id="filtroTipo">
-                        <option value="todos">Tipo</option>
-                        <option value="entrada">Entrada</option>
-                        <option value="saida">Saída</option>
-                    </select>
-
-                    <!-- MÊS -->
-                    <select id="filtroMes">
-                        <option value="todos">Todos os meses</option>
-                        <option value="0">Janeiro</option>
-                        <option value="1">Fevereiro</option>
-                        <option value="2">Março</option>
-                        <option value="3">Abril</option>
-                        <option value="4">Maio</option>
-                        <option value="5">Junho</option>
-                        <option value="6">Julho</option>
-                        <option value="7">Agosto</option>
-                        <option value="8">Setembro</option>
-                        <option value="9">Outubro</option>
-                        <option value="10">Novembro</option>
-                        <option value="11">Dezembro</option>
-                    </select>
-
-                    <!-- CATEGORIA -->
-                    <select id="filtroCategoria">
-                        <option value="todos">Categoria</option>
-                    </select>
-
-                </div>
-
+        <div class="cabecalho-pagina">
+            <div>
+                <h1 class="cabecalho-pagina__titulo">Histórico</h1>
+                <p class="cabecalho-pagina__subtitulo">Todas as suas movimentações, organizadas por dia.</p>
             </div>
 
-            <!-- =====================================
-                 RESUMO
-            ====================================== -->
+            <!-- FILTROS -->
+            <div class="filtros" role="group" aria-label="Filtros">
+                <label class="sr-only" for="filtroTipo">Tipo</label>
+                <select id="filtroTipo" class="entrada">
+                    <option value="todos">Todos os tipos</option>
+                    <option value="entrada">Entrada</option>
+                    <option value="saida">Saída</option>
+                </select>
 
-            <div class="resumo-historico">
+                <label class="sr-only" for="filtroMes">Mês</label>
+                <select id="filtroMes" class="entrada">
+                    <option value="todos">Todos os meses</option>
+                    <option value="0">Janeiro</option>
+                    <option value="1">Fevereiro</option>
+                    <option value="2">Março</option>
+                    <option value="3">Abril</option>
+                    <option value="4">Maio</option>
+                    <option value="5">Junho</option>
+                    <option value="6">Julho</option>
+                    <option value="7">Agosto</option>
+                    <option value="8">Setembro</option>
+                    <option value="9">Outubro</option>
+                    <option value="10">Novembro</option>
+                    <option value="11">Dezembro</option>
+                </select>
 
-                <div class="resumo-box">
-                    <span class="resumo-titulo">
-                        Entrada
-                    </span>
-
-                    <strong
-                        class="valor-entrada"
-                        id="resumoEntrada"
-                    >
-                        R$ 0,00
-                    </strong>
-                </div>
-
-                <div class="resumo-box">
-                    <span class="resumo-titulo">
-                        Saída
-                    </span>
-
-                    <strong
-                        class="valor-saida"
-                        id="resumoSaida"
-                    >
-                        R$ 0,00
-                    </strong>
-                </div>
-
-                <div class="resumo-box">
-                    <span class="resumo-titulo">
-                        Saldo
-                    </span>
-
-                    <strong
-                        class="valor-saldo"
-                        id="resumoSaldo"
-                    >
-                        R$ 0,00
-                    </strong>
-                </div>
-
+                <label class="sr-only" for="filtroCategoria">Categoria</label>
+                <select id="filtroCategoria" class="entrada">
+                    <option value="todos">Todas as categorias</option>
+                </select>
             </div>
+        </div>
 
-            <!-- =====================================
-                 CABEÇALHO DA TABELA
-            ====================================== -->
+        <!-- RESUMO -->
+        <section class="resumo-historico" aria-label="Resumo do período">
+            <article class="cartao resumo-box">
+                <span class="resumo-box__rotulo">Entrada</span>
+                <strong class="resumo-box__valor numero texto-entrada" id="resumoEntrada">R$ 0,00</strong>
+            </article>
 
-            <div class="cabecalho-tabela">
-                <span>Valor</span>
-                <span>Tipo</span>
+            <article class="cartao resumo-box">
+                <span class="resumo-box__rotulo">Saída</span>
+                <strong class="resumo-box__valor numero texto-saida" id="resumoSaida">R$ 0,00</strong>
+            </article>
+
+            <article class="cartao resumo-box">
+                <span class="resumo-box__rotulo">Saldo</span>
+                <strong class="resumo-box__valor numero" id="resumoSaldo">R$ 0,00</strong>
+            </article>
+        </section>
+
+        <!-- TRANSAÇÕES -->
+        <section class="cartao card-historico">
+
+            <div class="cabecalho-tabela" aria-hidden="true">
                 <span>Categoria</span>
+                <span>Tipo</span>
                 <span>Horário</span>
+                <span>Valor</span>
             </div>
 
-            <!-- =====================================
-                 TRANSAÇÕES
-            ====================================== -->
-
-            <div
-                class="lista-transacoes"
-                id="listaTransacoes"
-            >
+            <div class="lista-transacoes" id="listaTransacoes">
                 <!-- GERADO PELO JS -->
             </div>
 
-            <!-- =====================================
-                 SEM TRANSAÇÕES
-            ====================================== -->
-
-            <div
-                class="sem-transacoes"
-                id="semTransacoes"
-            >
-                Nenhuma transação encontrada.
+            <div class="sem-transacoes" id="semTransacoes" hidden>
+                <img src="/shared/img/coin.png" alt="" class="sem-transacoes__mascote">
+                <p class="sem-transacoes__titulo" id="semTransacoesTitulo">Nenhuma transação encontrada.</p>
+                <p class="sem-transacoes__texto" id="semTransacoesTexto">Tente mudar os filtros ou registre uma nova transação no início.</p>
             </div>
 
-        </main>
+        </section>
 
-    </div>
+    </main>
 
-    <img
-        src="Assets/Coin.png"
-        alt="Coin"
-        class="Coin"
-    >
-
+    <script src="/shared/js/ui.js"></script>
     <script src="historico.js"></script>
 
 </body>

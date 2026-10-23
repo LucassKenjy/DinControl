@@ -6,249 +6,301 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Dashboard | DinControl</title>
-    <link rel="icon" type="image/png" href="../Assets/favicon.png">
+    <meta name="theme-color" content="#040b1f">
+
+    <link rel="icon" type="image/png" href="/shared/img/favicon.png">
+    <link rel="apple-touch-icon" href="/shared/img/apple-touch-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+    <link rel="stylesheet" href="/shared/css/base.css">
     <link rel="stylesheet" href="principal.css">
 </head>
 
-<body>
+<body class="tema-escuro">
 
     <!-- Loading -->
     <div id="loading-screen">
+        <img src="/shared/img/logo.png" alt="DinControl">
         <div class="loader"></div>
     </div>
 
-    <div class="conteudo-principal">
+    <!-- =========================================
+         CABEÇALHO
+    ========================================== -->
 
-        <!-- Topo -->
-        <header class="topo-dashboard">
+    <header class="cabecalho-app">
+        <div class="container cabecalho-app__conteudo">
 
-            <img
-                src="Assets/Logo.png"
-                alt="DinControl"
-                class="logo-dincontrol"
-            >
+            <a href="/Principal/principal.html" class="cabecalho-app__logo">
+                <img src="/shared/img/logo.png" alt="DinControl">
+            </a>
 
-            <div class="acoes-topo">
+            <nav class="navegacao" id="menuPaginas" aria-label="Páginas">
+                <a href="/Principal/principal.html" class="navegacao__link ativo" aria-current="page">
+                    <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#inicio"></use></svg>
+                    Início
+                </a>
 
-                <!-- Menu de páginas -->
-                <div class="area-menu">
-                    <button
-                        type="button"
-                        class="botao-menu"
-                        id="botaoMenu"
-                    >
-                        ☰
-                    </button>
+                <a href="/Historico/historico.html" class="navegacao__link">
+                    <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#historico"></use></svg>
+                    Histórico
+                </a>
+            </nav>
 
-                    <div
-                        class="menu-paginas"
-                        id="menuPaginas"
-                    >
-                        <a
-                            href="/Principal/principal.html"
-                            class="item-menu"
-                        >
-                            Início
-                        </a>
+            <div class="cabecalho-app__acoes">
+                <a href="/Perfil/perfil.html" class="usuario" title="Meu perfil">
+                    <span class="usuario__nome" data-usuario-nome>Usuário</span>
+                    <img src="/shared/img/avatar.png" alt="Foto de perfil" class="avatar" data-usuario-foto>
+                </a>
 
-                        <a
-                            href="/Historico/historico.html"
-                            class="item-menu"
-                        >
-                            Histórico
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Saldo e nova transação -->
-                <div class="area-saldo">
-                    <button
-                        class="botao-adicionar"
-                        id="abrirTransacao"
-                        type="button"
-                    >
-                        +
-                    </button>
-
-                    <div
-                        class="painel-transacao"
-                        id="painelTransacao"
-                    >
-                        <p class="titulo-transacao">
-                            Nova Transação
-                        </p>
-
-                        <!-- Entrada -->
-                        <div class="linha-transacao entrada">
-                            <span class="bolinha entrada-cor"></span>
-
-                            <span class="cifrao">
-                                R$:
-                            </span>
-
-                            <input
-                                type="number"
-                                id="valorEntrada"
-                                step="0.01"
-                                min="0"
-                                placeholder="0,00"
-                            >
-
-                            <select id="categoriaEntrada">
-                                <option value=""></option>
-                                <option value="Salario">Salário</option>
-                                <option value="Outros">Outros</option>
-                            </select>
-                        </div>
-
-                        <!-- Saída -->
-                        <div class="linha-transacao">
-                            <span class="bolinha saida-cor"></span>
-
-                            <span class="cifrao">
-                                R$:
-                            </span>
-
-                            <input
-                                type="number"
-                                id="valorSaida"
-                                step="0.01"
-                                min="0"
-                                placeholder="0,00"
-                            >
-
-                            <div class="area-seta">
-                                <select id="categoriaSaida">
-                                    <option value=""></option>
-                                    <option value="Alimentacao">Alimentação</option>
-                                    <option value="Locomocao">Locomoção</option>
-                                    <option value="Lazer">Lazer</option>
-                                    <option value="Educacao">Educação</option>
-                                    <option value="Investimento">Investimento</option>
-                                    <option value="Outros">Outros</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <button
-                            id="confirmarTransacao"
-                            class="confirmar-transacao"
-                            type="button"
-                        >
-                            CONFIRMAR
-                        </button>
-
-                        <p id="mensagemTransacao"></p>
-                    </div>
-
-                    <div class="saldo-box">
-                        <div class="saldo-titulo">
-                            Saldo Atual
-                        </div>
-
-                        <div
-                            class="saldo-valor"
-                            id="valorSaldo"
-                        >
-                            R$ 0,00
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Perfil -->
-                <div class="area-perfil">
-                    <span
-                        id="nomeUsuario"
-                        class="nome-usuario"
-                    >
-                        Usuário
-                    </span>
-
-                    <button
-                        class="botao-perfil"
-                        type="button"
-                    >
-                        <img
-                            src="Assets/perfil.png"
-                            alt="Perfil"
-                            class="perfil"
-                            id="fotoPerfilDashboard"
-                        >
-                    </button>
-                </div>
-
+                <button
+                    type="button"
+                    class="botao-icone botao-menu"
+                    id="botaoMenu"
+                    aria-label="Abrir menu"
+                    aria-controls="menuPaginas"
+                    aria-expanded="false"
+                >
+                    <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#menu"></use></svg>
+                </button>
             </div>
-        </header>
 
-        <!-- Dashboard -->
-        <main class="dashboard-grid">
+        </div>
+    </header>
 
-            <section class="card-entrada-saida">
-                <div class="cabecalho-entrada-saida">
-                    <h2>ENTRADA/SAÍDA</h2>
-                    <span
-                        class="indicador-verde"
-                        id="indicadorSaldo"
-                    ></span>
+    <!-- =========================================
+         CONTEÚDO
+    ========================================== -->
+
+    <main class="container principal-app">
+
+        <div class="cabecalho-pagina">
+            <div>
+                <h1 class="cabecalho-pagina__titulo" id="saudacao">Olá!</h1>
+                <p class="cabecalho-pagina__subtitulo" id="dataHoje">Resumo das suas finanças</p>
+            </div>
+
+            <button type="button" class="botao botao--primario" id="abrirTransacao">
+                <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#mais"></use></svg>
+                Nova transação
+            </button>
+        </div>
+
+        <div class="dashboard-grid">
+
+            <!-- SALDO -->
+            <section class="cartao cartao-saldo">
+                <div class="cartao-saldo__info">
+                    <div class="cartao-saldo__rotulo">
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#carteira"></use></svg>
+                        Saldo atual
+                    </div>
+
+                    <div class="cartao-saldo__valor numero" id="valorSaldo">R$ 0,00</div>
+
+                    <span class="selo selo--entrada" id="indicadorSaldo">
+                        <span class="ponto"></span>
+                        <span id="indicadorSaldoTexto">Entradas acima das saídas</span>
+                    </span>
                 </div>
 
-                <div class="linha-card"></div>
+                <img src="/shared/img/coin.png" alt="Mascote DinControl" class="cartao-saldo__mascote">
+            </section>
 
-                <div class="resumo-item">
-                    <strong>Entrada:</strong>
-                    <span id="totalEntrada">R$ 0,00</span>
+            <!-- ENTRADA / SAÍDA / INVESTIMENTO -->
+            <section class="resumo" aria-label="Entrada e saída">
+                <article class="cartao indicador">
+                    <span class="indicador__icone indicador__icone--entrada">
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#seta-entrada"></use></svg>
+                    </span>
+                    <div>
+                        <p class="indicador__rotulo">Entradas</p>
+                        <p class="indicador__valor numero" id="totalEntrada">R$ 0,00</p>
+                    </div>
+                </article>
+
+                <article class="cartao indicador">
+                    <span class="indicador__icone indicador__icone--saida">
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#seta-saida"></use></svg>
+                    </span>
+                    <div>
+                        <p class="indicador__rotulo">Saídas</p>
+                        <p class="indicador__valor numero" id="totalSaida">R$ 0,00</p>
+                    </div>
+                </article>
+
+                <article class="cartao indicador">
+                    <span class="indicador__icone indicador__icone--investimento">
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#cofrinho"></use></svg>
+                    </span>
+                    <div>
+                        <p class="indicador__rotulo">Investimentos</p>
+                        <p class="indicador__valor numero" id="totalInvestimento">R$ 0,00</p>
+                    </div>
+                </article>
+            </section>
+
+            <!-- GRÁFICO MENSAL -->
+            <section class="cartao card-grafico-mensal">
+                <div class="cartao__cabecalho">
+                    <div>
+                        <h2 class="cartao__titulo">Gráfico mensal</h2>
+                        <p class="cartao__descricao">Entradas e saídas por mês</p>
+                    </div>
+
+                    <div class="legenda">
+                        <span class="legenda__item"><span class="ponto texto-entrada"></span>Entrada</span>
+                        <span class="legenda__item"><span class="ponto texto-saida"></span>Saída</span>
+                    </div>
                 </div>
 
-                <div class="resumo-item">
-                    <strong>Saída:</strong>
-                    <span id="totalSaida">R$ 0,00</span>
-                </div>
-
-                <div class="resumo-item">
-                    <strong>Investimento:</strong>
-                    <span id="totalInvestimento">R$ 0,00</span>
+                <div class="grafico grafico--barras">
+                    <canvas id="graficoMensal" aria-label="Gráfico de entradas e saídas por mês" role="img"></canvas>
                 </div>
             </section>
 
-            <section class="card-grafico-mensal">
-                <h2>GRÁFICO MENSAL</h2>
-                <div class="linha-titulo"></div>
+            <!-- GRÁFICO DE SAÍDA -->
+            <section class="cartao card-grafico-saida">
+                <div class="cartao__cabecalho">
+                    <div>
+                        <h2 class="cartao__titulo">Gráfico de saída</h2>
+                        <p class="cartao__descricao">Gastos por categoria</p>
+                    </div>
+                </div>
 
-                <div class="grafico-mensal-container">
-                    <canvas id="graficoMensal"></canvas>
+                <div class="grafico grafico--rosca">
+                    <canvas id="graficoSaida" aria-label="Gráfico de saídas por categoria" role="img"></canvas>
+
+                    <div class="grafico-rosca__centro">
+                        <span>Total</span>
+                        <strong class="numero" id="totalSaidaGrafico">R$ 0,00</strong>
+                    </div>
+                </div>
+
+                <ul class="legenda-categorias" id="legendaSaida"></ul>
+            </section>
+
+            <!-- GRÁFICO DE INVESTIMENTO -->
+            <section class="cartao card-grafico-investimento">
+                <div class="cartao__cabecalho">
+                    <div>
+                        <h2 class="cartao__titulo">Investimento</h2>
+                        <p class="cartao__descricao">Valor investido por mês</p>
+                    </div>
+                </div>
+
+                <div class="grafico grafico--barras">
+                    <canvas id="graficoInvestimento" aria-label="Gráfico de investimentos por mês" role="img"></canvas>
                 </div>
             </section>
 
-            <section class="card-grafico-saida">
-                <h2>GRÁFICO DE SAÍDA</h2>
-                <div class="linha-grafico-saida"></div>
+            <!-- ÚLTIMAS TRANSAÇÕES -->
+            <section class="cartao card-ultimas">
+                <div class="cartao__cabecalho">
+                    <div>
+                        <h2 class="cartao__titulo">Últimas transações</h2>
+                        <p class="cartao__descricao">Movimentações mais recentes</p>
+                    </div>
 
-                <div class="grafico-saida-container">
-                    <canvas id="graficoSaida"></canvas>
+                    <a href="/Historico/historico.html" class="link-ver-tudo">
+                        Ver tudo
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#seta-direita"></use></svg>
+                    </a>
                 </div>
+
+                <ul class="ultimas" id="ultimasTransacoes"></ul>
+
+                <p class="ultimas__vazio" id="ultimasVazio" hidden>
+                    Nenhuma transação ainda. Clique em <strong>Nova transação</strong> para começar.
+                </p>
             </section>
 
-            <section class="card-grafico-investimento">
-                <h2>INVESTIMENTO</h2>
-                <div class="linha-grafico-investimento"></div>
+        </div>
 
-                <div class="grafico-investimento-container">
-                    <canvas id="graficoInvestimento"></canvas>
+    </main>
+
+    <!-- =========================================
+         MODAL: NOVA TRANSAÇÃO
+    ========================================== -->
+
+    <dialog class="modal" id="painelTransacao" aria-labelledby="tituloTransacao">
+        <form class="modal__conteudo" id="formTransacao" novalidate>
+
+            <div class="modal__cabecalho">
+                <div>
+                    <h2 class="modal__titulo" id="tituloTransacao">Nova transação</h2>
+                    <p class="modal__texto">Registre uma entrada ou uma saída.</p>
                 </div>
-            </section>
 
-        </main>
+                <button type="button" class="botao-icone modal__fechar" data-fechar-modal aria-label="Fechar">
+                    <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#fechar"></use></svg>
+                </button>
+            </div>
 
-        <img
-            src="Assets/Coin.png"
-            alt="Mascote DinControl"
-            class="Coin"
-        >
+            <!-- TIPO -->
+            <div class="segmentado" role="radiogroup" aria-label="Tipo da transação">
+                <label class="segmentado__opcao segmentado__opcao--entrada">
+                    <input type="radio" name="tipo" value="ENTRADA" checked>
+                    <span>
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#seta-entrada"></use></svg>
+                        Entrada
+                    </span>
+                </label>
 
-    </div>
+                <label class="segmentado__opcao segmentado__opcao--saida">
+                    <input type="radio" name="tipo" value="SAIDA">
+                    <span>
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#seta-saida"></use></svg>
+                        Saída
+                    </span>
+                </label>
+            </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+            <!-- VALOR -->
+            <div class="campo">
+                <label for="valorTransacao" class="campo__rotulo">Valor</label>
+
+                <div class="entrada-grupo">
+                    <span class="entrada-grupo__prefixo">R$</span>
+                    <input
+                        type="number"
+                        id="valorTransacao"
+                        class="entrada numero"
+                        step="0.01"
+                        min="0"
+                        placeholder="0,00"
+                        inputmode="decimal"
+                    >
+                </div>
+            </div>
+
+            <!-- CATEGORIA -->
+            <div class="campo">
+                <label for="categoriaTransacao" class="campo__rotulo">Categoria</label>
+
+                <select id="categoriaTransacao" class="entrada"></select>
+            </div>
+
+            <p id="mensagemTransacao" class="alerta"></p>
+
+            <div class="modal__acoes">
+                <button type="button" class="botao botao--secundario" data-fechar-modal>
+                    Cancelar
+                </button>
+
+                <button type="submit" class="botao botao--primario" id="confirmarTransacao">
+                    Confirmar
+                </button>
+            </div>
+
+        </form>
+    </dialog>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="/shared/js/ui.js"></script>
     <script src="principal.js"></script>
 
 </body>

@@ -1,370 +1,21 @@
 /* =====================================================
    DINCONTROL - HISTÓRICO
-===================================================== */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-
-html,
-body {
-    width: 100%;
-    min-height: 100%;
-}
-
-
-body {
-    min-height: 100vh;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    background-image:
-        url("../Principal/Assets/Background.png");
-
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-
-    color: #ffffff;
-
-    overflow-x: hidden;
-}
-
-
-/* =====================================================
-   PÁGINA
-===================================================== */
-
-.pagina-historico {
-    width: 100%;
-    min-height: 100vh;
-
-    position: relative;
-
-    padding-bottom: 70px;
-}
-
-
-/* =====================================================
-   LOGO
-===================================================== */
-
-.logo-dincontrol {
-    position: absolute;
-
-    top: -20px;
-    left: -25px;
-
-    width: 600px;
-
-    height: auto;
-
-    z-index: 10;
-}
-
-
-/* =====================================================
-   PERFIL
-===================================================== */
-
-.area-perfil {
-    position: absolute;
-
-    top: 35px;
-    right: 45px;
-
-    display: flex;
-    align-items: center;
-
-    gap: 12px;
-
-    z-index: 30;
-}
-
-
-.nome-usuario {
-    font-size: 18px;
-    font-weight: 400;
-
-    color: #ffffff;
-
-    white-space: nowrap;
-}
-
-
-.botao-perfil {
-    width: 55px;
-    height: 55px;
-
-    padding: 0;
-
-    border: none;
-
-    border-radius: 50%;
-
-    background: transparent;
-
-    cursor: pointer;
-
-    overflow: hidden;
-}
-
-
-.botao-perfil img {
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-
-    border-radius: 50%;
-}
-
-
-/* =====================================================
-   MENU
-===================================================== */
-
-.area-menu {
-    position: absolute;
-
-    top: 245px;
-    right: 250px;
-
-    z-index: 300;
-}
-
-
-.botao-menu {
-    width: 58px;
-    height: 58px;
-
-    border: none;
-    border-radius: 13px;
-
-    background-color: #ffffff;
-
-    color: #555555;
-
-    font-size: 24px;
-
-    cursor: pointer;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    transition:
-        transform 0.2s ease,
-        background-color 0.2s ease;
-}
-
-
-.botao-menu:hover {
-    transform: scale(1.05);
-
-    background-color: #f2f2f2;
-}
-
-
-/* =====================================================
-   MENU ABERTO
-===================================================== */
-
-.menu-paginas {
-    position: absolute;
-
-    top: 72px;
-    right: 0;
-
-    width: 180px;
-
-    padding: 9px;
-
-    display: none;
-    flex-direction: column;
-
-    gap: 5px;
-
-    background-color: #07598c;
-
-    border-radius: 12px;
-
-    box-shadow:
-        0 6px 18px
-        rgba(0, 0, 0, 0.35);
-
-    z-index: 400;
-}
-
-
-.menu-paginas.ativo {
-    display: flex;
-}
-
-
-.menu-paginas::before {
-    content: "";
-
-    position: absolute;
-
-    top: -11px;
-    right: 18px;
-
-    width: 22px;
-    height: 12px;
-
-    background-color: #07598c;
-
-    clip-path:
-        polygon(
-            50% 0,
-            0 100%,
-            100% 100%
-        );
-}
-
-
-.menu-paginas a {
-    width: 100%;
-
-    padding: 11px 13px;
-
-    border-radius: 8px;
-
-    color: #ffffff;
-
-    text-decoration: none;
-
-    font-size: 14px;
-
-    transition:
-        background-color 0.2s ease;
-}
-
-
-.menu-paginas a:hover {
-    background-color:
-        rgba(255, 255, 255, 0.15);
-}
-
-
-.menu-paginas .pagina-ativa {
-    background-color:
-        rgba(255, 255, 255, 0.18);
-}
-
-
-/* =====================================================
-   CARD HISTÓRICO
-===================================================== */
-
-.card-historico {
-    position: relative;
-
-    top: 220px;
-    left: 6%;
-
-    width: min(1050px, 65vw);
-
-    min-height: 500px;
-
-    padding: 25px 20px 20px;
-
-    background-color: #396f9f;
-
-    border-radius: 18px;
-
-    overflow: hidden;
-
-    z-index: 20;
-}
-
-
-/* =====================================================
-   CABEÇALHO
-===================================================== */
-
-.cabecalho-historico {
-    width: 100%;
-
-    min-height: 65px;
-
-    display: flex;
-
-    align-items: flex-start;
-
-    justify-content: space-between;
-
-    gap: 20px;
-}
-
-
-.cabecalho-historico h1 {
-    font-size: 31px;
-
-    line-height: 1;
-
-    font-weight: 700;
-
-    color: #ffffff;
-}
-
-
-/* =====================================================
-   FILTROS
+   (estilos compartilhados ficam em /shared/css/base.css)
 ===================================================== */
 
 .filtros {
     display: flex;
-
-    align-items: center;
-
-    justify-content: flex-end;
-
-    gap: 9px;
-
     flex-wrap: wrap;
+    gap: 10px;
 }
 
+.filtros .entrada {
+    width: auto;
+    min-width: 170px;
+    height: 42px;
 
-.filtros select {
-    min-width: 105px;
-
-    height: 30px;
-
-    padding: 0 8px;
-
-    border: none;
-
-    border-radius: 8px;
-
-    outline: none;
-
-    color: #ffffff;
-
-    background-color: #7295b4;
-
-    font-size: 13px;
-    font-weight: 600;
-
-    cursor: pointer;
-}
-
-
-.filtros select:nth-child(2) {
-    min-width: 130px;
-}
-
-
-.filtros select:nth-child(3) {
-    min-width: 125px;
+    font-size: 14px;
+    background-color: var(--superficie);
 }
 
 
@@ -373,200 +24,178 @@ body {
 ===================================================== */
 
 .resumo-historico {
-    width: 65%;
-
-    min-height: 80px;
-
     display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
 
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    align-items: center;
-
-    gap: 20px;
+    margin-bottom: 20px;
 }
-
 
 .resumo-box {
-    display: flex;
-    flex-direction: column;
-
-    gap: 12px;
+    padding: 18px 20px;
 }
 
+.resumo-box__rotulo {
+    display: block;
 
-.resumo-titulo {
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 13px;
+    color: var(--texto-suave);
 }
 
+.resumo-box__valor {
+    display: block;
 
-.resumo-box strong {
-    font-size: 17px;
+    margin-top: 4px;
 
-    white-space: nowrap;
-}
-
-
-.valor-entrada {
-    color: #00ff26;
-}
-
-
-.valor-saida {
-    color: #ff0000;
-}
-
-
-.valor-saldo {
-    color: #00ff26;
+    font-size: 22px;
+    font-weight: 700;
 }
 
 
 /* =====================================================
-   CABEÇALHO DA TABELA
+   TABELA
 ===================================================== */
+
+.card-historico {
+    padding: 0;
+    overflow: hidden;
+}
+
+.cabecalho-tabela,
+.linha-historico {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr);
+    align-items: center;
+    gap: 16px;
+
+    padding: 0 24px;
+}
 
 .cabecalho-tabela {
-    width: calc(100% + 40px);
+    height: 46px;
 
-    margin-left: -20px;
+    border-bottom: 1px solid var(--borda);
+    background: rgba(255, 255, 255, 0.03);
 
-    min-height: 43px;
-
-    padding: 0 20px;
-
-    display: grid;
-
-    grid-template-columns:
-        1.1fr
-        1.2fr
-        1.2fr
-        0.7fr;
-
-    align-items: center;
-
-    border-top:
-        1px solid
-        rgba(255, 255, 255, 0.25);
-
-    border-bottom:
-        1px solid
-        rgba(255, 255, 255, 0.25);
-
-    font-size: 15px;
-
-    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--texto-fraco);
 }
 
-
-/* =====================================================
-   LISTA
-===================================================== */
+.cabecalho-tabela span:last-child,
+.linha-historico .valor-transacao {
+    text-align: right;
+}
 
 .lista-transacoes {
-    width: 100%;
-
-    max-height: 430px;
-
+    max-height: calc(100vh - 380px);
+    min-height: 240px;
     overflow-y: auto;
-    overflow-x: hidden;
 }
 
-
-/* SCROLL */
-
-.lista-transacoes::-webkit-scrollbar {
-    width: 6px;
+.lista-transacoes:empty {
+    display: none;
 }
-
-
-.lista-transacoes::-webkit-scrollbar-thumb {
-    background:
-        rgba(255, 255, 255, 0.30);
-
-    border-radius: 20px;
-}
-
-
-.lista-transacoes::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-
-/* =====================================================
-   GRUPO DE DATA
-===================================================== */
-
-.grupo-data {
-    width: 100%;
-}
-
 
 .titulo-data {
-    width: calc(100% + 40px);
+    position: sticky;
+    top: 0;
+    z-index: 1;
 
-    margin-left: -20px;
+    padding: 10px 24px;
 
-    padding: 12px 30px 8px;
+    border-bottom: 1px solid var(--borda);
+    background: var(--superficie-forte);
 
-    font-size: 16px;
-
-    font-weight: bold;
-
-    border-bottom:
-        1px solid
-        rgba(255, 255, 255, 0.12);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--texto-suave);
 }
-
-
-/* =====================================================
-   TRANSAÇÃO
-===================================================== */
 
 .linha-historico {
-    width: 100%;
+    min-height: 60px;
 
-    min-height: 45px;
+    font-size: 14px;
 
-    display: grid;
-
-    grid-template-columns:
-        1.1fr
-        1.2fr
-        1.2fr
-        0.7fr;
-
-    align-items: center;
-
-    font-size: 15px;
-
-    font-weight: 600;
-
-    transition:
-        background-color 0.15s ease;
+    transition: background-color var(--transicao);
 }
 
+.linha-historico + .linha-historico {
+    border-top: 1px solid var(--borda);
+}
 
 .linha-historico:hover {
-    background-color:
-        rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.03);
 }
 
+.linha-historico__categoria {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-width: 0;
+
+    font-weight: 500;
+}
+
+.linha-historico__categoria span:last-child {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.linha-historico__icone {
+    display: grid;
+    place-items: center;
+
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+
+    border-radius: 10px;
+}
+
+.linha-historico__icone .icone {
+    width: 16px;
+    height: 16px;
+}
+
+.linha-historico__icone--entrada {
+    color: var(--entrada);
+    background: var(--entrada-fundo);
+}
+
+.linha-historico__icone--saida {
+    color: var(--saida);
+    background: var(--saida-fundo);
+}
+
+.linha-historico__horario {
+    color: var(--texto-suave);
+}
 
 .valor-transacao {
-    font-weight: bold;
+    font-weight: 600;
 }
 
-
-.valor-transacao.entrada {
-    color: #00ff26;
+.valor-transacao--entrada {
+    color: var(--entrada);
 }
 
+.valor-transacao--saida {
+    color: var(--saida);
+}
 
-.valor-transacao.saida {
-    color: #ff0000;
+/* Barra de rolagem discreta */
+.lista-transacoes::-webkit-scrollbar {
+    width: 8px;
+}
+
+.lista-transacoes::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background: rgba(148, 177, 255, 0.2);
 }
 
 
@@ -575,998 +204,109 @@ body {
 ===================================================== */
 
 .sem-transacoes {
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-    padding: 50px 15px;
-
-    display: none;
+    padding: 40px 24px 48px;
 
     text-align: center;
+}
 
-    color:
-        rgba(255, 255, 255, 0.75);
+.sem-transacoes[hidden] {
+    display: none;
+}
+
+.sem-transacoes__mascote {
+    width: 180px;
+    margin-bottom: 12px;
+
+    filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.4));
+}
+
+.sem-transacoes__titulo {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.sem-transacoes__texto {
+    max-width: 360px;
+    margin-top: 4px;
 
     font-size: 14px;
+    color: var(--texto-suave);
 }
 
 
 /* =====================================================
-   1600x900
+   RESPONSIVO
 ===================================================== */
 
-@media screen
-and (min-width: 1450px)
-and (max-width: 1699px) {
-
-    .logo-dincontrol {
-        width: 520px;
-    }
-
-
-    .card-historico {
-        top: 220px;
-
-        width: 930px;
-    }
-
-
-    .area-menu {
-        top: 235px;
-        right: 160px;
-    }
-
-}
-
-
-/* =====================================================
-   1280x800
-===================================================== */
-
-@media screen
-and (min-width: 1150px)
-and (max-width: 1449px) {
-
-    .logo-dincontrol {
-        width: 440px;
-
-        top: 0;
-    }
-
-
-    .area-perfil {
-        top: 28px;
-        right: 30px;
-    }
-
-
-    .nome-usuario {
-        font-size: 15px;
-    }
-
-
-    .botao-perfil {
-        width: 48px;
-        height: 48px;
-    }
-
-
-    .card-historico {
-        top: 190px;
-        left: 5%;
-
-        width: 760px;
-
-        padding: 20px 16px 16px;
-    }
-
-
-    .cabecalho-historico h1 {
-        font-size: 27px;
-    }
-
-
-    .resumo-historico {
-        width: 75%;
-    }
-
-
-    .area-menu {
-        top: 205px;
-        right: 130px;
-    }
-
-
-    .botao-menu {
-        width: 52px;
-        height: 52px;
-    }
-
-}
-
-
-/* =====================================================
-   1024x600
-===================================================== */
-
-@media screen
-and (min-width: 901px)
-and (max-width: 1149px)
-and (max-height: 899px) {
-
-    .pagina-historico {
-        min-height: 600px;
-    }
-
-
-    .logo-dincontrol {
-        top: 5px;
-        left: 10px;
-
-        width: 350px;
-    }
-
-
-    .area-perfil {
-        top: 20px;
-        right: 20px;
-
-        gap: 7px;
-    }
-
-
-    .nome-usuario {
-        font-size: 11px;
-    }
-
-
-    .botao-perfil {
-        width: 42px;
-        height: 42px;
-    }
-
-
-    .card-historico {
-        top: 145px;
-        left: 40px;
-
-        width: 620px;
-
-        min-height: 390px;
-
-        padding: 16px;
-    }
-
-
-    .cabecalho-historico {
-        min-height: 55px;
-    }
-
-
-    .cabecalho-historico h1 {
-        font-size: 24px;
-    }
-
-
-    .filtros {
-        gap: 5px;
-    }
-
-
-    .filtros select {
-        min-width: 78px;
-
-        height: 25px;
-
-        font-size: 10px;
-    }
-
-
-    .filtros select:nth-child(2) {
-        min-width: 95px;
-    }
-
-
-    .filtros select:nth-child(3) {
-        min-width: 95px;
-    }
-
-
-    .resumo-historico {
-        width: 75%;
-
-        min-height: 65px;
-    }
-
-
-    .resumo-titulo {
-        font-size: 13px;
-    }
-
-
-    .resumo-box strong {
-        font-size: 13px;
-    }
-
-
-    .cabecalho-tabela {
-        min-height: 34px;
-
-        font-size: 12px;
-    }
-
-
-    .titulo-data {
-        font-size: 12px;
-
-        padding-top: 9px;
-        padding-bottom: 6px;
-    }
-
-
-    .linha-historico {
-        min-height: 34px;
-
-        font-size: 11px;
-    }
-
-
-    .lista-transacoes {
-        max-height: 215px;
-    }
-
-
-    .area-menu {
-        top: 158px;
-        right: 110px;
-    }
-
-
-    .botao-menu {
-        width: 44px;
-        height: 44px;
-
-        border-radius: 9px;
-
-        font-size: 19px;
-    }
-
-
-    .menu-paginas {
-        top: 55px;
-
-        width: 145px;
-    }
-
-
-    .menu-paginas a {
-        padding: 8px 10px;
-
-        font-size: 11px;
-    }
-
-}
-
-
-/* =====================================================
-   TABLET EM PÉ
-   1024 x 1366
-===================================================== */
-
-@media screen
-and (min-width: 901px)
-and (max-width: 1100px)
-and (min-height: 900px) {
-
-    /* =================================================
-       LOGO
-    ================================================= */
-
-    .logo-dincontrol {
-        width: 480px;
-
-        top: 15px;
-        left: 15px;
-    }
-
-
-    /* =================================================
-       PERFIL
-    ================================================= */
-
-    .area-perfil {
-        top: 40px;
-        right: 35px;
-    }
-
-
-    /* =================================================
-       CARD HISTÓRICO
-    ================================================= */
-
-    .card-historico {
-        top: 240px;
-        left: 50%;
-
-        width: calc(100% - 100px);
-
-        min-height: 600px;
-
-        transform: translateX(-50%);
-    }
-
-
-    /* =================================================
-       BOTÃO MENU
-       AGORA FICA NO TOPO DIREITO,
-       FORA DO CARD
-    ================================================= */
-
-    .area-menu {
-        position: absolute;
-
-        top: 155px;
-        right: 50px;
-
-        left: auto;
-
-        width: 55px;
-        height: 55px;
-
-        margin: 0;
-
-        transform: none;
-
-        z-index: 300;
-    }
-
-
-    .botao-menu {
-        width: 55px;
-        height: 55px;
-
-        margin: 0;
-        padding: 0;
-
-        border-radius: 12px;
-
-        font-size: 24px;
-    }
-
-
-    /* =================================================
-       CAIXA DO MENU
-    ================================================= */
-
-    .menu-paginas {
-        top: 68px;
-
-        right: 0;
-        left: auto;
-
-        width: 180px;
-    }
-
-
-    /* TRIÂNGULO */
-
-    .menu-paginas::before {
-        left: auto;
-        right: 18px;
-    }
-
-}
-
-
-/* =====================================================
-   TABLET
-   601px - 900px
-===================================================== */
-
-@media screen
-and (min-width: 601px)
-and (max-width: 900px) {
-
-    .pagina-historico {
-        padding:
-            0
-            20px
-            250px;
-    }
-
-
-    .logo-dincontrol {
-        position: relative;
-
-        top: 15px;
-        left: 50%;
-
-        width: min(450px, 75vw);
-
-        transform:
-            translateX(-50%);
-    }
-
-
-    .area-perfil {
-        top: 145px;
-        left: 50%;
-        right: auto;
-
-        transform:
-            translateX(-50%);
-
-        flex-direction: column-reverse;
-
-        gap: 6px;
-    }
-
-
-    .botao-perfil {
-        width: 75px;
-        height: 75px;
-    }
-
-
-    .nome-usuario {
-        font-size: 14px;
-    }
-
-
-    .card-historico {
-        position: relative;
-
-        top: 190px;
-        left: auto;
-
-        width: 100%;
-
-        min-height: 550px;
-
-        padding: 20px 16px;
-    }
-
-
-    .cabecalho-historico {
-        flex-direction: column;
-
-        gap: 18px;
-    }
-
-
+@media (max-width: 860px) {
     .filtros {
         width: 100%;
-
-        justify-content: flex-start;
     }
 
-
-    .resumo-historico {
-        width: 100%;
-
-        margin-top: 15px;
-    }
-
-
-    .area-menu {
-        top: 255px;
-        right: 30px;
-    }
-
-
-}
-
-
-/* =====================================================
-   CELULAR
-   401px - 600px
-===================================================== */
-
-@media screen
-and (min-width: 401px)
-and (max-width: 600px) {
-
-    .pagina-historico {
-        padding:
-            0
-            10px
-            210px;
-    }
-
-
-    .logo-dincontrol {
-        position: relative;
-
-        top: 10px;
-        left: 50%;
-
-        width: min(340px, 88vw);
-
-        transform:
-            translateX(-50%);
-    }
-
-
-    .area-perfil {
-        top: 120px;
-        left: 50%;
-        right: auto;
-
-        transform:
-            translateX(-50%);
-
-        flex-direction: column-reverse;
-    }
-
-
-    .botao-perfil {
-        width: 68px;
-        height: 68px;
-    }
-
-
-    .nome-usuario {
-        font-size: 13px;
-    }
-
-
-    .area-menu {
-        top: 235px;
-        right: 20px;
-    }
-
-
-    .botao-menu {
-        width: 48px;
-        height: 48px;
-
-        font-size: 20px;
-    }
-
-
-    .menu-paginas {
-        top: 60px;
-
-        width: 155px;
-    }
-
-
-    .card-historico {
-        position: relative;
-
-        top: 195px;
-        left: auto;
-
-        width: 100%;
-
-        min-height: 500px;
-
-        padding: 18px 12px;
-
-        border-radius: 14px;
-    }
-
-
-    .cabecalho-historico {
-        flex-direction: column;
-
-        gap: 15px;
-    }
-
-
-    .cabecalho-historico h1 {
-        font-size: 24px;
-    }
-
-
-    .filtros {
-        width: 100%;
-
-        justify-content: flex-start;
-
-        gap: 6px;
-    }
-
-
-    .filtros select {
+    .filtros .entrada {
         flex: 1;
-
-        min-width: 0;
-
-        font-size: 10px;
+        min-width: 140px;
     }
-
-
-    .filtros select:nth-child(2),
-    .filtros select:nth-child(3) {
-        min-width: 0;
-    }
-
-
-    .resumo-historico {
-        width: 100%;
-
-        margin-top: 12px;
-
-        gap: 8px;
-    }
-
-
-    .resumo-titulo {
-        font-size: 12px;
-    }
-
-
-    .resumo-box strong {
-        font-size: 12px;
-    }
-
-
-    .cabecalho-tabela {
-        grid-template-columns:
-            1.1fr
-            1fr
-            1.2fr
-            0.7fr;
-
-        font-size: 10px;
-    }
-
-
-    .linha-historico {
-        grid-template-columns:
-            1.1fr
-            1fr
-            1.2fr
-            0.7fr;
-
-        font-size: 10px;
-
-        gap: 3px;
-    }
-
-
-    .titulo-data {
-        font-size: 12px;
-    }
-
 }
 
-
-/* =====================================================
-   CELULAR PEQUENO
-===================================================== */
-
-@media screen
-and (max-width: 400px) {
-
-    .pagina-historico {
-        padding:
-            0
-            8px
-            180px;
+@media (max-width: 640px) {
+    .resumo-historico {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
     }
 
+    .resumo-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
 
-    .logo-dincontrol {
-        position: relative;
-
-        top: 10px;
-        left: 50%;
-
-        width: min(310px, 85vw);
-
-        transform:
-            translateX(-50%);
+        padding: 14px 18px;
     }
 
-
-    .area-perfil {
-        top: 115px;
-        left: 50%;
-        right: auto;
-
-        transform:
-            translateX(-50%);
-
-        flex-direction: column-reverse;
-
-        gap: 5px;
-    }
-
-
-    .botao-perfil {
-        width: 62px;
-        height: 62px;
-    }
-
-
-    .nome-usuario {
-        font-size: 12px;
-    }
-
-
-    .area-menu {
-        top: 220px;
-        right: 15px;
-    }
-
-
-    .botao-menu {
-        width: 44px;
-        height: 44px;
-
-        border-radius: 9px;
-
+    .resumo-box__valor {
+        margin-top: 0;
         font-size: 18px;
     }
 
-
-    .menu-paginas {
-        top: 55px;
-
-        width: 145px;
-    }
-
-
-    .menu-paginas a {
-        padding: 9px 10px;
-
-        font-size: 11px;
-    }
-
-
-    .card-historico {
-        position: relative;
-
-        top: 190px;
-        left: auto;
-
-        width: 100%;
-
-        min-height: 480px;
-
-        padding: 16px 10px;
-
-        border-radius: 13px;
-    }
-
-
-    .cabecalho-historico {
-        flex-direction: column;
-
-        gap: 13px;
-    }
-
-
-    .cabecalho-historico h1 {
-        font-size: 22px;
-    }
-
-
-    .filtros {
-        width: 100%;
-
-        gap: 4px;
-    }
-
-
-    .filtros select {
-        flex: 1;
-
-        min-width: 0;
-
-        height: 28px;
-
-        padding: 0 4px;
-
-        font-size: 9px;
-    }
-
-
-    .filtros select:nth-child(2),
-    .filtros select:nth-child(3) {
-        min-width: 0;
-    }
-
-
-    .resumo-historico {
-        width: 100%;
-
-        min-height: 70px;
-
-        gap: 4px;
-    }
-
-
-    .resumo-titulo {
-        font-size: 11px;
-    }
-
-
-    .resumo-box strong {
-        font-size: 10px;
-    }
-
-
     .cabecalho-tabela {
-        width: calc(100% + 20px);
-
-        margin-left: -10px;
-
-        padding: 0 10px;
-
-        grid-template-columns:
-            1.15fr
-            1fr
-            1.15fr
-            0.65fr;
-
-        font-size: 9px;
+        display: none;
     }
 
+    /* Linha em formato de cartão: categoria + valor em cima, tipo e horário embaixo */
+    .linha-historico {
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+            "categoria valor"
+            "categoria detalhe";
+        row-gap: 2px;
+
+        padding: 12px 16px;
+    }
+
+    .linha-historico__categoria { grid-area: categoria; }
+    .valor-transacao { grid-area: valor; }
+
+    .linha-historico__tipo {
+        display: none;
+    }
+
+    .linha-historico__horario {
+        grid-area: detalhe;
+
+        font-size: 12.5px;
+        text-align: right;
+    }
 
     .titulo-data {
-        width: calc(100% + 20px);
-
-        margin-left: -10px;
-
-        padding-left: 18px;
-
-        font-size: 11px;
+        padding: 10px 16px;
     }
 
-
-    .linha-historico {
-        grid-template-columns:
-            1.15fr
-            1fr
-            1.15fr
-            0.65fr;
-
-        min-height: 40px;
-
-        font-size: 9px;
-
-        gap: 2px;
+    .lista-transacoes {
+        max-height: none;
+        min-height: 0;
     }
-
-
-}
-
-/* =========================================================
-   COIN
-   ESCONDIDO POR PADRÃO
-   APARECE SOMENTE EM DESKTOP
-========================================================= */
-
-.Coin {
-    display: none;
-}
-
-
-/* =========================================================
-   1024 x 600
-========================================================= */
-
-@media screen
-and (min-width: 901px)
-and (max-width: 1149px)
-and (max-height: 899px) {
-
-    .Coin {
-        display: block;
-
-        position: fixed;
-
-        right: 8px;
-        bottom: 3px;
-
-        width: 230px;
-        height: auto;
-
-        max-width: none;
-        max-height: 45vh;
-
-        object-fit: contain;
-
-        pointer-events: none;
-
-        z-index: 3;
-    }
-
-}
-
-
-/* =========================================================
-   1280 x 800
-========================================================= */
-
-@media screen
-and (min-width: 1150px)
-and (max-width: 1449px) {
-
-    .Coin {
-        display: block;
-
-        position: fixed;
-
-        right: 10px;
-        bottom: 5px;
-
-        width: 310px;
-        height: auto;
-
-        max-width: none;
-        max-height: 48vh;
-
-        object-fit: contain;
-
-        pointer-events: none;
-
-        z-index: 3;
-    }
-
-}
-
-
-/* =========================================================
-   1600 x 900
-========================================================= */
-
-@media screen
-and (min-width: 1450px)
-and (max-width: 1699px) {
-
-    .Coin {
-        display: block;
-
-        position: fixed;
-
-        right: 18px;
-        bottom: 5px;
-
-        width: 390px;
-        height: auto;
-
-        max-width: none;
-        max-height: 52vh;
-
-        object-fit: contain;
-
-        pointer-events: none;
-
-        z-index: 3;
-    }
-
-}
-
-
-/* =========================================================
-   1920 x 1080
-========================================================= */
-
-@media screen
-and (min-width: 1700px) {
-
-    .Coin {
-        display: block;
-
-        position: fixed;
-
-        right: 25px;
-        bottom: 10px;
-
-        width: 500px;
-        height: auto;
-
-        max-width: none;
-        max-height: 60vh;
-
-        object-fit: contain;
-
-        pointer-events: none;
-
-        z-index: 3;
-    }
-
 }

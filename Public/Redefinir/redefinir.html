@@ -3,97 +3,151 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Esqueci minha senha | DinControl</title>
-    <link rel="icon" type="image/png" href="../Assets/favicon.png">
-    <link
-        rel="stylesheet"
-        href="redefinir.css"
-    >
+    <meta name="theme-color" content="#040b1f">
+
+    <link rel="icon" type="image/png" href="/shared/img/favicon.png">
+    <link rel="apple-touch-icon" href="/shared/img/apple-touch-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+    <link rel="stylesheet" href="/shared/css/base.css">
 </head>
 
 <body>
 
-    <div class="conteudo-redefinir">
+    <div class="auth">
 
-        <!-- LOGO -->
-        <img
-            src="Assets/Logo.png"
-            alt="DinControl"
-            class="logo-dincontrol"
-        >
+        <!-- =========================================
+             MARCA
+        ========================================== -->
 
-        <!-- CAIXA REDEFINIR -->
-        <div class="redefinir">
+        <aside class="auth__marca">
 
-            <h1 class="titulo">
-                Redefina sua senha
-            </h1>
+            <img src="/shared/img/logo.png" alt="DinControl" class="auth__logo">
 
-            <form id="formRedef">
+            <div class="auth__chamada">
+                <span class="auth__selo">Recuperação de acesso</span>
 
-                <!-- EMAIL -->
-                <label for="email">
-                    Você receberá um código neste e-mail
-                </label>
+                <h2 class="auth__titulo">
+                    Recupere sua conta<br>
+                    <span>em poucos passos.</span>
+                </h2>
 
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Digite seu e-mail"
-                >
+                <p class="auth__texto">
+                    Enviaremos um código de 6 números para o e-mail cadastrado.
+                    Ele é válido por 10 minutos.
+                </p>
 
-                <button
-                    type="button"
-                    id="btnEnviarCodigo"
-                >
-                    Enviar Código
-                </button>
+                <ul class="auth__recursos">
+                    <li>
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#email"></use></svg>
+                        Receba o código no seu e-mail
+                    </li>
+                    <li>
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#escudo"></use></svg>
+                        Confirme o código recebido
+                    </li>
+                    <li>
+                        <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#cadeado"></use></svg>
+                        Crie uma nova senha
+                    </li>
+                </ul>
+            </div>
 
-                <!-- CÓDIGO -->
-                <div class="CampoC">
+            <img src="/shared/img/coin.png" alt="" class="auth__mascote">
 
-                    <label for="codigo">
-                        Digite o código recebido no e-mail
-                    </label>
+        </aside>
 
-                    <input
-                        type="text"
-                        id="codigo"
-                        placeholder="Digite o código"
-                        maxlength="6"
-                        inputmode="numeric"
-                    >
+        <!-- =========================================
+             FORMULÁRIO
+        ========================================== -->
 
-                    <button
-                        type="button"
-                        id="btnVerificarCodigo"
-                    >
-                        Verificar código
-                    </button>
+        <main class="auth__painel">
 
-                </div>
+            <img src="/shared/img/logo.png" alt="DinControl" class="auth__logo">
 
-                <!-- MENSAGEM -->
-                <p id="mensagem"></p>
+            <div class="auth-cartao">
 
-            </form>
+                <a href="/login/login.html" class="auth-voltar">
+                    <svg class="icone" aria-hidden="true"><use href="/shared/img/icones.svg#seta-esquerda"></use></svg>
+                    Voltar para o login
+                </a>
 
-        </div>
+                <h1 class="auth-cartao__titulo">Redefina sua senha</h1>
+                <p class="auth-cartao__subtitulo">Informe seu e-mail para receber o código de verificação.</p>
 
-        <!-- MASCOTE -->
-        <img
-            src="Assets/Coin.png"
-            alt="Coin"
-            class="Coin"
-        >
+                <form id="formRedef" novalidate>
+
+                    <!-- ETAPA 1: EMAIL -->
+                    <div class="etapa">
+                        <span class="etapa__numero">1</span>
+
+                        <label for="email" class="etapa__titulo campo__rotulo">
+                            Você receberá um código neste e-mail
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            class="entrada"
+                            placeholder="voce@email.com"
+                            autocomplete="email"
+                        >
+
+                        <button
+                            type="button"
+                            id="btnEnviarCodigo"
+                            class="botao botao--primario botao--bloco"
+                        >
+                            Enviar código
+                        </button>
+                    </div>
+
+                    <!-- ETAPA 2: CÓDIGO -->
+                    <div class="etapa">
+                        <span class="etapa__numero">2</span>
+
+                        <label for="codigo" class="etapa__titulo campo__rotulo">
+                            Digite o código recebido no e-mail
+                        </label>
+
+                        <input
+                            type="text"
+                            id="codigo"
+                            class="entrada entrada--codigo"
+                            placeholder="000000"
+                            maxlength="6"
+                            inputmode="numeric"
+                            autocomplete="one-time-code"
+                        >
+
+                        <button
+                            type="button"
+                            id="btnVerificarCodigo"
+                            class="botao botao--primario botao--bloco"
+                        >
+                            Verificar código
+                        </button>
+                    </div>
+
+                    <p id="mensagem" class="alerta"></p>
+
+                </form>
+
+            </div>
+
+            <p class="auth__creditos">© DinControl · Seu dinheiro, seu controle.</p>
+
+        </main>
 
     </div>
 
+    <script src="/shared/js/ui.js"></script>
     <script src="redefinir.js"></script>
 
 </body>

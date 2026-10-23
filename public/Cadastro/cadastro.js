@@ -14,110 +14,23 @@ const campoEmail =
 const campoSenha =
     document.querySelector("#senha");
 
-const botaoOlho =
-    document.querySelector("#toggleSenha");
+const botaoCriar =
+    document.querySelector("#botaoCriar");
 
 const mensagem =
     document.querySelector("#mensagem");
 
 
 // =====================================================
-// PERMITE APENAS NÚMEROS NA SENHA
+// SENHA: SOMENTE NÚMEROS, OLHO E REGRAS AO VIVO
 // =====================================================
 
-campoSenha.addEventListener("input", () => {
-
-    campoSenha.value =
-        campoSenha.value.replace(/\D/g, "");
-
-});
-
-
-// =====================================================
-// MOSTRAR / ESCONDER SENHA
-// =====================================================
-
-botaoOlho.addEventListener("click", () => {
-
-    campoSenha.type =
-        campoSenha.type === "password"
-            ? "text"
-            : "password";
-
-});
-
-
-// =====================================================
-// MOSTRAR MENSAGEM
-// =====================================================
-
-function mostrarMensagem(texto, sucesso = false) {
-
-    mensagem.textContent = texto;
-
-    mensagem.style.color =
-        sucesso
-            ? "#159447"
-            : "#e63946";
-
-}
-
-
-// =====================================================
-// VALIDAR SENHA
-// =====================================================
-
-function validarSenha(senha) {
-
-    // Apenas números
-    if (!/^\d+$/.test(senha)) {
-
-        mostrarMensagem(
-            "A senha deve conter somente números."
-        );
-
-        return false;
-
-    }
-
-
-    // Mínimo de 5 números
-    if (senha.length < 5) {
-
-        mostrarMensagem(
-            "A senha deve conter no mínimo 5 números."
-        );
-
-        return false;
-
-    }
-
-
-    // Não permite números repetidos
-    const numeros =
-        senha.split("");
-
-    const numerosUnicos =
-        new Set(numeros);
-
-
-    if (
-        numerosUnicos.size !==
-        numeros.length
-    ) {
-
-        mostrarMensagem(
-            "A senha não pode conter números repetidos."
-        );
-
-        return false;
-
-    }
-
-
-    return true;
-
-}
+permitirSomenteNumeros(campoSenha, 10);
+configurarOlhosSenha();
+configurarRegrasSenha(
+    campoSenha,
+    document.querySelector("#regrasSenha")
+);
 
 
 // =====================================================
@@ -129,7 +42,6 @@ formulario.addEventListener(
     async (event) => {
 
         event.preventDefault();
-
 
         const nome =
             campoNome.value.trim();
@@ -152,7 +64,9 @@ formulario.addEventListener(
         ) {
 
             mostrarMensagem(
-                "Preencha todos os campos."
+                mensagem,
+                "Preencha todos os campos.",
+                "erro"
             );
 
             return;
@@ -164,12 +78,21 @@ formulario.addEventListener(
         // VALIDAR SENHA
         // =============================================
 
-        if (!validarSenha(senha)) {
+        const erroSenha =
+            validarSenhaNumerica(senha);
+
+        if (erroSenha) {
+
+            mostrarMensagem(mensagem, erroSenha, "erro");
+            campoSenha.focus();
 
             return;
 
         }
 
+
+        limparMensagem(mensagem);
+        definirCarregando(botaoCriar, true, "Criando conta...");
 
         try {
 
@@ -205,17 +128,18 @@ formulario.addEventListener(
             if (resposta.ok) {
 
                 mostrarMensagem(
-                    "Conta criada com sucesso!",
-                    true
+                    mensagem,
+                    "Conta criada com sucesso! Redirecionando para o login...",
+                    "sucesso"
                 );
 
-
-                console.log(resultado);
-
-
-                // Limpa formulário
                 formulario.reset();
+                campoSenha.dispatchEvent(new Event("input"));
 
+                setTimeout(() => {
+                    window.location.href =
+                        "/login/login.html";
+                }, 1800);
 
                 return;
 
@@ -227,8 +151,10 @@ formulario.addEventListener(
             // =========================================
 
             mostrarMensagem(
+                mensagem,
                 resultado.erro ||
-                "Erro ao criar conta."
+                "Erro ao criar conta.",
+                "erro"
             );
 
 
@@ -241,10 +167,14 @@ formulario.addEventListener(
 
 
             mostrarMensagem(
-                "Erro ao conectar com o servidor."
+                mensagem,
+                "Erro ao conectar com o servidor.",
+                "erro"
             );
 
         }
+
+        definirCarregando(botaoCriar, false);
 
     }
 );

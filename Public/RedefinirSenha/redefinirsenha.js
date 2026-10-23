@@ -2,13 +2,12 @@
 // ELEMENTOS
 // =====================================================
 
+const formulario = document.getElementById("formRedefinirSenha");
+
 const novaSenhaInput = document.getElementById("novaSenha");
 const confirmarSenhaInput = document.getElementById("confirmarSenha");
 
 const btnRedefinirSenha = document.getElementById("btnRedefinirSenha");
-
-const olhoNovaSenha = document.getElementById("olhoNovaSenha");
-const olhoConfirmarSenha = document.getElementById("olhoConfirmarSenha");
 
 const mensagem = document.getElementById("mensagem");
 
@@ -32,32 +31,32 @@ if (!email || !resetToken) {
 
 
 // =====================================================
-// PERMITE SOMENTE NÚMEROS
+// CAMPOS DE SENHA
 // =====================================================
 
-function permitirSomenteNumeros(input) {
-    input.value = input.value.replace(/\D/g, "");
-}
+permitirSomenteNumeros(novaSenhaInput);
+permitirSomenteNumeros(confirmarSenhaInput);
 
-novaSenhaInput.addEventListener("input", () => {
-    permitirSomenteNumeros(novaSenhaInput);
-});
-
-confirmarSenhaInput.addEventListener("input", () => {
-    permitirSomenteNumeros(confirmarSenhaInput);
-});
+configurarOlhosSenha();
+configurarRegrasSenha(
+    novaSenhaInput,
+    document.getElementById("regrasSenha")
+);
 
 
 // =====================================================
-// BOTÃO REDEFINIR SENHA
+// REDEFINIR SENHA
 // =====================================================
 
-btnRedefinirSenha.addEventListener("click", async () => {
+formulario.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
     const novaSenha = novaSenhaInput.value.trim();
     const confirmarSenha = confirmarSenhaInput.value.trim();
 
     if (!novaSenha || !confirmarSenha) {
         mostrarMensagem(
+            mensagem,
             "Preencha os dois campos.",
             "erro"
         );
@@ -65,41 +64,17 @@ btnRedefinirSenha.addEventListener("click", async () => {
         return;
     }
 
-    if (!/^\d+$/.test(novaSenha)) {
-        mostrarMensagem(
-            "A senha deve conter somente números.",
-            "erro"
-        );
+    const erroSenha = validarSenhaNumerica(novaSenha);
 
-        novaSenhaInput.focus();
-        return;
-    }
-
-    if (novaSenha.length < 5) {
-        mostrarMensagem(
-            "A senha deve conter no mínimo 5 números.",
-            "erro"
-        );
-
-        novaSenhaInput.focus();
-        return;
-    }
-
-    const numeros = novaSenha.split("");
-    const numerosUnicos = new Set(numeros);
-
-    if (numerosUnicos.size !== numeros.length) {
-        mostrarMensagem(
-            "A senha não pode conter números repetidos.",
-            "erro"
-        );
-
+    if (erroSenha) {
+        mostrarMensagem(mensagem, erroSenha, "erro");
         novaSenhaInput.focus();
         return;
     }
 
     if (novaSenha !== confirmarSenha) {
         mostrarMensagem(
+            mensagem,
             "As senhas não são iguais.",
             "erro"
         );
@@ -108,15 +83,10 @@ btnRedefinirSenha.addEventListener("click", async () => {
         return;
     }
 
+    limparMensagem(mensagem);
+    definirCarregando(btnRedefinirSenha, true, "Redefinindo...");
+
     try {
-        btnRedefinirSenha.disabled = true;
-        btnRedefinirSenha.textContent = "Redefinindo...";
-
-        mostrarMensagem(
-            "Alterando sua senha...",
-            "normal"
-        );
-
         const resposta = await fetch(
             "/forgot-password/reset-password",
             {
@@ -138,16 +108,19 @@ btnRedefinirSenha.addEventListener("click", async () => {
 
         if (!resposta.ok) {
             mostrarMensagem(
+                mensagem,
                 resultado.erro ||
                 "Erro ao redefinir senha.",
                 "erro"
             );
 
+            definirCarregando(btnRedefinirSenha, false);
             return;
         }
 
         mostrarMensagem(
-            "Senha redefinida com sucesso!",
+            mensagem,
+            "Senha redefinida com sucesso! Redirecionando para o login...",
             "sucesso"
         );
 
@@ -166,54 +139,11 @@ btnRedefinirSenha.addEventListener("click", async () => {
         );
 
         mostrarMensagem(
+            mensagem,
             "Erro ao conectar com o servidor.",
             "erro"
         );
 
-    } finally {
-        btnRedefinirSenha.disabled = false;
-        btnRedefinirSenha.textContent =
-            "Redefinir sua senha";
+        definirCarregando(btnRedefinirSenha, false);
     }
-});
-
-
-// =====================================================
-// MENSAGEM
-// =====================================================
-
-function mostrarMensagem(texto, tipo) {
-    mensagem.textContent = texto;
-
-    if (tipo === "erro") {
-        mensagem.style.color = "#e63946";
-        return;
-    }
-
-    if (tipo === "sucesso") {
-        mensagem.style.color = "#159447";
-        return;
-    }
-
-    mensagem.style.color = "#555555";
-}
-
-
-// =====================================================
-// MOSTRAR / ESCONDER SENHAS
-// =====================================================
-
-function alternarVisibilidadeSenha(input) {
-    input.type =
-        input.type === "password"
-            ? "text"
-            : "password";
-}
-
-olhoNovaSenha.addEventListener("click", () => {
-    alternarVisibilidadeSenha(novaSenhaInput);
-});
-
-olhoConfirmarSenha.addEventListener("click", () => {
-    alternarVisibilidadeSenha(confirmarSenhaInput);
 });
