@@ -1,264 +1,178 @@
 /* =====================================================
-   DINCONTROL - MODAL
-   Caixa padrão do app: fundo #07598c, cantos
-   arredondados e sombra escura sobre um fundo escurecido.
-   Usada nas telas de Listas/Anotações e no
-   "Nova Transação" da tela Principal.
+   MODAL
+   As classes rotulo/campo/erro/texto/opcao-modal também são
+   usadas pelo conteúdo que cada tela coloca dentro do modal.
 ===================================================== */
 
 .fundo-modal {
     position: fixed;
-
     inset: 0;
+    z-index: 90;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    padding: 20px;
+    padding: 16px;
 
-    background-color:
-        rgba(0, 0, 0, 0.55);
+    background: rgba(2, 6, 20, 0.66);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
 
-    z-index: 900;
+    animation: aparecer 160ms ease;
 }
-
 
 .modal {
-    width: min(370px, 100%);
+    width: 100%;
+    max-width: 440px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
 
-    padding: 22px 22px 18px;
+    padding: 24px;
 
-    background-color: #07598c;
+    border-radius: var(--raio-lg);
+    border: 1px solid var(--borda-forte);
+    background: var(--superficie-forte);
+    box-shadow: var(--sombra-lg);
 
-    border-radius: 14px;
+    color: var(--texto);
 
-    box-shadow:
-        0 6px 18px
-        rgba(0, 0, 0, 0.35);
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    color: #ffffff;
+    animation: surgir 180ms ease;
 }
 
+@keyframes aparecer {
+    from {
+        opacity: 0;
+    }
+}
+
+@keyframes surgir {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+    }
+}
+
+.cabecalho-modal {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
 
 .titulo-modal {
-    margin-bottom: 16px;
-
-    text-align: center;
-
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 700;
+    line-height: 1.3;
 }
 
+.descricao-modal {
+    margin-top: 4px;
+
+    font-size: 14px;
+    color: var(--texto-suave);
+}
+
+.fechar-modal {
+    margin: -8px -8px 0 0;
+}
 
 .corpo-modal {
     display: flex;
     flex-direction: column;
 
-    gap: 10px;
-
-    margin-bottom: 18px;
+    margin-top: 20px;
 }
-
-
-/* =====================================================
-   CAMPOS
-===================================================== */
-
-.rotulo-modal {
-    font-size: 13px;
-
-    color:
-        rgba(255, 255, 255, 0.85);
-}
-
-
-.campo-modal {
-    width: 100%;
-
-    height: 40px;
-
-    padding: 0 12px;
-
-    border: none;
-    border-radius: 8px;
-
-    outline: none;
-
-    background-color: #e5e5e5;
-
-    color: #333333;
-
-    font-size: 15px;
-    font-family: inherit;
-}
-
-
-.texto-modal {
-    font-size: 14px;
-
-    line-height: 1.45;
-
-    color:
-        rgba(255, 255, 255, 0.9);
-
-    text-align: center;
-}
-
-
-.erro-modal {
-    font-size: 13px;
-
-    color: #ffb4b0;
-}
-
-
-/* =====================================================
-   OPÇÕES (O QUE DESEJA CRIAR?)
-===================================================== */
-
-.opcao-modal {
-    width: 100%;
-
-    padding: 13px 15px;
-
-    border: none;
-    border-radius: 10px;
-
-    background-color:
-        rgba(255, 255, 255, 0.12);
-
-    color: #ffffff;
-
-    font-size: 15px;
-    font-weight: 600;
-    font-family: inherit;
-
-    text-align: left;
-
-    cursor: pointer;
-
-    transition:
-        background-color 0.2s ease,
-        transform 0.2s ease;
-}
-
-
-.opcao-modal:hover {
-    background-color:
-        rgba(255, 255, 255, 0.22);
-
-    transform: translateY(-1px);
-}
-
-
-/* =====================================================
-   AÇÕES
-===================================================== */
 
 .acoes-modal {
     display: flex;
-
     justify-content: flex-end;
-
     gap: 10px;
-}
 
-
-.botao-cancelar,
-.botao-confirmar {
-    min-width: 96px;
-
-    height: 38px;
-
-    padding: 0 14px;
-
-    border-radius: 9px;
-
-    font-size: 14px;
-    font-weight: 600;
-    font-family: inherit;
-
-    cursor: pointer;
-
-    transition:
-        background-color 0.2s ease,
-        transform 0.2s ease;
-}
-
-
-.botao-cancelar {
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.45);
-
-    background-color: transparent;
-
-    color: #ffffff;
-}
-
-
-.botao-cancelar:hover {
-    background-color:
-        rgba(255, 255, 255, 0.15);
-}
-
-
-.botao-confirmar {
-    border: none;
-
-    background-color: #ffffff;
-
-    color: #07598c;
-}
-
-
-.botao-confirmar:hover:not(:disabled) {
-    transform: scale(1.03);
-}
-
-
-.botao-confirmar:disabled {
-    opacity: 0.55;
-
-    cursor: not-allowed;
-}
-
-
-.botao-confirmar.perigo {
-    background-color: #d93a33;
-
-    color: #ffffff;
+    margin-top: 24px;
 }
 
 
 /* =====================================================
-   CELULAR
+   CONTEÚDO
 ===================================================== */
 
-@media screen
-and (max-width: 400px) {
+.rotulo-modal {
+    margin-bottom: 6px;
 
-    .modal {
-        padding: 18px 16px 15px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.campo-modal {
+    composes: entrada from global;
+}
+
+.erro-modal {
+    margin-top: 12px;
+
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #ffb4bd;
+}
+
+.texto-modal {
+    font-size: 14px;
+    color: var(--texto-suave);
+}
+
+.opcao-modal {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    width: 100%;
+    padding: 14px 16px;
+
+    border-radius: var(--raio);
+    border: 1px solid var(--borda);
+    background: rgba(255, 255, 255, 0.04);
+
+    font-size: 15px;
+    font-weight: 600;
+    text-align: left;
+
+    transition: background-color var(--transicao), border-color var(--transicao);
+}
+
+.opcao-modal + .opcao-modal {
+    margin-top: 10px;
+}
+
+.opcao-modal:hover {
+    border-color: var(--borda-forte);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.opcao-modal .icone {
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+
+    border-radius: 10px;
+    color: var(--azul-ciano);
+    background: rgba(0, 194, 255, 0.12);
+}
+
+.opcao-modal small {
+    display: block;
+
+    font-size: 12.5px;
+    font-weight: 400;
+    color: var(--texto-fraco);
+}
+
+@media (max-width: 480px) {
+    .acoes-modal {
+        flex-direction: column-reverse;
     }
 
-
-    .titulo-modal {
-        font-size: 16px;
+    .acoes-modal :global(.botao) {
+        width: 100%;
     }
-
-
-    .botao-cancelar,
-    .botao-confirmar {
-        min-width: 0;
-
-        flex: 1;
-    }
-
 }

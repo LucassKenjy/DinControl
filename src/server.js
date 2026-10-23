@@ -36,6 +36,16 @@ app.use(
 // FUNÇÕES AUXILIARES
 // =====================================================
 
+function escaparHtml(texto) {
+    return String(texto)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+
 function normalizarEmail(email) {
     return String(email)
         .trim()
@@ -102,6 +112,35 @@ function possuiSequenciaNumerica(senha) {
     }
 
     return false;
+}
+
+
+const TIPOS_TRANSACAO = ["ENTRADA", "SAIDA"];
+
+function validarDadosTransacao(tipo, valor, categoria) {
+    if (
+        !tipo ||
+        valor === undefined ||
+        !categoria
+    ) {
+        return "Dados da transação incompletos";
+    }
+
+    if (!TIPOS_TRANSACAO.includes(tipo)) {
+        return "Tipo de transação inválido";
+    }
+
+    const numero = Number(valor);
+
+    if (!Number.isFinite(numero) || numero <= 0) {
+        return "Valor da transação inválido";
+    }
+
+    if (String(categoria).trim().length > 50) {
+        return "Categoria inválida";
+    }
+
+    return null;
 }
 
 
@@ -760,14 +799,16 @@ app.post(
                 categoria
             } = req.body;
 
-            if (
-                !tipo ||
-                valor === undefined ||
-                !categoria
-            ) {
+            const erroValidacao =
+                validarDadosTransacao(
+                    tipo,
+                    valor,
+                    categoria
+                );
+
+            if (erroValidacao) {
                 return res.status(400).json({
-                    erro:
-                        "Dados da transação incompletos"
+                    erro: erroValidacao
                 });
             }
 
@@ -843,14 +884,16 @@ app.put(
                 categoria
             } = req.body;
 
-            if (
-                !tipo ||
-                valor === undefined ||
-                !categoria
-            ) {
+            const erroValidacao =
+                validarDadosTransacao(
+                    tipo,
+                    valor,
+                    categoria
+                );
+
+            if (erroValidacao) {
                 return res.status(400).json({
-                    erro:
-                        "Dados incompletos"
+                    erro: erroValidacao
                 });
             }
 
@@ -2334,58 +2377,42 @@ app.post(
                     "Código para redefinir sua senha - DinControl",
 
                 html: `
-                    <div
-                        style="
-                            font-family: Arial, sans-serif;
-                            max-width: 500px;
-                            margin: auto;
-                            padding: 30px;
-                        "
-                    >
-                        <h2 style="color: #0d6efd;">
-                            DinControl
-                        </h2>
+                    <div style="background:#040b1f;padding:32px 16px;font-family:Arial,Helvetica,sans-serif;">
+                        <div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;">
 
-                        <p>
-                            Olá, ${usuario.nome}.
-                        </p>
+                            <div style="background-color:#1f6bff;background:linear-gradient(135deg,#00c2ff,#1f6bff);padding:22px 28px;">
+                                <span style="font-size:22px;font-weight:bold;color:#ffffff;letter-spacing:-0.5px;">
+                                    DinControl
+                                </span>
+                                <div style="font-size:11px;color:#e6f3ff;letter-spacing:2px;margin-top:2px;">
+                                    SEU DINHEIRO, SEU CONTROLE.
+                                </div>
+                            </div>
 
-                        <p>
-                            Recebemos uma solicitação
-                            para redefinir sua senha.
-                        </p>
+                            <div style="padding:28px;color:#0b1530;font-size:15px;line-height:1.5;">
+                                <p style="margin:0 0 12px;">
+                                    Olá, ${escaparHtml(usuario.nome)}.
+                                </p>
 
-                        <p>
-                            Seu código de verificação é:
-                        </p>
+                                <p style="margin:0 0 20px;color:#5b6785;">
+                                    Recebemos uma solicitação para redefinir sua senha.
+                                    Use o código abaixo para continuar:
+                                </p>
 
-                        <div
-                            style="
-                                font-size: 32px;
-                                font-weight: bold;
-                                letter-spacing: 8px;
-                                margin: 25px 0;
-                                color: #0d6efd;
-                            "
-                        >
-                            ${codigo}
+                                <div style="text-align:center;font-size:32px;font-weight:bold;letter-spacing:10px;color:#1f6bff;background:#edf2ff;border-radius:12px;padding:18px 0;">
+                                    ${codigo}
+                                </div>
+
+                                <p style="margin:20px 0 0;color:#5b6785;">
+                                    Este código é válido por <strong style="color:#0b1530;">10 minutos</strong>.
+                                </p>
+                            </div>
+
+                            <div style="padding:16px 28px;border-top:1px solid #e6ebf5;color:#8792ab;font-size:12px;">
+                                Se você não solicitou a redefinição de senha, ignore este e-mail.
+                            </div>
+
                         </div>
-
-                        <p>
-                            Este código é válido por
-                            <strong>10 minutos</strong>.
-                        </p>
-
-                        <p
-                            style="
-                                color: #777777;
-                                font-size: 12px;
-                            "
-                        >
-                            Se você não solicitou
-                            a redefinição de senha,
-                            ignore este e-mail.
-                        </p>
                     </div>
                 `
             });

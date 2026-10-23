@@ -1,7 +1,13 @@
 import type { ChartOptions } from 'chart.js'
-import { formatarEixoMoeda } from './formatters'
+import { formatarEixoMoeda, formatarMoeda } from './formatters'
 
-type CartesianScales = ChartOptions<'bar'>['scales']
+export const CORES_GRAFICO = {
+  entrada: '#22c55e',
+  saida: '#f5475a',
+  investimento: '#8b9bff',
+  texto: '#9fb0d6',
+  grade: 'rgba(148, 177, 255, 0.08)',
+}
 
 export function calcularLimiteMaximo(valores: number[]): number {
   const maiorValor = Math.max(...valores)
@@ -15,45 +21,45 @@ export function calcularLimiteMaximo(valores: number[]): number {
   return Math.max(limite, 1000)
 }
 
-export function obterPaddingGrafico(compacto: boolean) {
-  return {
-    left: compacto ? 2 : 5,
-    right: compacto ? 2 : 5,
-    top: compacto ? 0 : 3,
-    bottom: compacto ? 0 : 3,
-  }
-}
+/** Opções compartilhadas pelos gráficos de barras (mensal e investimento). */
+export function opcoesBarras(limiteMaximo: number): ChartOptions<'bar'> {
+  const celular = window.innerWidth < 560
 
-export function obterEixosGrafico(limiteMaximo: number, compacto: boolean): CartesianScales {
   return {
-    x: {
-      grid: {
-        display: false,
-      },
-      ticks: {
-        color: '#ffffff',
-        maxRotation: 0,
-        minRotation: 0,
-        autoSkip: false,
-        padding: compacto ? 2 : 5,
-        font: {
-          size: compacto ? 7 : 10,
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: 500 },
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label(context) {
+            return ` ${context.dataset.label}: ${formatarMoeda(Number(context.raw))}`
+          },
         },
       },
     },
-    y: {
-      beginAtZero: true,
-      max: limiteMaximo,
-      grid: {
-        color: 'rgba(255,255,255,0.08)',
-      },
-      ticks: {
-        color: '#ffffff',
-        stepSize: limiteMaximo / 5,
-        font: {
-          size: compacto ? 7 : 9,
+    scales: {
+      x: {
+        grid: { display: false },
+        border: { display: false },
+        ticks: {
+          maxRotation: 0,
+          autoSkip: false,
+          font: { size: celular ? 10 : 12 },
         },
-        callback: formatarEixoMoeda,
+      },
+      y: {
+        beginAtZero: true,
+        max: limiteMaximo,
+        border: { display: false },
+        grid: { color: CORES_GRAFICO.grade },
+        ticks: {
+          stepSize: limiteMaximo / 5,
+          callback: (valor) =>
+            formatarEixoMoeda(Number(valor), Math.abs(Number(valor)) >= 10000),
+        },
       },
     },
   }

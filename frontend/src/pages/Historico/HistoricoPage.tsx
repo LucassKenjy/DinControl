@@ -1,24 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
 import styles from './HistoricoPage.module.css'
+import { AppLayout } from '../../components/layout/AppLayout'
 import { LoadingScreen } from '../../components/layout/LoadingScreen'
-import { AppLogo } from '../../components/layout/AppLogo'
-import { AppCoin } from '../../components/layout/AppCoin'
-import { NavMenu } from '../../components/layout/NavMenu'
-import { ProfileButton } from '../../components/layout/ProfileButton'
 import { HistoryFilters } from '../../components/transactions/HistoryFilters'
 import type { HistoryFiltersValue } from '../../components/transactions/HistoryFilters'
 import { TransactionHistory } from '../../components/transactions/TransactionHistory'
-import { useAuth } from '../../context/AuthContext'
-import { useFotoPerfil } from '../../utils/useFotoPerfil'
 import { buscarTransacoes } from '../../api/transactions'
 import { formatarMoeda, normalizarTipo } from '../../utils/formatters'
 import type { Transaction } from '../../types/transaction'
 
 export function HistoricoPage() {
-  const { usuario } = useAuth()
-  const { fotoSrc } = useFotoPerfil(usuario?.id ?? null)
-
   const [transacoes, setTransacoes] = useState<Transaction[]>([])
+  const [carregando, setCarregando] = useState(true)
   const [erroCarregamento, setErroCarregamento] = useState(false)
   const [filtros, setFiltros] = useState<HistoryFiltersValue>(() => ({
     tipo: 'todos',
@@ -39,6 +32,8 @@ export function HistoricoPage() {
       } catch (erro) {
         console.error('Erro ao carregar histórico:', erro)
         setErroCarregamento(true)
+      } finally {
+        setCarregando(false)
       }
     }
 
@@ -99,76 +94,76 @@ export function HistoricoPage() {
     setTransacoes((estado) => estado.filter((transacao) => transacao.id !== id))
   }
 
+  const vazio = !erroCarregamento && transacoesFiltradas.length === 0
+
   return (
     <>
-      <LoadingScreen atraso={0} estilizado={false} />
+      {carregando ? <LoadingScreen /> : null}
 
-      <div className={styles['pagina-historico']}>
-        <AppLogo />
+      <AppLayout
+        titulo="Histórico"
+        subtitulo="Todas as suas movimentações, organizadas por dia."
+        acoes={
+          <HistoryFilters
+            className={styles.filtros}
+            valor={filtros}
+            categoriasDisponiveis={categoriasDisponiveis}
+            onChange={setFiltros}
+          />
+        }
+      >
+        <section className={styles.resumo} aria-label="Resumo do período">
+          <article className={`cartao ${styles['resumo-box']}`}>
+            <span className={styles['resumo-titulo']}>Entrada</span>
+            <strong className={`${styles['resumo-valor']} numero texto-entrada`} id="resumoEntrada">
+              {formatarMoeda(resumo.entrada)}
+            </strong>
+          </article>
 
-        <ProfileButton
-          styles={styles}
-          nome={usuario?.nome ?? 'Usuário'}
-          fotoSrc={fotoSrc}
-        />
+          <article className={`cartao ${styles['resumo-box']}`}>
+            <span className={styles['resumo-titulo']}>Saída</span>
+            <strong className={`${styles['resumo-valor']} numero texto-saida`} id="resumoSaida">
+              {formatarMoeda(resumo.saida)}
+            </strong>
+          </article>
 
-        <NavMenu styles={styles} paginaAtiva="historico" />
+          <article className={`cartao ${styles['resumo-box']}`}>
+            <span className={styles['resumo-titulo']}>Saldo</span>
+            <strong
+              className={`${styles['resumo-valor']} numero ${resumo.saldo >= 0 ? 'texto-entrada' : 'texto-saida'}`}
+              id="resumoSaldo"
+            >
+              {formatarMoeda(resumo.saldo)}
+            </strong>
+          </article>
+        </section>
 
-        <main className={styles['card-historico']}>
-          <div className={styles['cabecalho-historico']}>
-            <h1>HISTÓRICO</h1>
-
-            <HistoryFilters
-              styles={styles}
-              valor={filtros}
-              categoriasDisponiveis={categoriasDisponiveis}
-              onChange={setFiltros}
-            />
-          </div>
-
-          <div className={styles['resumo-historico']}>
-            <div className={styles['resumo-box']}>
-              <span className={styles['resumo-titulo']}>Entrada</span>
-              <strong className={styles['valor-entrada']} id="resumoEntrada">
-                {formatarMoeda(resumo.entrada)}
-              </strong>
-            </div>
-
-            <div className={styles['resumo-box']}>
-              <span className={styles['resumo-titulo']}>Saída</span>
-              <strong className={styles['valor-saida']} id="resumoSaida">
-                {formatarMoeda(resumo.saida)}
-              </strong>
-            </div>
-
-            <div className={styles['resumo-box']}>
-              <span className={styles['resumo-titulo']}>Saldo</span>
-              <strong
-                className={styles['valor-saldo']}
-                id="resumoSaldo"
-                style={{ color: resumo.saldo >= 0 ? '#00ff26' : '#ff0000' }}
-              >
-                {formatarMoeda(resumo.saldo)}
-              </strong>
-            </div>
-          </div>
-
-          <div className={styles['cabecalho-tabela']}>
-            <span>Valor</span>
-            <span>Tipo</span>
+        <section className={`cartao ${styles['card-historico']}`}>
+          <div className={styles['cabecalho-tabela']} aria-hidden="true">
             <span>Categoria</span>
+            <span>Tipo</span>
             <span>Horário</span>
+            <span>Valor</span>
+            <span />
           </div>
 
-          {erroCarregamento ? (
-            <div className={styles['sem-transacoes']}>Erro ao carregar o histórico.</div>
+          {erroCarregamento || vazio ? (
+            <div className={styles['sem-transacoes']}>
+              <img src="/assets/Coin.png" alt="" className={styles.mascote} />
+              <p className={styles['sem-transacoes-titulo']}>
+                {erroCarregamento ? 'Erro ao carregar o histórico.' : 'Nenhuma transação encontrada.'}
+              </p>
+              <p className={styles['sem-transacoes-texto']}>
+                {erroCarregamento
+                  ? 'Verifique sua conexão e recarregue a página.'
+                  : 'Tente mudar os filtros ou registre uma nova transação no início.'}
+              </p>
+            </div>
           ) : (
             <TransactionHistory styles={styles} transacoes={transacoesFiltradas} onDeleted={aoExcluir} />
           )}
-        </main>
-
-        <AppCoin />
-      </div>
+        </section>
+      </AppLayout>
     </>
   )
 }

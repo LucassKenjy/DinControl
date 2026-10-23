@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import styles from './LoginPage.module.css'
-import { LoadingScreen } from '../../components/layout/LoadingScreen'
-import { AuthLogo } from '../../components/layout/AuthLogo'
-import { AuthCoin } from '../../components/layout/AuthCoin'
+import { AuthLayout } from '../../components/layout/AuthLayout'
+import { CampoSenha } from '../../components/ui/CampoSenha'
+import { Mensagem } from '../../components/ui/Mensagem'
 import { login } from '../../api/auth'
 import { ApiError } from '../../api/client'
 import { useAuth } from '../../context/AuthContext'
@@ -15,12 +14,19 @@ export function LoginPage() {
 
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
-  const [senhaVisivel, setSenhaVisivel] = useState(false)
   const [mensagem, setMensagem] = useState('')
+  const [enviando, setEnviando] = useState(false)
 
   async function aoEnviar(event: FormEvent) {
     event.preventDefault()
     setMensagem('')
+
+    if (!email.trim() || !senha.trim()) {
+      setMensagem('Preencha e-mail e senha.')
+      return
+    }
+
+    setEnviando(true)
 
     try {
       const resultado = await login({
@@ -34,74 +40,71 @@ export function LoginPage() {
       setMensagem(
         erro instanceof ApiError ? erro.message : 'Erro ao conectar com o servidor.',
       )
+      setEnviando(false)
     }
   }
 
   return (
-    <>
-      <LoadingScreen estilizado={false} />
+    <AuthLayout
+      selo="Controle financeiro pessoal"
+      titulo="Seu dinheiro,"
+      destaque="seu controle."
+      texto="Acompanhe entradas, saídas e investimentos em um só lugar."
+      recursos={[
+        { icone: 'grafico', texto: 'Saldo e gráficos sempre atualizados' },
+        { icone: 'lista', texto: 'Listas e anotações junto com suas finanças' },
+        { icone: 'escudo', texto: 'Senha criptografada e sessão segura' },
+      ]}
+    >
+      <h1 className="auth-titulo">Seja bem-vindo(a)</h1>
+      <p className="auth-subtitulo">Faça login para continuar</p>
 
-      <div className={styles['conteudo-login']}>
-        <AuthLogo />
+      <form id="formLogin" onSubmit={aoEnviar} noValidate>
+        <div className="campo">
+          <label htmlFor="email" className="campo__rotulo">E-mail</label>
 
-        <div className={styles.login}>
-          <h1 className={styles.T}>Seja Bem Vindo(a)</h1>
-          <p className={styles.SBT}>Faça login para continuar</p>
-
-          <form id="formLogin" className={styles.formLogin} onSubmit={aoEnviar}>
-            <label htmlFor="email">Email</label>
-
-            <input
-              type="email"
-              id="email"
-              placeholder="Digite seu email"
-              required
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-            />
-
-            <div className={styles['linha-senha']}>
-              <label htmlFor="senha">Senha</label>
-
-              <div className={styles.Esqueci}>
-                <Link to="/redefinir">Esqueceu sua senha?</Link>
-              </div>
-            </div>
-
-            <div className={styles.CampoSenha}>
-              <input
-                type={senhaVisivel ? 'text' : 'password'}
-                id="senha"
-                placeholder="Digite sua senha"
-                value={senha}
-                onChange={(event) => setSenha(event.target.value)}
-              />
-
-              <button
-                type="button"
-                className={styles['botao-olho']}
-                onClick={() => setSenhaVisivel((valor) => !valor)}
-              >
-                <img src="/assets/olho.png" alt="Mostrar senha" />
-              </button>
-            </div>
-
-            <button className={styles['botao-entrar']} type="submit">
-              Entrar
-            </button>
-
-            <p className={styles['login-link']}>
-              Não possui uma conta? <Link to="/cadastro">Cadastre-se</Link>
-            </p>
-          </form>
-
-          <p id="mensagem" className={styles.mensagem}>
-            {mensagem}
-          </p>
+          <input
+            type="email"
+            id="email"
+            className="entrada"
+            placeholder="voce@email.com"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
         </div>
-      </div>
 
-      <AuthCoin />
-    </>
+        <div className="campo">
+          <div className="campo__topo">
+            <label htmlFor="senha" className="campo__rotulo">Senha</label>
+            <Link to="/redefinir" className="campo__link">Esqueceu sua senha?</Link>
+          </div>
+
+          <CampoSenha
+            id="senha"
+            placeholder="Digite sua senha"
+            autoComplete="current-password"
+            value={senha}
+            onChange={(event) => setSenha(event.target.value)}
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="botao botao--primario botao--bloco auth-enviar"
+          disabled={enviando}
+        >
+          {enviando ? <span className="spinner" aria-hidden="true" /> : null}
+          {enviando ? 'Entrando...' : 'Entrar'}
+        </button>
+
+        <Mensagem id="mensagem" texto={mensagem} tipo="erro" />
+      </form>
+
+      <p className="auth-rodape">
+        Não possui uma conta? <Link to="/cadastro">Cadastre-se</Link>
+      </p>
+    </AuthLayout>
   )
 }

@@ -2,12 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styles from './Anotacoes.module.css'
 import { LayoutAnotacoes } from '../../components/anotacoes/LayoutAnotacoes'
-import {
-  IconeCheck,
-  IconeLapis,
-  IconeLixeira,
-  IconeVoltar,
-} from '../../components/anotacoes/Icones'
+import { Icone } from '../../components/ui/Icone'
 import { Modal } from '../../components/ui/Modal'
 import modalStyles from '../../components/ui/Modal.module.css'
 import { useFeedback } from '../../utils/useFeedback'
@@ -208,76 +203,86 @@ export function ListaPage() {
     }
   }
 
+  const concluidos = itens.filter((item) => item.completed).length
+
+  const titulo = editandoTitulo ? (
+    <input
+      className={`entrada ${styles['campo-titulo']}`}
+      type="text"
+      maxLength={120}
+      autoFocus
+      aria-label="Nome da lista"
+      value={tituloEditado}
+      onChange={(evento) => setTituloEditado(evento.target.value)}
+      onBlur={salvarTitulo}
+      onKeyDown={(evento) => {
+        if (evento.key === 'Enter') {
+          evento.currentTarget.blur()
+        }
+
+        if (evento.key === 'Escape') {
+          setEditandoTitulo(false)
+        }
+      }}
+    />
+  ) : carregando ? (
+    'Carregando...'
+  ) : indisponivel ? (
+    'Lista não encontrada'
+  ) : (
+    nome
+  )
+
   return (
     <>
       <LayoutAnotacoes
         feedback={feedback}
         colunaUnica
+        titulo={titulo}
+        voltar={{ para: '/anotacoes', texto: 'Voltar para Listas e Anotações' }}
         acoes={
-          indisponivel ? null : (
-            <button
-              type="button"
-              className={styles['botao-acao']}
-              aria-label="Adicionar item"
-              onClick={() => {
-                setTextoNovoItem('')
-                setErroModal('')
-                setCriandoItem(true)
-              }}
-            >
-              +
-            </button>
+          indisponivel || carregando ? null : (
+            <>
+              {!editandoTitulo ? (
+                <button
+                  type="button"
+                  className="botao botao--secundario"
+                  onClick={() => {
+                    setTituloEditado(nome)
+                    setEditandoTitulo(true)
+                  }}
+                >
+                  <Icone nome="lapis" />
+                  Renomear
+                </button>
+              ) : null}
+
+              <button
+                type="button"
+                className="botao botao--primario"
+                onClick={() => {
+                  setTextoNovoItem('')
+                  setErroModal('')
+                  setCriandoItem(true)
+                }}
+              >
+                <Icone nome="mais" />
+                Adicionar item
+              </button>
+            </>
           )
         }
       >
-        <section className={styles.card}>
+        <section className={`cartao ${styles.card}`}>
           <div className={styles['cabecalho-card']}>
-            <button
-              type="button"
-              className={styles['botao-icone']}
-              aria-label="Voltar para Listas e Anotações"
-              onClick={() => navigate('/anotacoes')}
-            >
-              <IconeVoltar />
-            </button>
+            <span className={styles['icone-card']}>
+              <Icone nome="lista" />
+            </span>
 
-            {editandoTitulo ? (
-              <input
-                className={styles['campo-titulo']}
-                type="text"
-                maxLength={120}
-                autoFocus
-                value={tituloEditado}
-                onChange={(evento) => setTituloEditado(evento.target.value)}
-                onBlur={salvarTitulo}
-                onKeyDown={(evento) => {
-                  if (evento.key === 'Enter') {
-                    evento.currentTarget.blur()
-                  }
+            <h2 className={styles['titulo-card']}>Itens</h2>
 
-                  if (evento.key === 'Escape') {
-                    setEditandoTitulo(false)
-                  }
-                }}
-              />
-            ) : (
-              <h1 className={styles['titulo-card']}>
-                {carregando ? 'Carregando...' : indisponivel ? 'Lista não encontrada' : nome}
-              </h1>
-            )}
-
-            {!editandoTitulo && !carregando && !indisponivel ? (
-              <button
-                type="button"
-                className={styles['botao-icone']}
-                aria-label="Renomear lista"
-                onClick={() => {
-                  setTituloEditado(nome)
-                  setEditandoTitulo(true)
-                }}
-              >
-                <IconeLapis />
-              </button>
+            {!carregando && !indisponivel ? (
+              <span className={styles.contador}>{itens.length}</span>
             ) : null}
           </div>
 
@@ -288,107 +293,111 @@ export function ListaPage() {
               </p>
             ) : carregando ? (
               <p className={styles['mensagem-vazia']}>Carregando...</p>
+            ) : itens.length === 0 ? (
+              <p className={styles['mensagem-vazia']}>
+                Adicione seu primeiro item em <strong>Adicionar item</strong>.
+              </p>
             ) : (
-              <>
-                {itens.length === 0 ? (
-                  <p className={styles['mensagem-vazia']}>Adicione seu primeiro item.</p>
-                ) : (
-                  itens.map((item) => (
-                    <div key={item.id} className={styles['linha-registro']}>
-                      {itemEditando === item.id ? (
-                        <input
-                          className={styles['campo-item']}
-                          type="text"
-                          maxLength={255}
-                          autoFocus
-                          value={textoEditado}
-                          onChange={(evento) => setTextoEditado(evento.target.value)}
-                          onBlur={() => salvarTextoItem(item)}
-                          onKeyDown={(evento) => {
-                            if (evento.key === 'Enter') {
-                              evento.currentTarget.blur()
-                            }
+              itens.map((item) => (
+                <div key={item.id} className={styles['linha-registro']}>
+                  <button
+                    type="button"
+                    className={['botao-icone', styles.check, item.completed && styles.marcado]
+                      .filter(Boolean)
+                      .join(' ')}
+                    aria-label={
+                      item.completed
+                        ? `Desmarcar ${item.text}`
+                        : `Marcar ${item.text} como concluído`
+                    }
+                    aria-pressed={item.completed}
+                    onClick={() => alternarConcluido(item)}
+                  >
+                    <Icone nome={item.completed ? 'circulo-check' : 'circulo'} />
+                  </button>
 
-                            if (evento.key === 'Escape') {
-                              setItemEditando(null)
-                            }
-                          }}
-                        />
-                      ) : (
-                        <span
-                          className={[styles['texto-item'], item.completed && styles.concluido]
-                            .filter(Boolean)
-                            .join(' ')}
-                        >
-                          {item.text}
-                        </span>
-                      )}
+                  {itemEditando === item.id ? (
+                    <input
+                      className={`entrada ${styles['campo-item']}`}
+                      type="text"
+                      maxLength={255}
+                      autoFocus
+                      aria-label="Nome do item"
+                      value={textoEditado}
+                      onChange={(evento) => setTextoEditado(evento.target.value)}
+                      onBlur={() => salvarTextoItem(item)}
+                      onKeyDown={(evento) => {
+                        if (evento.key === 'Enter') {
+                          evento.currentTarget.blur()
+                        }
 
-                      {itemEditando === item.id ? null : (
-                        <>
-                          <button
-                            type="button"
-                            className={styles['botao-icone']}
-                            aria-label={`Editar ${item.text}`}
-                            onClick={() => {
-                              setTextoEditado(item.text)
-                              setItemEditando(item.id)
-                            }}
-                          >
-                            <IconeLapis />
-                          </button>
+                        if (evento.key === 'Escape') {
+                          setItemEditando(null)
+                        }
+                      }}
+                    />
+                  ) : (
+                    <span
+                      className={[styles['texto-item'], item.completed && styles.concluido]
+                        .filter(Boolean)
+                        .join(' ')}
+                    >
+                      {item.text}
+                    </span>
+                  )}
 
-                          <button
-                            type="button"
-                            className={[styles['botao-icone'], styles.excluir].join(' ')}
-                            aria-label={`Excluir ${item.text}`}
-                            onClick={() => removerItem(item)}
-                          >
-                            <IconeLixeira />
-                          </button>
-                        </>
-                      )}
+                  {itemEditando === item.id ? null : (
+                    <div className={styles['acoes-linha']}>
+                      <button
+                        type="button"
+                        className="botao-icone"
+                        aria-label={`Editar ${item.text}`}
+                        title="Editar"
+                        onClick={() => {
+                          setTextoEditado(item.text)
+                          setItemEditando(item.id)
+                        }}
+                      >
+                        <Icone nome="lapis" />
+                      </button>
 
                       <button
                         type="button"
-                        className={[
-                          styles['botao-icone'],
-                          styles.check,
-                          item.completed && styles.marcado,
-                        ]
-                          .filter(Boolean)
-                          .join(' ')}
-                        aria-label={
-                          item.completed
-                            ? `Desmarcar ${item.text}`
-                            : `Marcar ${item.text} como concluído`
-                        }
-                        aria-pressed={item.completed}
-                        onClick={() => alternarConcluido(item)}
+                        className="botao-icone botao-icone--perigo"
+                        aria-label={`Excluir ${item.text}`}
+                        title="Excluir"
+                        onClick={() => removerItem(item)}
                       >
-                        <IconeCheck marcado={item.completed} />
+                        <Icone nome="lixeira" />
                       </button>
                     </div>
-                  ))
-                )}
-
-                <div className={styles.pauta}></div>
-              </>
+                  )}
+                </div>
+              ))
             )}
           </div>
+
+          {!carregando && !indisponivel && itens.length > 0 ? (
+            <div className={styles.progresso}>
+              {concluidos} de {itens.length} concluídos
+              <div className={styles['progresso-barra']}>
+                <span style={{ width: `${(concluidos / itens.length) * 100}%` }} />
+              </div>
+            </div>
+          ) : null}
         </section>
       </LayoutAnotacoes>
 
       {criandoItem ? (
         <Modal
           titulo="Adicionar item"
-          textoConfirmar="Adicionar"
+          textoConfirmar={salvando ? 'Adicionando...' : 'Adicionar'}
           confirmarDesabilitado={salvando}
           onConfirmar={confirmarNovoItem}
           onCancelar={() => setCriandoItem(false)}
         >
           <label className={modalStyles['rotulo-modal']} htmlFor="nomeNovoItem">
-            Nome do item:
+            Nome do item
           </label>
 
           <input

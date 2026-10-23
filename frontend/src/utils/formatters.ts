@@ -5,10 +5,11 @@ export function formatarMoeda(valor: number | string): string {
   })
 }
 
-export function formatarEixoMoeda(valor: number | string): string {
+export function formatarEixoMoeda(valor: number | string, compacto = false): string {
   return Number(valor).toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL',
+    notation: compacto ? 'compact' : 'standard',
     maximumFractionDigits: 0,
   })
 }
@@ -59,11 +60,14 @@ export function tituloDaData(data: Date | string): string {
     return 'Ontem'
   }
 
-  return dataTransacao.toLocaleDateString('pt-BR', {
+  const texto = dataTransacao.toLocaleDateString('pt-BR', {
+    weekday: 'long',
     day: '2-digit',
-    month: '2-digit',
+    month: 'long',
     year: 'numeric',
   })
+
+  return texto.charAt(0).toUpperCase() + texto.slice(1)
 }
 
 export function chaveData(data: Date | string): string {

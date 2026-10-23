@@ -12,27 +12,31 @@ export interface HistoryFiltersValue {
 }
 
 interface HistoryFiltersProps {
-  styles: Record<string, string>
+  className?: string
   valor: HistoryFiltersValue
   categoriasDisponiveis: string[]
   onChange: (valor: HistoryFiltersValue) => void
 }
 
-export function HistoryFilters({ styles, valor, categoriasDisponiveis, onChange }: HistoryFiltersProps) {
+export function HistoryFilters({ className, valor, categoriasDisponiveis, onChange }: HistoryFiltersProps) {
   return (
-    <div className={styles.filtros}>
+    <div className={className} role="group" aria-label="Filtros">
+      <label className="sr-only" htmlFor="filtroTipo">Tipo</label>
       <select
         id="filtroTipo"
+        className="entrada"
         value={valor.tipo}
         onChange={(event) => onChange({ ...valor, tipo: event.target.value })}
       >
-        <option value="todos">Tipo</option>
+        <option value="todos">Todos os tipos</option>
         <option value="entrada">Entrada</option>
         <option value="saida">Saída</option>
       </select>
 
+      <label className="sr-only" htmlFor="filtroMes">Mês</label>
       <select
         id="filtroMes"
+        className="entrada"
         value={valor.mes}
         onChange={(event) => onChange({ ...valor, mes: event.target.value })}
       >
@@ -44,12 +48,14 @@ export function HistoryFilters({ styles, valor, categoriasDisponiveis, onChange 
         ))}
       </select>
 
+      <label className="sr-only" htmlFor="filtroCategoria">Categoria</label>
       <select
         id="filtroCategoria"
+        className="entrada"
         value={valor.categoria}
         onChange={(event) => onChange({ ...valor, categoria: event.target.value })}
       >
-        <option value="todos">Categoria</option>
+        <option value="todos">Todas as categorias</option>
         {categoriasDisponiveis.map((categoria) => (
           <option key={categoria} value={categoria}>
             {formatarCategoria(categoria)}

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import type { ChartConfiguration } from 'chart.js'
 import { Chart } from '../../../utils/chartSetup'
 import type { Transaction } from '../../../types/transaction'
@@ -8,16 +8,31 @@ import {
   obterSaidasPorCategoria,
   formatarRotuloCategoriaSaida,
 } from '../../../utils/expenseCategories'
-import { useCompacto } from '../../../utils/useCompacto'
+import styles from './ExpenseChart.module.css'
 
 interface ExpenseChartProps {
   transacoes: Transaction[]
 }
 
+/** Rosca de saídas por categoria, com o total no centro e a legenda ao lado. */
 export function ExpenseChart({ transacoes }: ExpenseChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const chartRef = useRef<Chart<'pie'> | null>(null)
-  const compacto = useCompacto()
+  const chartRef = useRef<Chart<'doughnut'> | null>(null)
+
+  const categorias = useMemo(() => {
+    const totais = obterSaidasPorCategoria(transacoes)
+    const chaves = [...totais.keys()]
+    const cores = obterCoresCategoriasSaida(chaves)
+
+    return chaves.map((chave, indice) => ({
+      chave,
+      rotulo: formatarRotuloCategoriaSaida(chave),
+      valor: totais.get(chave) ?? 0,
+      cor: cores[indice],
+    }))
+  }, [transacoes])
+
+  const total = categorias.reduce((soma, categoria) => soma + categoria.valor, 0)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -28,78 +43,40 @@ export function ExpenseChart({ transacoes }: ExpenseChartProps) {
 
     chartRef.current?.destroy()
 
-    const categorias = obterSaidasPorCategoria(transacoes)
-    const chaves: string[] = []
-    const rotulos: string[] = []
-    const valores: number[] = []
+    const temSaidas = total > 0
 
-    categorias.forEach((valor, chave) => {
-      chaves.push(chave)
-      rotulos.push(formatarRotuloCategoriaSaida(chave))
-      valores.push(valor)
-    })
-
-    const config: ChartConfiguration<'pie'> = {
-      type: 'pie',
+    const config: ChartConfiguration<'doughnut'> = {
+      type: 'doughnut',
       data: {
-        labels: rotulos,
+        labels: categorias.map((categoria) => categoria.rotulo),
         datasets: [
           {
-            data: valores,
-            backgroundColor: obterCoresCategoriasSaida(chaves),
+            // Sem saídas, mostra só um anel vazio
+            data: temSaidas ? categorias.map((categoria) => categoria.valor) : [1],
+            backgroundColor: temSaidas
+              ? categorias.map((categoria) => categoria.cor)
+              : ['rgba(148, 177, 255, 0.12)'],
             borderWidth: 0,
+            hoverOffset: temSaidas ? 6 : 0,
+            spacing: temSaidas ? 2 : 0,
           },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        layout: {
-          padding: {
-            left: compacto ? 3 : 5,
-            right: compacto ? 3 : 5,
-            top: compacto ? 3 : 5,
-            bottom: compacto ? 3 : 5,
-          },
-        },
+        cutout: '74%',
+        layout: { padding: 6 },
         plugins: {
-          datalabels: {
-            color: '#ffffff',
-            font: { size: compacto ? 8 : 10, weight: 'bold' },
-            formatter(valor, context) {
-              const dados = context.chart.data.datasets[0].data as number[]
-              const total = dados.reduce((soma, numero) => soma + Number(numero), 0)
-
-              if (valor === 0 || total === 0) {
-                return ''
-              }
-
-              const porcentagem = (Number(valor) / total) * 100
-              return `${porcentagem.toFixed(0)}%`
-            },
-          },
-          legend: {
-            position: 'right',
-            align: 'center',
-            labels: {
-              color: '#ffffff',
-              usePointStyle: true,
-              pointStyle: 'circle',
-              boxWidth: compacto ? 5 : 7,
-              boxHeight: compacto ? 5 : 7,
-              padding: compacto ? 5 : 11,
-              font: { size: compacto ? 9 : 10 },
-            },
-          },
+          legend: { display: false },
           tooltip: {
+            enabled: temSaidas,
             callbacks: {
               label(context) {
                 const valor = Number(context.raw)
-                const dados = context.dataset.data as number[]
-                const total = dados.reduce((soma, numero) => soma + Number(numero), 0)
-                const porcentagem = total > 0 ? ((valor / total) * 100).toFixed(1) : '0'
+                const porcentagem = ((valor / total) * 100).toFixed(1)
 
-                return `${context.label}: ${formatarMoeda(valor)} (${porcentagem}%)`
+                return ` ${formatarMoeda(valor)} (${porcentagem}%)`
               },
             },
           },
@@ -113,7 +90,36 @@ export function ExpenseChart({ transacoes }: ExpenseChartProps) {
       chartRef.current?.destroy()
       chartRef.current = null
     }
-  }, [transacoes, compacto])
+  }, [categorias, total])
 
-  return <canvas id="graficoSaida" ref={canvasRef} />
+  return (
+    <>
+      <div className={styles.rosca}>
+        <canvas
+          id="graficoSaida"
+          ref={canvasRef}
+          role="img"
+          aria-label="Gráfico de saídas por categoria"
+        />
+
+        <div className={styles.centro}>
+          <span>Total</span>
+          <strong className="numero">{formatarMoeda(total)}</strong>
+        </div>
+      </div>
+
+      <ul className={styles.legenda}>
+        {categorias.map((categoria) => (
+          <li key={categoria.chave}>
+            <span className={styles.cor} style={{ background: categoria.cor }} />
+            <span className={styles.nome}>{categoria.rotulo}</span>
+            <span className={`${styles.porcentagem} numero`}>
+              {total > 0 ? Math.round((categoria.valor / total) * 100) : 0}%
+            </span>
+            <span className={`${styles.valor} numero`}>{formatarMoeda(categoria.valor)}</span>
+          </li>
+        ))}
+      </ul>
+    </>
+  )
 }

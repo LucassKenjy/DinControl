@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Anotacoes.module.css'
 import { LayoutAnotacoes } from '../../components/anotacoes/LayoutAnotacoes'
-import { IconeLixeira } from '../../components/anotacoes/Icones'
+import { Icone } from '../../components/ui/Icone'
+import type { NomeIcone } from '../../components/ui/Icone'
 import { Modal } from '../../components/ui/Modal'
 import modalStyles from '../../components/ui/Modal.module.css'
 import { useFeedback } from '../../utils/useFeedback'
@@ -23,10 +24,26 @@ interface Exclusao {
 interface Registro {
   id: number
   nome: string
+  atualizadoEm: string
+}
+
+function formatarAtualizacao(data: string): string {
+  const momento = new Date(data)
+
+  if (isNaN(momento.getTime())) {
+    return ''
+  }
+
+  return `Atualizado em ${momento.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  })}`
 }
 
 interface CardRegistrosProps {
   titulo: string
+  icone: NomeIcone
   registros: Registro[]
   mensagemVazia: string
   carregando: boolean
@@ -37,6 +54,7 @@ interface CardRegistrosProps {
 
 function CardRegistros({
   titulo,
+  icone,
   registros,
   mensagemVazia,
   carregando,
@@ -45,9 +63,15 @@ function CardRegistros({
   rotuloExcluir,
 }: CardRegistrosProps) {
   return (
-    <section className={styles.card}>
+    <section className={`cartao ${styles.card}`}>
       <div className={styles['cabecalho-card']}>
-        <h1 className={styles['titulo-card']}>{titulo}</h1>
+        <span className={styles['icone-card']}>
+          <Icone nome={icone} />
+        </span>
+
+        <h2 className={styles['titulo-card']}>{titulo}</h2>
+
+        {!carregando ? <span className={styles.contador}>{registros.length}</span> : null}
       </div>
 
       <div className={styles['corpo-card']}>
@@ -63,17 +87,21 @@ function CardRegistros({
                 className={styles['nome-registro']}
                 onClick={() => onAbrir(registro.id)}
               >
-                {registro.nome}
+                <strong>{registro.nome}</strong>
+                <small>{formatarAtualizacao(registro.atualizadoEm)}</small>
               </button>
 
-              <button
-                type="button"
-                className={[styles['botao-icone'], styles.excluir].join(' ')}
-                aria-label={`${rotuloExcluir} ${registro.nome}`}
-                onClick={() => onExcluir(registro)}
-              >
-                <IconeLixeira />
-              </button>
+              <div className={styles['acoes-linha']}>
+                <button
+                  type="button"
+                  className="botao-icone botao-icone--perigo"
+                  aria-label={`${rotuloExcluir} ${registro.nome}`}
+                  title={rotuloExcluir}
+                  onClick={() => onExcluir(registro)}
+                >
+                  <Icone nome="lixeira" />
+                </button>
+              </div>
             </div>
           ))
         )}
@@ -226,25 +254,32 @@ export function AnotacoesPage() {
   return (
     <>
       <LayoutAnotacoes
+        titulo="Listas e Anotações"
+        subtitulo="Organize suas compras, metas e ideias junto com suas finanças."
         feedback={feedback}
         acoes={
           <button
             type="button"
-            className={styles['botao-acao']}
-            aria-label="Criar lista ou anotação"
+            className="botao botao--primario"
             onClick={() => {
               setNomeNovo('')
               setErroModal('')
               setEtapa('escolha')
             }}
           >
-            +
+            <Icone nome="mais" />
+            Criar nova
           </button>
         }
       >
         <CardRegistros
-          titulo="Listas:"
-          registros={listas.map((lista) => ({ id: lista.id, nome: lista.name }))}
+          titulo="Listas"
+          icone="lista"
+          registros={listas.map((lista) => ({
+            id: lista.id,
+            nome: lista.name,
+            atualizadoEm: lista.updated_at,
+          }))}
           mensagemVazia="Você ainda não possui listas."
           carregando={carregando}
           rotuloExcluir="Excluir lista"
@@ -255,8 +290,13 @@ export function AnotacoesPage() {
         />
 
         <CardRegistros
-          titulo="Anotações:"
-          registros={anotacoes.map((nota) => ({ id: nota.id, nome: nota.title }))}
+          titulo="Anotações"
+          icone="nota"
+          registros={anotacoes.map((nota) => ({
+            id: nota.id,
+            nome: nota.title,
+            atualizadoEm: nota.updated_at,
+          }))}
           mensagemVazia="Você ainda não possui anotações."
           carregando={carregando}
           rotuloExcluir="Excluir anotação"
@@ -274,7 +314,11 @@ export function AnotacoesPage() {
             className={modalStyles['opcao-modal']}
             onClick={() => setEtapa('lista')}
           >
-            Nova Lista
+            <Icone nome="lista" />
+            <span>
+              Nova lista
+              <small>Itens com marcação de concluído</small>
+            </span>
           </button>
 
           <button
@@ -282,21 +326,25 @@ export function AnotacoesPage() {
             className={modalStyles['opcao-modal']}
             onClick={() => setEtapa('nota')}
           >
-            Nova Anotação
+            <Icone nome="nota" />
+            <span>
+              Nova anotação
+              <small>Texto livre, salvo automaticamente</small>
+            </span>
           </button>
         </Modal>
       ) : null}
 
       {etapa === 'lista' || etapa === 'nota' ? (
         <Modal
-          titulo={etapa === 'lista' ? 'Nova Lista' : 'Nova Anotação'}
-          textoConfirmar="Criar"
+          titulo={etapa === 'lista' ? 'Nova lista' : 'Nova anotação'}
+          textoConfirmar={salvando ? 'Criando...' : 'Criar'}
           confirmarDesabilitado={salvando}
           onConfirmar={confirmarCriacao}
           onCancelar={fecharCriacao}
         >
           <label className={modalStyles['rotulo-modal']} htmlFor="nomeNovoRegistro">
-            {etapa === 'lista' ? 'Nome da lista:' : 'Título:'}
+            {etapa === 'lista' ? 'Nome da lista' : 'Título'}
           </label>
 
           <input
@@ -325,10 +373,10 @@ export function AnotacoesPage() {
         <Modal
           titulo={
             exclusao.tipo === 'lista'
-              ? 'Tem certeza que deseja excluir esta lista?'
-              : 'Tem certeza que deseja excluir esta anotação?'
+              ? 'Excluir lista?'
+              : 'Excluir anotação?'
           }
-          textoConfirmar="Excluir"
+          textoConfirmar={salvando ? 'Excluindo...' : 'Excluir'}
           perigo
           confirmarDesabilitado={salvando}
           onConfirmar={confirmarExclusao}
@@ -336,8 +384,8 @@ export function AnotacoesPage() {
         >
           <p className={modalStyles['texto-modal']}>
             {exclusao.tipo === 'lista'
-              ? `"${exclusao.nome}" e todos os seus itens serão excluídos.`
-              : `"${exclusao.nome}" será excluída permanentemente.`}
+              ? `Tem certeza? "${exclusao.nome}" e todos os seus itens serão excluídos.`
+              : `Tem certeza? "${exclusao.nome}" será excluída permanentemente.`}
           </p>
         </Modal>
       ) : null}
