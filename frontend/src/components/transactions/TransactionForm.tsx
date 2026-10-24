@@ -1,61 +1,66 @@
 import { useState } from 'react'
 import { Modal } from '../ui/Modal'
-import modalStyles from '../ui/Modal.module.css'
+import { Icone } from '../ui/Icone'
+import { Mensagem } from '../ui/Mensagem'
 import formStyles from './TransactionForm.module.css'
 import { CategorySelector } from './CategorySelector'
 import { CustomCategoryInput } from './CustomCategoryInput'
 import { CATEGORIAS_ENTRADA, CATEGORIAS_SAIDA, CATEGORIA_PERSONALIZADA } from '../../types/category'
+import type { TransactionType } from '../../types/transaction'
 import { cadastrarTransacao } from '../../api/transactions'
 import { ApiError } from '../../api/client'
 
 interface TransactionFormProps {
-  styles: Record<string, string>
   onTransactionCreated: () => void | Promise<void>
 }
 
 interface FormState {
-  valorEntrada: string
-  valorSaida: string
-  categoriaEntrada: string
-  categoriaSaida: string
-  categoriaEntradaPersonalizada: string
-  categoriaSaidaPersonalizada: string
+  tipo: TransactionType
+  valor: string
+  categoria: string
+  categoriaPersonalizada: string
 }
 
 const ESTADO_INICIAL: FormState = {
-  valorEntrada: '',
-  valorSaida: '',
-  categoriaEntrada: '',
-  categoriaSaida: '',
-  categoriaEntradaPersonalizada: '',
-  categoriaSaidaPersonalizada: '',
+  tipo: 'ENTRADA',
+  valor: '',
+  categoria: '',
+  categoriaPersonalizada: '',
 }
 
-export function TransactionForm({ styles, onTransactionCreated }: TransactionFormProps) {
+/** Tempo mostrando o sucesso antes de fechar o modal. */
+const ATRASO_FECHAR = 700
+
+/** Botão "Nova transação" e o modal de cadastro. */
+export function TransactionForm({ onTransactionCreated }: TransactionFormProps) {
   const [aberto, setAberto] = useState(false)
   const [dados, setDados] = useState<FormState>(ESTADO_INICIAL)
   const [mensagem, setMensagem] = useState('')
-  const [erro, setErro] = useState<boolean | null>(null)
+  const [erro, setErro] = useState(false)
+  const [salvando, setSalvando] = useState(false)
 
   function atualizar<K extends keyof FormState>(campo: K, valor: FormState[K]) {
     setDados((estado) => ({ ...estado, [campo]: valor }))
+    setMensagem('')
   }
 
-  function limparMensagem() {
+  function trocarTipo(tipo: TransactionType) {
+    // As categorias de entrada e saída são diferentes
+    setDados((estado) => ({ ...estado, tipo, categoria: '', categoriaPersonalizada: '' }))
     setMensagem('')
-    setErro(null)
   }
 
   /** Fecha o modal sem criar nem alterar nenhuma transação. */
   function fechar() {
     setAberto(false)
     setDados(ESTADO_INICIAL)
-    limparMensagem()
+    setMensagem('')
   }
 
   function abrir() {
     setDados(ESTADO_INICIAL)
-    limparMensagem()
+    setMensagem('')
+    setSalvando(false)
     setAberto(true)
   }
 
@@ -64,54 +69,35 @@ export function TransactionForm({ styles, onTransactionCreated }: TransactionFor
     setErro(true)
   }
 
-  function mostrarSucesso(texto: string) {
-    setMensagem(texto)
-    setErro(false)
-  }
-
-  function categoriaResolvida(selecionada: string, personalizada: string): string {
-    return selecionada === CATEGORIA_PERSONALIZADA ? personalizada.trim() : selecionada
+  function categoriaResolvida(): string {
+    return dados.categoria === CATEGORIA_PERSONALIZADA
+      ? dados.categoriaPersonalizada.trim()
+      : dados.categoria
   }
 
   function validar(): string | null {
-    const entrada = dados.valorEntrada.trim()
-    const saida = dados.valorSaida.trim()
-    const categoriaEntrada = categoriaResolvida(dados.categoriaEntrada, dados.categoriaEntradaPersonalizada)
-    const categoriaSaida = categoriaResolvida(dados.categoriaSaida, dados.categoriaSaidaPersonalizada)
+    const valor = dados.valor.trim()
+    const entrada = dados.tipo === 'ENTRADA'
 
-    if (!entrada && !saida) {
-      return 'Digite um valor de entrada ou saída.'
+    if (!valor) {
+      return `Digite um valor de ${entrada ? 'entrada' : 'saída'}.`
     }
 
-    if (entrada && saida) {
-      return 'Preencha apenas entrada ou saída.'
+    if (Number(valor) <= 0) {
+      return `Digite um valor de ${entrada ? 'entrada' : 'saída'} válido.`
     }
 
-    if (entrada && Number(entrada) <= 0) {
-      return 'Digite um valor de entrada válido.'
-    }
-
-    if (saida && Number(saida) <= 0) {
-      return 'Digite um valor de saída válido.'
-    }
-
-    if (entrada && !categoriaEntrada) {
-      return dados.categoriaEntrada === CATEGORIA_PERSONALIZADA
+    if (!categoriaResolvida()) {
+      return dados.categoria === CATEGORIA_PERSONALIZADA
         ? 'Digite o nome da categoria personalizada.'
-        : 'Selecione uma categoria para a entrada.'
-    }
-
-    if (saida && !categoriaSaida) {
-      return dados.categoriaSaida === CATEGORIA_PERSONALIZADA
-        ? 'Digite o nome da categoria personalizada.'
-        : 'Selecione uma categoria para a saída.'
+        : `Selecione uma categoria para a ${entrada ? 'entrada' : 'saída'}.`
     }
 
     return null
   }
 
   async function aoConfirmar() {
-    limparMensagem()
+    setMensagem('')
 
     const erroValidacao = validar()
 
@@ -120,29 +106,19 @@ export function TransactionForm({ styles, onTransactionCreated }: TransactionFor
       return
     }
 
-    const entrada = dados.valorEntrada.trim()
-    const saida = dados.valorSaida.trim()
+    setSalvando(true)
 
     try {
-      if (entrada) {
-        await cadastrarTransacao({
-          tipo: 'ENTRADA',
-          valor: Number(entrada),
-          categoria: categoriaResolvida(dados.categoriaEntrada, dados.categoriaEntradaPersonalizada),
-        })
-      }
+      await cadastrarTransacao({
+        tipo: dados.tipo,
+        valor: Number(dados.valor.trim()),
+        categoria: categoriaResolvida(),
+      })
 
-      if (saida) {
-        await cadastrarTransacao({
-          tipo: 'SAIDA',
-          valor: Number(saida),
-          categoria: categoriaResolvida(dados.categoriaSaida, dados.categoriaSaidaPersonalizada),
-        })
-      }
-
-      mostrarSucesso('Transação cadastrada com sucesso!')
-      setDados(ESTADO_INICIAL)
+      setMensagem('Transação cadastrada com sucesso!')
+      setErro(false)
       await onTransactionCreated()
+      setTimeout(fechar, ATRASO_FECHAR)
     } catch (erroRequisicao) {
       console.error('Erro ao cadastrar:', erroRequisicao)
       mostrarErro(
@@ -150,102 +126,101 @@ export function TransactionForm({ styles, onTransactionCreated }: TransactionFor
           ? erroRequisicao.message
           : 'Erro ao cadastrar transação.',
       )
+      setSalvando(false)
     }
   }
 
+  const opcoes = dados.tipo === 'ENTRADA' ? CATEGORIAS_ENTRADA : CATEGORIAS_SAIDA
+
   return (
     <>
-      <button
-        className={styles['botao-adicionar']}
-        id="abrirTransacao"
-        type="button"
-        onClick={() => (aberto ? fechar() : abrir())}
-      >
-        +
+      <button className="botao botao--primario" id="abrirTransacao" type="button" onClick={abrir}>
+        <Icone nome="mais" />
+        Nova transação
       </button>
 
       {aberto ? (
         <Modal
-          titulo="Nova Transação"
-          textoConfirmar="CONFIRMAR"
-          textoCancelar="Cancelar"
+          titulo="Nova transação"
+          descricao="Registre uma entrada ou uma saída."
+          textoConfirmar={salvando ? 'Salvando...' : 'Confirmar'}
+          confirmarDesabilitado={salvando}
           onConfirmar={aoConfirmar}
           onCancelar={fechar}
         >
-          <div className={formStyles['linha-transacao']}>
-            <span className={[formStyles.bolinha, formStyles['entrada-cor']].join(' ')}></span>
-            <span className={formStyles.cifrao}>R$:</span>
+          <form
+            onSubmit={(evento) => {
+              evento.preventDefault()
+              aoConfirmar()
+            }}
+          >
+            <div className={formStyles.segmentado} role="radiogroup" aria-label="Tipo da transação">
+              {(['ENTRADA', 'SAIDA'] as const).map((tipo) => (
+                <label
+                  key={tipo}
+                  className={[
+                    formStyles.opcao,
+                    tipo === 'ENTRADA' ? formStyles.entrada : formStyles.saida,
+                  ].join(' ')}
+                >
+                  <input
+                    type="radio"
+                    name="tipo"
+                    value={tipo}
+                    checked={dados.tipo === tipo}
+                    onChange={() => trocarTipo(tipo)}
+                  />
+                  <span>
+                    <Icone nome={tipo === 'ENTRADA' ? 'seta-entrada' : 'seta-saida'} />
+                    {tipo === 'ENTRADA' ? 'Entrada' : 'Saída'}
+                  </span>
+                </label>
+              ))}
+            </div>
 
-            <input
-              type="number"
-              id="valorEntrada"
-              step="0.01"
-              min="0"
-              placeholder="0,00"
-              value={dados.valorEntrada}
-              onChange={(event) => atualizar('valorEntrada', event.target.value)}
-            />
+            <div className="campo">
+              <label htmlFor="valorTransacao" className="campo__rotulo">Valor</label>
 
-            <CategorySelector
-              id="categoriaEntrada"
-              value={dados.categoriaEntrada}
-              options={CATEGORIAS_ENTRADA}
-              onChange={(valor) => atualizar('categoriaEntrada', valor)}
-            />
-          </div>
+              <div className="entrada-grupo">
+                <span className="entrada-grupo__prefixo">R$</span>
+                <input
+                  type="number"
+                  id="valorTransacao"
+                  className="entrada numero"
+                  step="0.01"
+                  min="0"
+                  placeholder="0,00"
+                  inputMode="decimal"
+                  autoFocus
+                  value={dados.valor}
+                  onChange={(event) => atualizar('valor', event.target.value)}
+                />
+              </div>
+            </div>
 
-          <CustomCategoryInput
-            id="categoriaEntradaPersonalizada"
-            className={formStyles['campo-categoria-personalizada']}
-            visible={dados.categoriaEntrada === CATEGORIA_PERSONALIZADA}
-            value={dados.categoriaEntradaPersonalizada}
-            onChange={(valor) => atualizar('categoriaEntradaPersonalizada', valor)}
-          />
+            <div className="campo">
+              <label htmlFor="categoriaTransacao" className="campo__rotulo">Categoria</label>
 
-          <div className={formStyles['linha-transacao']}>
-            <span className={[formStyles.bolinha, formStyles['saida-cor']].join(' ')}></span>
-            <span className={formStyles.cifrao}>R$:</span>
+              <CategorySelector
+                id="categoriaTransacao"
+                value={dados.categoria}
+                options={opcoes}
+                onChange={(valor) => atualizar('categoria', valor)}
+              />
 
-            <input
-              type="number"
-              id="valorSaida"
-              step="0.01"
-              min="0"
-              placeholder="0,00"
-              value={dados.valorSaida}
-              onChange={(event) => atualizar('valorSaida', event.target.value)}
-            />
+              <CustomCategoryInput
+                id="categoriaPersonalizada"
+                visible={dados.categoria === CATEGORIA_PERSONALIZADA}
+                value={dados.categoriaPersonalizada}
+                onChange={(valor) => atualizar('categoriaPersonalizada', valor)}
+              />
+            </div>
 
-            <CategorySelector
-              id="categoriaSaida"
-              value={dados.categoriaSaida}
-              options={CATEGORIAS_SAIDA}
-              onChange={(valor) => atualizar('categoriaSaida', valor)}
-            />
-          </div>
+            <Mensagem id="mensagemTransacao" texto={mensagem} tipo={erro ? 'erro' : 'sucesso'} />
 
-          <CustomCategoryInput
-            id="categoriaSaidaPersonalizada"
-            className={formStyles['campo-categoria-personalizada']}
-            visible={dados.categoriaSaida === CATEGORIA_PERSONALIZADA}
-            value={dados.categoriaSaidaPersonalizada}
-            onChange={(valor) => atualizar('categoriaSaidaPersonalizada', valor)}
-          />
-
-          {mensagem ? (
-            <p
-              id="mensagemTransacao"
-              className={[
-                formStyles['mensagem-transacao'],
-                erro === true && modalStyles['erro-modal'],
-                erro === false && formStyles['mensagem-sucesso'],
-              ]
-                .filter(Boolean)
-                .join(' ')}
-            >
-              {mensagem}
-            </p>
-          ) : null}
+            {/* Permite confirmar com Enter */}
+            <button type="submit" hidden aria-hidden="true" tabIndex={-1} />
+          </form>
         </Modal>
       ) : null}
     </>

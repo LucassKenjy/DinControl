@@ -1,0 +1,282 @@
+/* =====================================================
+   LAYOUT DE AUTENTICAÇÃO
+   (login, cadastro e recuperação de senha)
+===================================================== */
+
+.auth {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+
+    min-height: 100vh;
+}
+
+
+/* =====================================================
+   MARCA
+===================================================== */
+
+.marca {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 48px clamp(32px, 5vw, 80px);
+
+    overflow: hidden;
+}
+
+.logo {
+    width: 210px;
+}
+
+.chamada {
+    max-width: 480px;
+    margin-top: clamp(48px, 10vh, 120px);
+}
+
+.selo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 6px 12px;
+
+    border-radius: 999px;
+    border: 1px solid var(--borda-forte);
+    background: rgba(255, 255, 255, 0.05);
+
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--texto-suave);
+}
+
+.selo::before {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+    background: var(--entrada);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+.titulo {
+    margin-top: 18px;
+
+    font-size: clamp(30px, 3.2vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+}
+
+.titulo span {
+    background: var(--gradiente-marca);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.texto {
+    margin-top: 14px;
+
+    font-size: 16px;
+    color: var(--texto-suave);
+}
+
+.recursos {
+    display: grid;
+    gap: 12px;
+
+    margin-top: 28px;
+
+    list-style: none;
+}
+
+.recursos li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    font-size: 14.5px;
+}
+
+.recursos :global(.icone) {
+    width: 30px;
+    height: 30px;
+    padding: 7px;
+
+    border-radius: 9px;
+    color: var(--azul-ciano);
+    background: rgba(0, 194, 255, 0.1);
+    border: 1px solid rgba(0, 194, 255, 0.18);
+}
+
+.mascote {
+    position: absolute;
+    right: clamp(-40px, -2vw, 0px);
+    bottom: 0;
+
+    width: clamp(260px, 26vw, 400px);
+
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.45));
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   PAINEL / CARTÃO
+===================================================== */
+
+.painel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+
+    padding: 40px 24px;
+}
+
+.logo-celular {
+    display: none;
+}
+
+.cartao {
+    width: 100%;
+    max-width: 430px;
+    padding: 36px;
+
+    border-radius: var(--raio-xl);
+    background: var(--claro-fundo);
+    box-shadow: var(--sombra-lg);
+
+    color: var(--claro-texto);
+}
+
+/* Campos e textos dentro do cartão claro */
+.cartao :global(.entrada) {
+    color: var(--claro-texto);
+    background: var(--claro-campo);
+    border-color: var(--claro-borda);
+}
+
+.cartao :global(.entrada)::placeholder {
+    color: #97a1b8;
+}
+
+.cartao :global(.entrada):hover {
+    border-color: #bcc7dd;
+}
+
+.cartao :global(.entrada):focus {
+    background: #ffffff;
+    border-color: var(--azul);
+}
+
+.cartao :global(.entrada-grupo__acao) {
+    color: #8792ab;
+}
+
+.cartao :global(.entrada-grupo__acao):hover {
+    color: var(--azul);
+}
+
+.creditos {
+    font-size: 12.5px;
+    color: var(--texto-fraco);
+}
+
+
+/* =====================================================
+   CONTEÚDO COMUM DO CARTÃO
+===================================================== */
+
+.cartao :global(.auth-titulo) {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.cartao :global(.auth-subtitulo) {
+    margin-top: 6px;
+    margin-bottom: 26px;
+
+    font-size: 14.5px;
+    color: var(--claro-suave);
+}
+
+.cartao :global(.auth-enviar) {
+    margin-top: 24px;
+}
+
+.cartao :global(.auth-rodape) {
+    margin-top: 22px;
+
+    text-align: center;
+    font-size: 14px;
+    color: var(--claro-suave);
+}
+
+.cartao :global(.auth-rodape) a {
+    font-weight: 600;
+    color: var(--azul);
+}
+
+.cartao :global(.auth-rodape) a:hover {
+    text-decoration: underline;
+}
+
+.cartao :global(.auth-voltar) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-bottom: 20px;
+
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--claro-suave);
+}
+
+.cartao :global(.auth-voltar):hover {
+    color: var(--azul);
+}
+
+
+/* =====================================================
+   RESPONSIVO
+===================================================== */
+
+@media (max-width: 960px) {
+    .auth {
+        grid-template-columns: 1fr;
+    }
+
+    .marca {
+        display: none;
+    }
+
+    .painel {
+        justify-content: flex-start;
+        padding-top: 40px;
+    }
+
+    .logo-celular {
+        display: block;
+        width: 190px;
+        margin-bottom: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .painel {
+        padding: 28px 16px;
+    }
+
+    .cartao {
+        padding: 26px 20px;
+        border-radius: var(--raio-lg);
+    }
+}

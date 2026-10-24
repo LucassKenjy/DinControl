@@ -17,6 +17,16 @@ export function possuiSequenciaNumerica(senha: string): boolean {
   return false
 }
 
+/** Regras exibidas ao vivo nos formulários de senha. */
+export const REGRAS_SENHA = [
+  { texto: 'Somente números', atende: (senha: string) => /^\d+$/.test(senha) },
+  { texto: 'No mínimo 5 números', atende: (senha: string) => senha.length >= 5 },
+  {
+    texto: 'Sem sequências óbvias (ex: 1234, 4321)',
+    atende: (senha: string) => senha.length > 0 && !possuiSequenciaNumerica(senha),
+  },
+]
+
 export function validarSenha(senha: string): string | null {
   if (!/^\d+$/.test(senha)) {
     return 'A senha deve conter somente números.'

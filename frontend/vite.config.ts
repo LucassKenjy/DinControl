@@ -21,7 +21,16 @@ const loginProxy: ProxyOptions = {
   },
 }
 
-const SIMPLE_API_ROUTES = ['/users', '/logout', '/me', '/transactions', '/forgot-password']
+const SIMPLE_API_ROUTES = [
+  '/users',
+  '/logout',
+  '/me',
+  '/transactions',
+  '/forgot-password',
+  '/lists',
+  '/list-items',
+  '/notes',
+]
 
 // https://vite.dev/config/
 export default defineConfig({

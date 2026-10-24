@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './PerfilPage.module.css'
-import { LoadingScreen } from '../../components/layout/LoadingScreen'
-import { AppLogo } from '../../components/layout/AppLogo'
-import { AppCoin } from '../../components/layout/AppCoin'
+import { AppLayout } from '../../components/layout/AppLayout'
+import { CampoSenha } from '../../components/ui/CampoSenha'
+import { Icone } from '../../components/ui/Icone'
+import { Mensagem } from '../../components/ui/Mensagem'
+import { Modal } from '../../components/ui/Modal'
 import { useAuth } from '../../context/AuthContext'
-import { useFotoPerfil } from '../../utils/useFotoPerfil'
+import { reduzirImagem, useFotoPerfil } from '../../utils/useFotoPerfil'
 import { atualizarUsuario } from '../../api/auth'
 import { ApiError } from '../../api/client'
 
@@ -19,7 +21,10 @@ export function PerfilPage() {
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [mensagem, setMensagem] = useState('')
-  const [erro, setErro] = useState<boolean | null>(null)
+  const [erro, setErro] = useState(false)
+  const [salvando, setSalvando] = useState(false)
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false)
+  const [saindo, setSaindo] = useState(false)
 
   const inputFotoRef = useRef<HTMLInputElement>(null)
 
@@ -57,6 +62,9 @@ export function PerfilPage() {
       return
     }
 
+    setSalvando(true)
+    setMensagem('')
+
     try {
       const resultado = await atualizarUsuario({
         nome: novoNome,
@@ -84,22 +92,23 @@ export function PerfilPage() {
       mostrarErro(
         erroRequisicao instanceof ApiError ? erroRequisicao.message : 'Erro ao atualizar perfil.',
       )
+    } finally {
+      setSalvando(false)
     }
   }
 
   async function aoSair() {
-    const confirmarSaida = confirm('Deseja realmente sair da conta?')
-
-    if (!confirmarSaida) {
-      return
-    }
-
+    setSaindo(true)
     await sair()
     navigate('/login')
   }
 
-  function aoEscolherFoto() {
+  async function aoEscolherFoto() {
     const arquivo = inputFotoRef.current?.files?.[0]
+
+    if (inputFotoRef.current) {
+      inputFotoRef.current.value = ''
+    }
 
     if (!arquivo) {
       return
@@ -115,43 +124,29 @@ export function PerfilPage() {
       return
     }
 
-    const leitor = new FileReader()
-
-    leitor.onload = () => {
-      const imagem = leitor.result as string
-      salvarFoto(imagem)
+    try {
+      salvarFoto(await reduzirImagem(arquivo))
       mostrarSucesso('Foto atualizada!')
+    } catch (erroFoto) {
+      console.error('Erro ao salvar foto:', erroFoto)
+      mostrarErro('Não foi possível usar esta imagem.')
     }
-
-    leitor.readAsDataURL(arquivo)
   }
 
   return (
-    <>
-      <LoadingScreen />
+    <AppLayout
+      titulo="Meu perfil"
+      subtitulo="Gerencie suas informações pessoais e sua foto."
+      voltar={{ para: '/principal', texto: 'Voltar para o início' }}
+    >
+      <div className={styles.grade}>
+        <aside className={`cartao ${styles.resumo}`}>
+          <div className={styles.foto}>
+            <img src={fotoSrc} alt="Foto de perfil" id="fotoPerfil" />
 
-      <div className={styles['pagina-perfil']}>
-        <AppLogo />
-
-        <button
-          type="button"
-          className={styles['botao-voltar']}
-          id="voltarDashboard"
-          aria-label="Voltar para o dashboard"
-          onClick={() => navigate('/principal')}
-        >
-          ←
-        </button>
-
-        <main className={styles['card-perfil']}>
-          <h1>Meu Perfil</h1>
-          <div className={styles['linha-titulo']}></div>
-
-          <div className={styles['foto-perfil']}>
-            <img src={fotoSrc} alt="Foto de perfil" id="fotoPerfil" className={styles.fotoPerfil} />
-
-            <label htmlFor="inputFoto" className={styles['botao-foto']}>
-              Escolher foto
+            <label htmlFor="inputFoto" className={styles['foto-botao']} title="Escolher foto">
+              <Icone nome="camera" />
+              <span className="sr-only">Escolher foto</span>
             </label>
 
             <input
@@ -164,64 +159,116 @@ export function PerfilPage() {
             />
           </div>
 
-          <form id="formPerfil" className={styles.formPerfil} onSubmit={aoSalvar}>
-            <label htmlFor="nome">Nome</label>
-            <input
-              type="text"
-              id="nome"
-              autoComplete="name"
-              required
-              autoCorrect="off"
-              spellCheck={false}
-              value={nome}
-              onChange={(event) => setNome(event.target.value)}
-            />
+          <h2 className={styles.nome}>{usuario?.nome}</h2>
+          <p className={styles.email}>{usuario?.email}</p>
 
-            <label htmlFor="email">E-mail</label>
-            <input
-              type="email"
-              id="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-            />
+          <label htmlFor="inputFoto" className="botao botao--secundario botao--sm botao--bloco">
+            <Icone nome="camera" />
+            Escolher foto
+          </label>
 
-            <label htmlFor="senha">Senha necessária para alteração</label>
-            <input
-              type="password"
-              id="senha"
-              placeholder="Digite sua senha"
-              autoComplete="new-password"
-              value={senha}
-              onChange={(event) => setSenha(event.target.value)}
-            />
-
-            <button type="submit" className={styles['botao-salvar']}>
-              SALVAR ALTERAÇÕES
-            </button>
-          </form>
-
-          <p
-            id="mensagemPerfil"
-            className={[
-              styles.mensagemPerfil,
-              erro === true && styles['mensagem-erro'],
-              erro === false && styles['mensagem-sucesso'],
-            ]
-              .filter(Boolean)
-              .join(' ')}
-          >
-            {mensagem}
+          <p className={styles.dica}>
+            <Icone nome="info" />
+            A foto fica salva neste dispositivo.
           </p>
 
-          <button type="button" className={styles['botao-sair']} id="sairConta" onClick={aoSair}>
-            SAIR DA CONTA
-          </button>
-        </main>
+          <div className={styles.divisor} />
 
-        <AppCoin />
+          <button
+            type="button"
+            className="botao botao--perigo botao--bloco"
+            id="sairConta"
+            onClick={() => setConfirmandoSaida(true)}
+          >
+            <Icone nome="sair" />
+            Sair da conta
+          </button>
+        </aside>
+
+        <section className={`cartao ${styles.dados}`}>
+          <div className="cartao__cabecalho">
+            <div>
+              <h2 className="cartao__titulo">Dados da conta</h2>
+              <p className="cartao__descricao">Para salvar alterações, confirme com a sua senha.</p>
+            </div>
+          </div>
+
+          <form id="formPerfil" onSubmit={aoSalvar} noValidate>
+            <div className={styles.linha}>
+              <div className="campo">
+                <label htmlFor="nome" className="campo__rotulo">Nome</label>
+                <input
+                  type="text"
+                  id="nome"
+                  className="entrada"
+                  autoComplete="name"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  required
+                  value={nome}
+                  onChange={(event) => setNome(event.target.value)}
+                />
+              </div>
+
+              <div className="campo">
+                <label htmlFor="email" className="campo__rotulo">E-mail</label>
+                <input
+                  type="email"
+                  id="email"
+                  className="entrada"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="campo">
+              <label htmlFor="senha" className="campo__rotulo">Senha necessária para alteração</label>
+              <CampoSenha
+                id="senha"
+                placeholder="Digite sua senha atual"
+                autoComplete="current-password"
+                value={senha}
+                onChange={(event) => setSenha(event.target.value)}
+              />
+            </div>
+
+            <Mensagem id="mensagemPerfil" texto={mensagem} tipo={erro ? 'erro' : 'sucesso'} />
+
+            <div className={styles.acoes}>
+              <button type="submit" className="botao botao--primario" disabled={salvando}>
+                {salvando ? <span className="spinner" aria-hidden="true" /> : null}
+                {salvando ? 'Salvando...' : 'Salvar alterações'}
+              </button>
+            </div>
+          </form>
+
+          <div className={styles.aviso}>
+            <img src="/assets/Coin.png" alt="Mascote DinControl" className={styles['aviso-mascote']} />
+
+            <div>
+              <p className={styles['aviso-titulo']}>Esqueceu a senha?</p>
+              <p className={styles['aviso-texto']}>
+                Saia da conta e use “Esqueceu sua senha?” na tela de login para receber um código por e-mail.
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
-    </>
+
+      {confirmandoSaida ? (
+        <Modal
+          titulo="Sair da conta?"
+          descricao="Deseja realmente sair da conta? Você precisará fazer login novamente."
+          textoConfirmar={saindo ? 'Saindo...' : 'Sair da conta'}
+          perigo
+          confirmarDesabilitado={saindo}
+          onConfirmar={aoSair}
+          onCancelar={() => setConfirmandoSaida(false)}
+        />
+      ) : null}
+    </AppLayout>
   )
 }

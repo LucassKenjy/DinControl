@@ -8,10 +8,10 @@ interface CategorySelectorProps {
   onChange: (value: string) => void
 }
 
-export function CategorySelector({ id, className, value, options, onChange }: CategorySelectorProps) {
+export function CategorySelector({ id, className = 'entrada', value, options, onChange }: CategorySelectorProps) {
   return (
     <select id={id} className={className} value={value} onChange={(event) => onChange(event.target.value)}>
-      <option value=""></option>
+      <option value="">Selecione uma categoria</option>
 
       {options.map((opcao) => (
         <option key={opcao.value} value={opcao.value}>

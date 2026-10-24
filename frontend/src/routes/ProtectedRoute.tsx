@@ -6,7 +6,7 @@ export function ProtectedRoute() {
   const { autenticado, carregando } = useAuth()
 
   if (carregando) {
-    return <LoadingScreen atraso={0} />
+    return <LoadingScreen />
   }
 
   if (!autenticado) {

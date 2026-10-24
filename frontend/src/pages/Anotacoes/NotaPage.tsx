@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styles from './Anotacoes.module.css'
 import { LayoutAnotacoes } from '../../components/anotacoes/LayoutAnotacoes'
-import { IconeLapis, IconeVoltar } from '../../components/anotacoes/Icones'
+import { Icone } from '../../components/ui/Icone'
 import { useFeedback } from '../../utils/useFeedback'
 import { ApiError } from '../../api/client'
 import { atualizarAnotacao, buscarAnotacao } from '../../api/notes'
@@ -195,63 +195,57 @@ export function NotaPage() {
         ? 'pendente'
         : 'salvo'
 
+  const tituloPagina = editandoTitulo ? (
+    <input
+      className={`entrada ${styles['campo-titulo']}`}
+      type="text"
+      maxLength={120}
+      autoFocus
+      aria-label="Título da anotação"
+      value={tituloEditado}
+      onChange={(evento) => setTituloEditado(evento.target.value)}
+      onBlur={salvarTitulo}
+      onKeyDown={(evento) => {
+        if (evento.key === 'Enter') {
+          evento.currentTarget.blur()
+        }
+
+        if (evento.key === 'Escape') {
+          setEditandoTitulo(false)
+        }
+      }}
+    />
+  ) : carregando ? (
+    'Carregando...'
+  ) : indisponivel ? (
+    'Anotação não encontrada'
+  ) : (
+    titulo
+  )
+
   return (
-    <LayoutAnotacoes feedback={feedback} colunaUnica>
-      <section className={styles.card}>
-        <div className={styles['cabecalho-card']}>
+    <LayoutAnotacoes
+      feedback={feedback}
+      colunaUnica
+      titulo={tituloPagina}
+      voltar={{ para: '/anotacoes', texto: 'Voltar para Listas e Anotações' }}
+      acoes={
+        editandoTitulo || carregando || indisponivel ? null : (
           <button
             type="button"
-            className={styles['botao-icone']}
-            aria-label="Voltar para Listas e Anotações"
-            onClick={() => navigate('/anotacoes')}
+            className="botao botao--secundario"
+            onClick={() => {
+              setTituloEditado(titulo)
+              setEditandoTitulo(true)
+            }}
           >
-            <IconeVoltar />
+            <Icone nome="lapis" />
+            Renomear
           </button>
-
-          {editandoTitulo ? (
-            <input
-              className={styles['campo-titulo']}
-              type="text"
-              maxLength={120}
-              autoFocus
-              value={tituloEditado}
-              onChange={(evento) => setTituloEditado(evento.target.value)}
-              onBlur={salvarTitulo}
-              onKeyDown={(evento) => {
-                if (evento.key === 'Enter') {
-                  evento.currentTarget.blur()
-                }
-
-                if (evento.key === 'Escape') {
-                  setEditandoTitulo(false)
-                }
-              }}
-            />
-          ) : (
-            <h1 className={styles['titulo-card']}>
-              {carregando
-                ? 'Carregando...'
-                : indisponivel
-                  ? 'Anotação não encontrada'
-                  : titulo}
-            </h1>
-          )}
-
-          {!editandoTitulo && !carregando && !indisponivel ? (
-            <button
-              type="button"
-              className={styles['botao-icone']}
-              aria-label="Renomear anotação"
-              onClick={() => {
-                setTituloEditado(titulo)
-                setEditandoTitulo(true)
-              }}
-            >
-              <IconeLapis />
-            </button>
-          ) : null}
-        </div>
-
+        )
+      }
+    >
+      <section className={`cartao ${styles.card}`}>
         {indisponivel ? (
           <p className={styles['mensagem-vazia']}>
             Esta anotação não existe ou não pertence a você.
@@ -270,11 +264,14 @@ export function NotaPage() {
             />
 
             <div className={styles['rodape-nota']}>
-              <span className={styles['situacao-nota']}>{TEXTO_SITUACAO[situacaoExibida]}</span>
+              <span className={`${styles['situacao-nota']} ${styles[`situacao-${situacaoExibida}`]}`}>
+                <span className="ponto" />
+                {TEXTO_SITUACAO[situacaoExibida]}
+              </span>
 
               <button
                 type="button"
-                className={styles['botao-salvar']}
+                className="botao botao--primario botao--sm"
                 disabled={!pendente || situacao === 'salvando'}
                 onClick={() => salvarConteudo(conteudo, true)}
               >

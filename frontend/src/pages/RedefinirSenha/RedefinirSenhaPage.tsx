@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
+import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import styles from './RedefinirSenhaPage.module.css'
-import { AuthLogo } from '../../components/layout/AuthLogo'
-import { AuthCoin } from '../../components/layout/AuthCoin'
+import { AuthLayout } from '../../components/layout/AuthLayout'
+import { CampoSenha } from '../../components/ui/CampoSenha'
+import { Mensagem } from '../../components/ui/Mensagem'
+import type { TipoMensagem } from '../../components/ui/Mensagem'
+import { RegrasSenha } from '../../components/ui/RegrasSenha'
 import { redefinirSenha } from '../../api/auth'
 import { ApiError } from '../../api/client'
 import { validarSenha } from '../../utils/password'
-
-type TipoMensagem = 'erro' | 'sucesso' | 'normal'
 
 export function RedefinirSenhaPage() {
   const navigate = useNavigate()
@@ -15,11 +16,10 @@ export function RedefinirSenhaPage() {
   const [dadosValidos, setDadosValidos] = useState(false)
   const [novaSenha, setNovaSenha] = useState('')
   const [confirmarSenha, setConfirmarSenha] = useState('')
-  const [novaSenhaVisivel, setNovaSenhaVisivel] = useState(false)
-  const [confirmarSenhaVisivel, setConfirmarSenhaVisivel] = useState(false)
   const [enviando, setEnviando] = useState(false)
+  const [concluido, setConcluido] = useState(false)
   const [mensagem, setMensagem] = useState('')
-  const [tipoMensagem, setTipoMensagem] = useState<TipoMensagem>('normal')
+  const [tipoMensagem, setTipoMensagem] = useState<TipoMensagem>('info')
 
   useEffect(() => {
     const email = sessionStorage.getItem('emailRecuperacao')
@@ -38,7 +38,9 @@ export function RedefinirSenhaPage() {
     setTipoMensagem(tipo)
   }
 
-  async function aoRedefinir() {
+  async function aoRedefinir(event: FormEvent) {
+    event.preventDefault()
+
     const email = sessionStorage.getItem('emailRecuperacao')
     const resetToken = sessionStorage.getItem('resetToken')
 
@@ -68,12 +70,13 @@ export function RedefinirSenhaPage() {
     }
 
     setEnviando(true)
-    mostrarMensagem('Alterando sua senha...', 'normal')
+    setMensagem('')
 
     try {
       await redefinirSenha(email, resetToken, novaSenhaTrim)
 
-      mostrarMensagem('Senha redefinida com sucesso!', 'sucesso')
+      mostrarMensagem('Senha redefinida com sucesso! Redirecionando para o login...', 'sucesso')
+      setConcluido(true)
 
       sessionStorage.removeItem('emailRecuperacao')
       sessionStorage.removeItem('resetToken')
@@ -93,88 +96,58 @@ export function RedefinirSenhaPage() {
     return null
   }
 
-  const corMensagem =
-    tipoMensagem === 'erro' ? '#e63946' : tipoMensagem === 'sucesso' ? '#159447' : '#555555'
-
   return (
-    <div className={styles['conteudo-redefinirsenha']}>
-      <AuthLogo />
+    <AuthLayout
+      selo="Código verificado"
+      titulo="Quase lá!"
+      destaque="Crie sua nova senha."
+      texto="Depois de redefinir, você será levado ao login para entrar com a nova senha."
+    >
+      <h1 className="auth-titulo">Redefina sua senha</h1>
+      <p className="auth-subtitulo">Escolha uma nova senha para acessar sua conta.</p>
 
-      <div className={styles.redefinirsenha}>
-        <h1 className={styles.titulo}>Redefina sua senha</h1>
+      <form id="formRedefinirSenha" onSubmit={aoRedefinir} noValidate>
+        <div className="campo">
+          <label htmlFor="novaSenha" className="campo__rotulo">Insira sua nova senha</label>
 
-        <p className={styles.SubTitulo}>
-          • A senha deve conter somente números <br />
-          • Deve conter no mínimo 5 números <br />
-          • Não use sequências óbvias (ex: 1234, 4321)
-        </p>
+          <CampoSenha
+            id="novaSenha"
+            placeholder="Nova senha numérica"
+            inputMode="numeric"
+            autoComplete="new-password"
+            aria-describedby="regrasSenha"
+            value={novaSenha}
+            onChange={(event) => setNovaSenha(event.target.value.replace(/\D/g, ''))}
+          />
 
-        <form
-          id="formRedefinirSenha"
-          className={styles.formRedefinirSenha}
-          onSubmit={(event) => event.preventDefault()}
+          <RegrasSenha id="regrasSenha" senha={novaSenha} />
+        </div>
+
+        <div className="campo">
+          <label htmlFor="confirmarSenha" className="campo__rotulo">Confirme sua senha</label>
+
+          <CampoSenha
+            id="confirmarSenha"
+            placeholder="Repita a nova senha"
+            inputMode="numeric"
+            autoComplete="new-password"
+            value={confirmarSenha}
+            onChange={(event) => setConfirmarSenha(event.target.value.replace(/\D/g, ''))}
+          />
+        </div>
+
+        <button
+          type="submit"
+          id="btnRedefinirSenha"
+          className="botao botao--primario botao--bloco auth-enviar"
+          disabled={enviando || concluido}
         >
-          <label htmlFor="novaSenha">Insira sua nova senha</label>
+          {enviando ? <span className="spinner" aria-hidden="true" /> : null}
+          {enviando ? 'Redefinindo...' : 'Redefinir senha'}
+        </button>
 
-          <div className={styles.CampoSenha}>
-            <input
-              type={novaSenhaVisivel ? 'text' : 'password'}
-              id="novaSenha"
-              className={styles.campoSenhaInput}
-              inputMode="numeric"
-              autoComplete="new-password"
-              value={novaSenha}
-              onChange={(event) => setNovaSenha(event.target.value.replace(/\D/g, ''))}
-            />
-
-            <button
-              type="button"
-              className={styles['botao-olho']}
-              onClick={() => setNovaSenhaVisivel((valor) => !valor)}
-            >
-              <img src="/assets/olho.png" alt="Mostrar senha" />
-            </button>
-          </div>
-
-          <label htmlFor="confirmarSenha">Confirme sua senha</label>
-
-          <div className={styles.CampoSenha}>
-            <input
-              type={confirmarSenhaVisivel ? 'text' : 'password'}
-              id="confirmarSenha"
-              className={styles.campoSenhaInput}
-              inputMode="numeric"
-              autoComplete="new-password"
-              value={confirmarSenha}
-              onChange={(event) => setConfirmarSenha(event.target.value.replace(/\D/g, ''))}
-            />
-
-            <button
-              type="button"
-              className={styles['botao-olho']}
-              onClick={() => setConfirmarSenhaVisivel((valor) => !valor)}
-            >
-              <img src="/assets/olho.png" alt="Mostrar senha" />
-            </button>
-          </div>
-
-          <button
-            type="button"
-            id="btnRedefinirSenha"
-            className={styles.btnRedefinirSenha}
-            disabled={enviando}
-            onClick={aoRedefinir}
-          >
-            {enviando ? 'Redefinindo...' : 'Redefinir sua senha'}
-          </button>
-
-          <p id="mensagem" className={styles.mensagem} style={{ color: corMensagem }}>
-            {mensagem}
-          </p>
-        </form>
-      </div>
-
-      <AuthCoin />
-    </div>
+        <Mensagem id="mensagem" texto={mensagem} tipo={tipoMensagem} />
+      </form>
+    </AuthLayout>
   )
 }

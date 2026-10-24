@@ -1,0 +1,71 @@
+.saldo {
+    display: flex;
+    align-items: center;
+
+    min-height: 228px;
+    padding: 32px;
+    overflow: hidden;
+
+    border-color: rgba(0, 194, 255, 0.22);
+    background:
+        radial-gradient(120% 140% at 100% 0%, rgba(0, 194, 255, 0.28) 0%, transparent 55%),
+        linear-gradient(135deg, rgba(31, 107, 255, 0.55) 0%, rgba(12, 26, 62, 0.85) 70%);
+}
+
+.info {
+    position: relative;
+    z-index: 1;
+}
+
+.rotulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(234, 240, 255, 0.82);
+}
+
+.valor {
+    margin: 8px 0 16px;
+
+    font-size: clamp(32px, 4vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.negativo {
+    color: #ff9aa6;
+}
+
+.mascote {
+    position: absolute;
+    right: 12px;
+    bottom: -6px;
+
+    height: 116%;
+    width: auto;
+    max-width: none;
+
+    filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0.4));
+    pointer-events: none;
+}
+
+@media (max-width: 760px) {
+    .saldo {
+        min-height: 200px;
+        padding: 24px;
+    }
+
+    .mascote {
+        right: -24px;
+        height: 96%;
+    }
+}
+
+@media (max-width: 440px) {
+    .mascote {
+        display: none;
+    }
+}

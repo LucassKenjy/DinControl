@@ -1,0 +1,78 @@
+.rosca {
+    position: relative;
+    height: 170px;
+}
+
+.centro {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    pointer-events: none;
+}
+
+.centro span {
+    font-size: 12px;
+    color: var(--texto-fraco);
+}
+
+.centro strong {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.legenda {
+    display: grid;
+    gap: 2px;
+
+    margin-top: 14px;
+
+    list-style: none;
+}
+
+.legenda li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 10px;
+
+    padding: 5px 0;
+
+    font-size: 13px;
+}
+
+.legenda li + li {
+    border-top: 1px solid var(--borda);
+}
+
+.cor {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 3px;
+}
+
+.nome {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.porcentagem {
+    min-width: 40px;
+
+    font-size: 12.5px;
+    text-align: right;
+    color: var(--texto-fraco);
+}
+
+.valor {
+    min-width: 92px;
+
+    font-weight: 600;
+    text-align: right;
+}

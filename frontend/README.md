@@ -11,9 +11,10 @@ npm install
 npm run dev
 ```
 
-The dev server proxies `/users`, `/login`, `/logout`, `/me`,
-`/transactions` and `/forgot-password/*` to `http://localhost:3000`, so
-run the Express server (`npm start` from the repo root) alongside it.
+The dev server proxies `/users`, `/login`, `/logout`, `/me`, `/lists`,
+`/list-items`, `/notes`, `/transactions` and `/forgot-password/*` to
+`http://localhost:3000`, so run the Express server (`npm start` from the
+repo root) alongside it.
 
 ## Build
 

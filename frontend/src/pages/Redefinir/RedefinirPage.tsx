@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import styles from './RedefinirPage.module.css'
-import { AuthLogo } from '../../components/layout/AuthLogo'
-import { AuthCoin } from '../../components/layout/AuthCoin'
+import { AuthLayout } from '../../components/layout/AuthLayout'
+import { Icone } from '../../components/ui/Icone'
+import { Mensagem } from '../../components/ui/Mensagem'
+import type { TipoMensagem } from '../../components/ui/Mensagem'
 import { enviarCodigoRecuperacao, verificarCodigoRecuperacao } from '../../api/auth'
 import { ApiError } from '../../api/client'
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const REGEX_CODIGO = /^\d{6}$/
-
-type TipoMensagem = 'erro' | 'sucesso' | 'normal'
 
 export function RedefinirPage() {
   const navigate = useNavigate()
@@ -20,7 +20,7 @@ export function RedefinirPage() {
   const [enviando, setEnviando] = useState(false)
   const [verificando, setVerificando] = useState(false)
   const [mensagem, setMensagem] = useState('')
-  const [tipoMensagem, setTipoMensagem] = useState<TipoMensagem>('normal')
+  const [tipoMensagem, setTipoMensagem] = useState<TipoMensagem>('info')
 
   function mostrarMensagem(texto: string, tipo: TipoMensagem) {
     setMensagem(texto)
@@ -41,7 +41,7 @@ export function RedefinirPage() {
     }
 
     setEnviando(true)
-    mostrarMensagem('Enviando código...', 'normal')
+    setMensagem('')
 
     try {
       const resultado = await enviarCodigoRecuperacao(emailTrim)
@@ -77,12 +77,10 @@ export function RedefinirPage() {
     }
 
     setVerificando(true)
-    mostrarMensagem('Verificando código...', 'normal')
+    setMensagem('')
 
     try {
       const resultado = await verificarCodigoRecuperacao(emailTrim, codigoTrim)
-
-      mostrarMensagem('Código verificado com sucesso!', 'sucesso')
 
       sessionStorage.setItem('emailRecuperacao', emailTrim)
       sessionStorage.setItem('resetToken', resultado.resetToken)
@@ -93,84 +91,94 @@ export function RedefinirPage() {
         erro instanceof ApiError ? erro.message : 'Erro ao conectar com o servidor.',
         'erro',
       )
-    } finally {
       setVerificando(false)
     }
   }
 
-  const corMensagem =
-    tipoMensagem === 'erro' ? '#e63946' : tipoMensagem === 'sucesso' ? '#159447' : '#555555'
-
   return (
-    <div className={styles['conteudo-redefinir']}>
-      <AuthLogo />
+    <AuthLayout
+      selo="Recuperação de acesso"
+      titulo="Recupere sua conta"
+      destaque="em poucos passos."
+      texto="Enviaremos um código de 6 números para o e-mail cadastrado. Ele é válido por 10 minutos."
+      recursos={[
+        { icone: 'email', texto: 'Receba o código no seu e-mail' },
+        { icone: 'escudo', texto: 'Confirme o código recebido' },
+        { icone: 'cadeado', texto: 'Crie uma nova senha' },
+      ]}
+    >
+      <Link to="/login" className="auth-voltar">
+        <Icone nome="seta-esquerda" />
+        Voltar para o login
+      </Link>
 
-      <div className={styles.redefinir}>
-        <h1 className={styles.titulo}>Redefina sua senha</h1>
+      <h1 className="auth-titulo">Redefina sua senha</h1>
+      <p className="auth-subtitulo">Informe seu e-mail para receber o código de verificação.</p>
 
-        <form
-          id="formRedef"
-          className={styles.formRedef}
-          onSubmit={(event) => event.preventDefault()}
-        >
-          <label htmlFor="email">Você receberá um código neste e-mail</label>
+      <form id="formRedef" onSubmit={(event) => event.preventDefault()} noValidate>
+        <div className={styles.etapa}>
+          <span className={styles.numero}>1</span>
 
-          <div className={styles.campo}>
-            <input
-              type="email"
-              id="email"
-              className={styles.email}
-              placeholder="Digite seu e-mail"
-              value={email}
-              readOnly={emailBloqueado}
-              onChange={(event) => setEmail(event.target.value)}
-            />
-          </div>
+          <label htmlFor="email" className={`campo__rotulo ${styles['titulo-etapa']}`}>
+            Você receberá um código neste e-mail
+          </label>
+
+          <input
+            type="email"
+            id="email"
+            className="entrada"
+            placeholder="voce@email.com"
+            autoComplete="email"
+            value={email}
+            readOnly={emailBloqueado}
+            onChange={(event) => setEmail(event.target.value)}
+          />
 
           <button
             type="button"
             id="btnEnviarCodigo"
-            className={styles.btnEnviarCodigo}
+            className="botao botao--primario botao--bloco"
             disabled={enviando}
             onClick={aoEnviarCodigo}
           >
-            {enviando ? 'Enviando...' : 'Enviar Código'}
+            {enviando ? <span className="spinner" aria-hidden="true" /> : null}
+            {enviando ? 'Enviando...' : emailBloqueado ? 'Reenviar código' : 'Enviar código'}
           </button>
+        </div>
 
-          <div className={styles.CampoC}>
-            <label htmlFor="codigo">Digite o código recebido no e-mail</label>
+        <div className={styles.etapa}>
+          <span className={styles.numero}>2</span>
 
-            <div className={styles.campo}>
-              <input
-                type="text"
-                id="codigo"
-                className={styles.codigo}
-                placeholder="Digite o código"
-                maxLength={6}
-                inputMode="numeric"
-                value={codigo}
-                onChange={(event) => setCodigo(event.target.value.replace(/\D/g, '').slice(0, 6))}
-              />
-            </div>
+          <label htmlFor="codigo" className={`campo__rotulo ${styles['titulo-etapa']}`}>
+            Digite o código recebido no e-mail
+          </label>
 
-            <button
-              type="button"
-              id="btnVerificarCodigo"
-              className={styles.btnVerificarCodigo}
-              disabled={verificando}
-              onClick={aoVerificarCodigo}
-            >
-              {verificando ? 'Verificando...' : 'Verificar código'}
-            </button>
-          </div>
+          <input
+            type="text"
+            id="codigo"
+            className={`entrada ${styles.codigo}`}
+            placeholder="000000"
+            maxLength={6}
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            value={codigo}
+            onChange={(event) => setCodigo(event.target.value.replace(/\D/g, '').slice(0, 6))}
+          />
 
-          <p id="mensagem" className={styles.mensagem} style={{ color: corMensagem }}>
-            {mensagem}
-          </p>
-        </form>
-      </div>
+          <button
+            type="button"
+            id="btnVerificarCodigo"
+            className="botao botao--primario botao--bloco"
+            disabled={verificando}
+            onClick={aoVerificarCodigo}
+          >
+            {verificando ? <span className="spinner" aria-hidden="true" /> : null}
+            {verificando ? 'Verificando...' : 'Verificar código'}
+          </button>
+        </div>
 
-      <AuthCoin />
-    </div>
+        <Mensagem id="mensagem" texto={mensagem} tipo={tipoMensagem} />
+      </form>
+    </AuthLayout>
   )
 }

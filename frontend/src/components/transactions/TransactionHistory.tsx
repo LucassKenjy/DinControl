@@ -8,11 +8,8 @@ interface TransactionHistoryProps {
   onDeleted: (id: number) => void
 }
 
+/** Transações agrupadas por dia, do mais recente para o mais antigo. */
 export function TransactionHistory({ styles, transacoes, onDeleted }: TransactionHistoryProps) {
-  if (transacoes.length === 0) {
-    return <div className={styles['sem-transacoes']}>Nenhuma transação encontrada.</div>
-  }
-
   const grupos = new Map<string, Transaction[]>()
 
   transacoes.forEach((transacao) => {

@@ -30,3 +30,21 @@ export function calcularTotais(transacoes: Transaction[]): Totais {
 
   return { entradas, saidas, investimentos }
 }
+
+/**
+ * Data da transação, se ela for do ano atual. Os gráficos mensais
+ * mostram Jan–Dez do ano corrente, sem somar meses de anos anteriores.
+ */
+export function dataDoAnoAtual(transacao: Transaction): Date | null {
+  if (!transacao.data) {
+    return null
+  }
+
+  const data = new Date(transacao.data)
+
+  if (isNaN(data.getTime()) || data.getFullYear() !== new Date().getFullYear()) {
+    return null
+  }
+
+  return data
+}

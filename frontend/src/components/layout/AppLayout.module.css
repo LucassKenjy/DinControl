@@ -1,0 +1,319 @@
+/* =====================================================
+   LAYOUT DA ÁREA LOGADA
+===================================================== */
+
+.container {
+    width: 100%;
+    max-width: var(--largura-max);
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+
+/* =====================================================
+   CABEÇALHO
+===================================================== */
+
+.cabecalho {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+
+    border-bottom: 1px solid var(--borda);
+    background: rgba(4, 11, 31, 0.72);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+}
+
+.cabecalho-conteudo {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 32px;
+
+    height: 68px;
+}
+
+.logo img {
+    width: 148px;
+}
+
+.navegacao {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    height: 38px;
+    padding: 0 14px;
+
+    border-radius: var(--raio-sm);
+
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--texto-suave);
+
+    transition: color var(--transicao), background-color var(--transicao);
+}
+
+.link:hover {
+    color: var(--texto);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.ativo {
+    color: var(--texto);
+    background: rgba(31, 107, 255, 0.16);
+}
+
+.ativo :global(.icone) {
+    color: var(--azul-ciano);
+}
+
+.acoes {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-left: auto;
+}
+
+.usuario {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    height: 44px;
+    padding: 0 4px 0 14px;
+
+    border-radius: 999px;
+    border: 1px solid var(--borda);
+    background: rgba(255, 255, 255, 0.04);
+
+    transition: background-color var(--transicao), border-color var(--transicao);
+}
+
+.usuario:hover,
+.usuario[aria-current="page"] {
+    border-color: var(--borda-forte);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.usuario-nome {
+    max-width: 160px;
+    overflow: hidden;
+
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--superficie-elevada);
+    border: 2px solid rgba(255, 255, 255, 0.12);
+}
+
+.botao-menu {
+    display: none;
+}
+
+
+/* =====================================================
+   TÍTULO DA PÁGINA
+===================================================== */
+
+.principal {
+    padding-top: 32px;
+    padding-bottom: 56px;
+}
+
+.cabecalho-pagina {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    margin-bottom: 24px;
+}
+
+.cabecalho-pagina-texto {
+    min-width: 0;
+}
+
+.titulo {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
+}
+
+.subtitulo {
+    margin-top: 4px;
+
+    font-size: 14.5px;
+    color: var(--texto-suave);
+}
+
+.voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-bottom: 10px;
+
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--texto-suave);
+}
+
+.voltar:hover {
+    color: var(--texto);
+}
+
+.acoes-pagina {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+
+/* =====================================================
+   AVISO (TOAST)
+===================================================== */
+
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    z-index: 80;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    max-width: calc(100vw - 32px);
+    padding: 12px 18px;
+
+    border-radius: var(--raio);
+    border: 1px solid transparent;
+    background: var(--superficie-forte);
+    box-shadow: var(--sombra-lg);
+
+    font-size: 14px;
+    font-weight: 500;
+
+    transform: translateX(-50%);
+    animation: subir 200ms ease;
+}
+
+.toast-sucesso {
+    color: #9ff0bd;
+    border-color: rgba(34, 197, 94, 0.35);
+}
+
+.toast-erro {
+    color: #ffb4bd;
+    border-color: rgba(245, 71, 90, 0.35);
+}
+
+@keyframes subir {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 8px);
+    }
+}
+
+
+/* =====================================================
+   RESPONSIVO
+===================================================== */
+
+@media (max-width: 900px) {
+    .cabecalho-conteudo {
+        gap: 12px;
+        height: 62px;
+    }
+
+    .logo img {
+        width: 128px;
+    }
+
+    .botao-menu {
+        display: inline-flex;
+    }
+
+    .navegacao {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 16px;
+
+        flex-direction: column;
+        align-items: stretch;
+
+        min-width: 230px;
+        padding: 6px;
+
+        border-radius: var(--raio);
+        border: 1px solid var(--borda-forte);
+        background: var(--superficie-forte);
+        box-shadow: var(--sombra-lg);
+
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-6px);
+
+        transition: opacity var(--transicao), transform var(--transicao), visibility var(--transicao);
+    }
+
+    .navegacao.aberto {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .link {
+        height: 42px;
+    }
+
+    .usuario-nome {
+        display: none;
+    }
+
+    .usuario {
+        padding: 0 3px;
+    }
+}
+
+@media (max-width: 560px) {
+    .container {
+        padding: 0 16px;
+    }
+
+    .principal {
+        padding-top: 22px;
+    }
+
+    .titulo {
+        font-size: 22px;
+    }
+
+    .acoes-pagina,
+    .acoes-pagina > :global(.botao) {
+        width: 100%;
+    }
+}

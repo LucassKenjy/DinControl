@@ -1,207 +1,61 @@
-/* =====================================================
-   DINCONTROL - CORPO DO MODAL "NOVA TRANSAÇÃO"
-   A moldura (fundo escurecido, centralização, raio de
-   borda, botões Cancelar/CONFIRMAR) vem de Modal.module.css.
-   Aqui ficam apenas as linhas de entrada/saída.
-===================================================== */
+/* Seletor Entrada / Saída do modal Nova transação */
 
-.linha-transacao {
-    width: 100%;
+.segmentado {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
 
-    min-height: 42px;
+    margin-bottom: 18px;
+    padding: 5px;
 
-    padding: 0 12px;
+    border-radius: var(--raio);
+    border: 1px solid var(--borda);
+    background: rgba(255, 255, 255, 0.05);
+}
 
+.opcao input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.opcao span {
     display: flex;
     align-items: center;
-
+    justify-content: center;
     gap: 8px;
 
-    background-color: #e5e5e5;
+    height: 40px;
 
-    border-radius: 999px;
-}
-
-
-/* BOLINHAS */
-
-.bolinha {
-    width: 14px;
-    height: 14px;
-
-    border-radius: 50%;
-
-    flex-shrink: 0;
-}
-
-
-.entrada-cor {
-    background-color: #72b500;
-}
-
-
-.saida-cor {
-    background-color: #c43b00;
-}
-
-
-/* R$ */
-
-.cifrao {
-    color: #555555;
-
-    font-size: 14px;
-
-    flex-shrink: 0;
-}
-
-
-/* VALOR */
-
-.linha-transacao input {
-    width: 100%;
-
-    min-width: 0;
-
-    padding: 0;
-
-    border: none;
-    border-bottom: 1px solid #999999;
-
-    background: transparent;
-
-    color: #555555;
-
-    outline: none;
-
-    font-size: 15px;
-    font-family: inherit;
-
-    flex: 1 1 auto;
-}
-
-
-.linha-transacao input::-webkit-inner-spin-button,
-.linha-transacao input::-webkit-outer-spin-button {
-    appearance: none;
-}
-
-
-/* CATEGORIA */
-
-.linha-transacao select {
-    max-width: 130px;
-
-    min-width: 0;
-
-    margin-left: auto;
-
-    padding: 0;
-
-    border: none;
-
-    background: transparent;
-
-    color: #333333;
-
-    outline: none;
-
-    font-size: 13px;
-    font-family: inherit;
-
+    border-radius: var(--raio-sm);
     cursor: pointer;
 
-    flex: 0 1 auto;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--texto-suave);
+
+    transition: background-color var(--transicao), color var(--transicao);
 }
 
-
-/* CATEGORIA PERSONALIZADA */
-
-.campo-categoria-personalizada {
-    width: 100%;
-
-    box-sizing: border-box;
-
-    min-height: 42px;
-
-    padding: 0 12px;
-
-    border: none;
-    border-radius: 999px;
-
-    background-color: #e5e5e5;
-
-    color: #555555;
-
-    outline: none;
-
-    font-size: 15px;
-    font-family: inherit;
+.opcao span:hover {
+    color: var(--texto);
 }
 
-
-.campo-categoria-personalizada[hidden] {
-    display: none;
+.opcao input:focus-visible + span {
+    box-shadow: var(--anel-foco);
 }
 
-
-/* MENSAGEM */
-
-.mensagem-transacao {
-    margin: 0;
-
-    text-align: center;
-
-    font-size: 13px;
+.entrada input:checked + span {
+    color: var(--entrada);
+    background: var(--entrada-fundo);
 }
 
-
-.mensagem-sucesso {
-    color: #9de5a4;
+.saida input:checked + span {
+    color: var(--saida);
+    background: var(--saida-fundo);
 }
 
-
-/* =====================================================
-   CELULAR
-===================================================== */
-
-@media screen
-and (max-width: 400px) {
-
-    .linha-transacao,
-    .campo-categoria-personalizada {
-        min-height: 38px;
-
-        padding: 0 10px;
-    }
-
-
-    .linha-transacao {
-        gap: 6px;
-    }
-
-
-    .bolinha {
-        width: 12px;
-        height: 12px;
-    }
-
-
-    .cifrao {
-        font-size: 12px;
-    }
-
-
-    .linha-transacao input,
-    .campo-categoria-personalizada {
-        font-size: 14px;
-    }
-
-
-    .linha-transacao select {
-        max-width: 112px;
-
-        font-size: 12px;
-    }
-
+/* Campo da categoria personalizada logo abaixo do seletor */
+.segmentado ~ :global(.campo) :global(.entrada) + :global(.entrada) {
+    margin-top: 8px;
 }

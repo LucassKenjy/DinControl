@@ -11,12 +11,12 @@ const CATEGORIAS_SAIDA_BASE = [
 ]
 
 const CORES_CATEGORIA_SAIDA_BASE: Record<string, string> = {
-  Alimentacao: '#e51b17',
-  Locomocao: '#e7b700',
-  Investimento: '#ef7d00',
-  Lazer: '#65b900',
-  Educacao: '#fd00a9',
-  Outros: '#633cff',
+  Alimentacao: '#ff6b6b',
+  Locomocao: '#fbbf24',
+  Investimento: '#8b9bff',
+  Lazer: '#34d399',
+  Educacao: '#f472b6',
+  Outros: '#60a5fa',
 }
 
 /**
@@ -81,10 +81,10 @@ export function obterCoresCategoriasSaida(chaves: string[]): string[] {
       return corBase
     }
 
-    const matiz = (200 + contadorPersonalizadas * 47) % 360
+    const matiz = (280 + contadorPersonalizadas * 47) % 360
     contadorPersonalizadas += 1
 
-    return `hsl(${matiz}, 70%, 50%)`
+    return `hsl(${matiz}, 70%, 62%)`
   })
 }
 
