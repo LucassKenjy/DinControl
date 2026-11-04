@@ -2,30 +2,29 @@ import { useEffect, useRef } from 'react'
 import type { ChartConfiguration } from 'chart.js'
 import { Chart } from '../../../utils/chartSetup'
 import type { Transaction } from '../../../types/transaction'
-import { MESES } from '../../../utils/constants'
 import { calcularLimiteMaximo, CORES_GRAFICO, opcoesBarras } from '../../../utils/chartOptions'
-import { dataDoAnoAtual } from '../../../utils/totals'
+import { chaveData } from '../../../utils/formatters'
 
-function obterMovimentacaoMensal(transacoes: Transaction[]) {
-  const entradas = Array(12).fill(0)
-  const saidas = Array(12).fill(0)
+function obterMovimentacaoMensal(transacoes: Transaction[], mes: string) {
+  const entradas = Array(new Date(Number(mes.slice(0, 4)), Number(mes.slice(5)), 0).getDate()).fill(0)
+  const saidas = Array(new Date(Number(mes.slice(0, 4)), Number(mes.slice(5)), 0).getDate()).fill(0)
 
   transacoes.forEach((transacao) => {
-    const data = dataDoAnoAtual(transacao)
+    const data = new Date(transacao.data)
 
-    if (!data) {
+    if (chaveData(data).slice(0, 7) !== mes) {
       return
     }
 
-    const mes = data.getMonth()
+    const dia = data.getDate() - 1
     const valor = Number(transacao.valor) || 0
 
     if (transacao.tipo === 'ENTRADA') {
-      entradas[mes] += valor
+      entradas[dia] += valor
     }
 
     if (transacao.tipo === 'SAIDA') {
-      saidas[mes] += valor
+      saidas[dia] += valor
     }
   })
 
@@ -34,9 +33,10 @@ function obterMovimentacaoMensal(transacoes: Transaction[]) {
 
 interface MonthlyChartProps {
   transacoes: Transaction[]
+  mes: string
 }
 
-export function MonthlyChart({ transacoes }: MonthlyChartProps) {
+export function MonthlyChart({ transacoes, mes }: MonthlyChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const chartRef = useRef<Chart<'bar'> | null>(null)
 
@@ -49,13 +49,13 @@ export function MonthlyChart({ transacoes }: MonthlyChartProps) {
 
     chartRef.current?.destroy()
 
-    const { entradas, saidas } = obterMovimentacaoMensal(transacoes)
+    const { entradas, saidas } = obterMovimentacaoMensal(transacoes, mes)
     const limiteMaximo = calcularLimiteMaximo([...entradas, ...saidas])
 
     const config: ChartConfiguration<'bar'> = {
       type: 'bar',
       data: {
-        labels: MESES,
+        labels: Array.from({ length: new Date(Number(mes.slice(0, 4)), Number(mes.slice(5)), 0).getDate() }, (_, i) => String(i + 1)),
         datasets: [
           {
             label: 'Entrada',
@@ -82,14 +82,14 @@ export function MonthlyChart({ transacoes }: MonthlyChartProps) {
       chartRef.current?.destroy()
       chartRef.current = null
     }
-  }, [transacoes])
+  }, [transacoes, mes])
 
   return (
     <canvas
       id="graficoMensal"
       ref={canvasRef}
       role="img"
-      aria-label="Gráfico de entradas e saídas por mês"
+      aria-label="Gráfico de entradas e saídas por dia do mês selecionado"
     />
   )
 }

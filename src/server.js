@@ -796,7 +796,8 @@ app.post(
             const {
                 tipo,
                 valor,
-                categoria
+                categoria,
+                data
             } = req.body;
 
             const erroValidacao =
@@ -805,6 +806,12 @@ app.post(
                     valor,
                     categoria
                 );
+
+            if (data !== undefined && (typeof data !== "string" ||
+                !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(data) ||
+                !Number.isFinite(Date.parse(data)) || new Date(data).toISOString() !== data)) {
+                return res.status(400).json({ erro: "Data da transação inválida" });
+            }
 
             if (erroValidacao) {
                 return res.status(400).json({
@@ -820,11 +827,12 @@ app.post(
                         tipo,
                         valor,
                         categoria,
+                        data,
                         user_id
                     )
 
                     VALUES
-                    ($1, $2, $3, $4)
+                    ($1, $2, $3, COALESCE($5, CURRENT_TIMESTAMP), $4)
 
                     RETURNING
                         id,
@@ -838,7 +846,8 @@ app.post(
                         tipo,
                         valor,
                         categoria,
-                        req.usuarioId
+                        req.usuarioId,
+                        data ?? null
                     ]
                 );
 

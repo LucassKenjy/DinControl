@@ -2,27 +2,26 @@ import { useEffect, useRef } from 'react'
 import type { ChartConfiguration } from 'chart.js'
 import { Chart } from '../../../utils/chartSetup'
 import type { Transaction } from '../../../types/transaction'
-import { MESES } from '../../../utils/constants'
 import { normalizarTexto } from '../../../utils/formatters'
 import { calcularLimiteMaximo, CORES_GRAFICO, opcoesBarras } from '../../../utils/chartOptions'
-import { dataDoAnoAtual } from '../../../utils/totals'
+import { chaveData } from '../../../utils/formatters'
 
-function obterInvestimentosMensais(transacoes: Transaction[]): number[] {
-  const investimentos = Array(12).fill(0)
+function obterInvestimentosMensais(transacoes: Transaction[], mes: string): number[] {
+  const investimentos = Array(new Date(Number(mes.slice(0, 4)), Number(mes.slice(5)), 0).getDate()).fill(0)
 
   transacoes.forEach((transacao) => {
     if (normalizarTexto(transacao.categoria) !== 'investimento') {
       return
     }
 
-    const data = dataDoAnoAtual(transacao)
+    const data = new Date(transacao.data)
     const valor = Number(transacao.valor)
 
-    if (!data || isNaN(valor)) {
+    if (chaveData(data).slice(0, 7) !== mes || isNaN(valor)) {
       return
     }
 
-    investimentos[data.getMonth()] += valor
+    investimentos[data.getDate() - 1] += valor
   })
 
   return investimentos
@@ -30,9 +29,10 @@ function obterInvestimentosMensais(transacoes: Transaction[]): number[] {
 
 interface InvestmentChartProps {
   transacoes: Transaction[]
+  mes: string
 }
 
-export function InvestmentChart({ transacoes }: InvestmentChartProps) {
+export function InvestmentChart({ transacoes, mes }: InvestmentChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const chartRef = useRef<Chart<'bar'> | null>(null)
 
@@ -45,13 +45,13 @@ export function InvestmentChart({ transacoes }: InvestmentChartProps) {
 
     chartRef.current?.destroy()
 
-    const investimentos = obterInvestimentosMensais(transacoes)
+    const investimentos = obterInvestimentosMensais(transacoes, mes)
     const limiteMaximo = calcularLimiteMaximo(investimentos)
 
     const config: ChartConfiguration<'bar'> = {
       type: 'bar',
       data: {
-        labels: MESES,
+        labels: Array.from({ length: new Date(Number(mes.slice(0, 4)), Number(mes.slice(5)), 0).getDate() }, (_, i) => String(i + 1)),
         datasets: [
           {
             label: 'Investimento',
@@ -72,14 +72,14 @@ export function InvestmentChart({ transacoes }: InvestmentChartProps) {
       chartRef.current?.destroy()
       chartRef.current = null
     }
-  }, [transacoes])
+  }, [transacoes, mes])
 
   return (
     <canvas
       id="graficoInvestimento"
       ref={canvasRef}
       role="img"
-      aria-label="Gráfico de investimentos por mês"
+      aria-label="Gráfico de investimentos por dia do mês selecionado"
     />
   )
 }

@@ -236,3 +236,6 @@
         min-height: 220px;
     }
 }
+
+.filtros { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; padding: 1rem; margin-bottom: 1.5rem; }
+.filtros .campo { margin: 0; }
