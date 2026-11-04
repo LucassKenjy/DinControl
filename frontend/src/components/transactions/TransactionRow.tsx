@@ -30,7 +30,7 @@ export function TransactionRow({ styles, transacao, onDeleted }: TransactionRowP
         <span className={`selo selo--${variante}`}>{nomeTipo(transacao.tipo)}</span>
       </span>
 
-      <span className={`${styles.horario} numero`}>{formatarHorario(transacao.data)}</span>
+      <span className={`${styles.horario} numero`}>{new Date(transacao.data).toLocaleDateString('pt-BR')} · {formatarHorario(transacao.data)}</span>
 
       <span className={`${styles['valor-transacao']} ${styles[`valor-${variante}`]} numero`}>
         {valor}

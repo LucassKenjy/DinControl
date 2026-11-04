@@ -16,6 +16,7 @@ export interface Transaction {
 }
 
 export interface NewTransactionPayload {
+  data: string
   tipo: TransactionType
   valor: number
   categoria: string

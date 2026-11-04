@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { chaveData } from '../../utils/formatters'
 import { Modal } from '../ui/Modal'
 import { Icone } from '../ui/Icone'
 import { Mensagem } from '../ui/Mensagem'
@@ -18,10 +19,12 @@ interface FormState {
   tipo: TransactionType
   valor: string
   categoria: string
+  data: string
   categoriaPersonalizada: string
 }
 
 const ESTADO_INICIAL: FormState = {
+  data: '',
   tipo: 'ENTRADA',
   valor: '',
   categoria: '',
@@ -58,7 +61,7 @@ export function TransactionForm({ onTransactionCreated }: TransactionFormProps) 
   }
 
   function abrir() {
-    setDados(ESTADO_INICIAL)
+    setDados({ ...ESTADO_INICIAL, data: chaveData(new Date()) })
     setMensagem('')
     setSalvando(false)
     setAberto(true)
@@ -76,6 +79,7 @@ export function TransactionForm({ onTransactionCreated }: TransactionFormProps) 
   }
 
   function validar(): string | null {
+    if (!dados.data || !Number.isFinite(new Date(`${dados.data}T12:00:00`).getTime())) return 'Selecione uma data válida.'
     const valor = dados.valor.trim()
     const entrada = dados.tipo === 'ENTRADA'
 
@@ -110,6 +114,7 @@ export function TransactionForm({ onTransactionCreated }: TransactionFormProps) 
 
     try {
       await cadastrarTransacao({
+        data: new Date(`${dados.data}T12:00:00`).toISOString(),
         tipo: dados.tipo,
         valor: Number(dados.valor.trim()),
         categoria: categoriaResolvida(),
@@ -214,6 +219,12 @@ export function TransactionForm({ onTransactionCreated }: TransactionFormProps) 
                 value={dados.categoriaPersonalizada}
                 onChange={(valor) => atualizar('categoriaPersonalizada', valor)}
               />
+            </div>
+
+            <div className="campo">
+              <label htmlFor="dataTransacao" className="campo__rotulo">Data da transação</label>
+              <input type="date" id="dataTransacao" className="entrada" required
+                value={dados.data} onChange={(event) => atualizar('data', event.target.value)} />
             </div>
 
             <Mensagem id="mensagemTransacao" texto={mensagem} tipo={erro ? 'erro' : 'sucesso'} />

@@ -13,11 +13,12 @@ import { InvestmentChart } from '../../components/transactions/charts/Investment
 import { useAuth } from '../../context/AuthContext'
 import { buscarTransacoes } from '../../api/transactions'
 import { calcularTotais } from '../../utils/totals'
-import { formatarMoeda } from '../../utils/formatters'
+import { chaveData, formatarMoeda } from '../../utils/formatters'
 import { formatarCategoria } from '../../types/category'
 import type { Transaction } from '../../types/transaction'
 
 const QUANTIDADE_ULTIMAS = 5
+const FORMATO_MES = /^\d{4}-(0[1-9]|1[0-2])$/
 
 function primeiroNome(nome: string | undefined): string {
   return String(nome || '').trim().split(/\s+/)[0] || ''
@@ -62,6 +63,11 @@ export function PrincipalPage() {
   const { usuario } = useAuth()
 
   const [transacoes, setTransacoes] = useState<Transaction[]>([])
+  const [mes, setMes] = useState(() => chaveData(new Date()).slice(0, 7))
+  // Firefox e Safari exibem type="month" como texto livre: o filtro só muda com um mês completo.
+  const [mesDigitado, setMesDigitado] = useState(mes)
+  const filtradas = useMemo(() => transacoes.filter((t) => chaveData(t.data).slice(0, 7) === mes), [transacoes, mes])
+  const periodo = new Date(`${mes}-01T12:00:00`).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
   const [carregando, setCarregando] = useState(true)
 
   const carregarDashboard = useCallback(async () => {
@@ -79,18 +85,26 @@ export function PrincipalPage() {
     carregarDashboard()
   }, [carregarDashboard])
 
-  const { entradas, saidas, investimentos } = calcularTotais(transacoes)
+  const { entradas, saidas, investimentos } = calcularTotais(filtradas)
   const saldo = entradas - saidas
 
   const ultimas = useMemo(
     () =>
-      [...transacoes]
+      [...filtradas]
         .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
         .slice(0, QUANTIDADE_ULTIMAS),
-    [transacoes],
+    [filtradas],
   )
 
   const nome = primeiroNome(usuario?.nome)
+
+  function selecionarMes(valor: string) {
+    setMesDigitado(valor)
+
+    if (FORMATO_MES.test(valor)) {
+      setMes(valor)
+    }
+  }
 
   return (
     <>
@@ -101,6 +115,16 @@ export function PrincipalPage() {
         subtitulo={`${dataDeHoje()} · Resumo das suas finanças`}
         acoes={<TransactionForm onTransactionCreated={carregarDashboard} />}
       >
+        <section className={`cartao ${styles.filtros}`} aria-label="Filtro de data">
+          <div className="campo">
+            <label htmlFor="mesDashboard" className="campo__rotulo">Mês de referência</label>
+            <input id="mesDashboard" className="entrada" type="month" placeholder="AAAA-MM" value={mesDigitado}
+              onChange={(event) => selecionarMes(event.target.value)}
+              onBlur={() => setMesDigitado(mes)} />
+          </div>
+          <button type="button" className="botao" onClick={() => selecionarMes(chaveData(new Date()).slice(0, 7))}>Mês atual</button>
+          <p aria-live="polite">Resumo de {periodo}</p>
+        </section>
         <div className={styles.grade}>
           <BalanceCard className={styles['area-saldo']} saldo={saldo} negativo={saidas > entradas} />
 
@@ -120,7 +144,7 @@ export function PrincipalPage() {
             <div className="cartao__cabecalho">
               <div>
                 <h2 className="cartao__titulo">Gráfico mensal</h2>
-                <p className="cartao__descricao">Entradas e saídas por mês em {new Date().getFullYear()}</p>
+                <p className="cartao__descricao">Entradas e saídas por dia · {periodo}</p>
               </div>
 
               <div className={styles.legenda}>
@@ -130,7 +154,7 @@ export function PrincipalPage() {
             </div>
 
             <div className={styles.barras}>
-              <MonthlyChart transacoes={transacoes} />
+              <MonthlyChart transacoes={filtradas} mes={mes} />
             </div>
           </section>
 
@@ -138,23 +162,23 @@ export function PrincipalPage() {
             <div className="cartao__cabecalho">
               <div>
                 <h2 className="cartao__titulo">Gráfico de saída</h2>
-                <p className="cartao__descricao">Gastos por categoria</p>
+                <p className="cartao__descricao">Gastos por categoria · {periodo}</p>
               </div>
             </div>
 
-            <ExpenseChart transacoes={transacoes} />
+            <ExpenseChart transacoes={filtradas} />
           </section>
 
           <section className={`cartao ${styles['area-investimento']}`}>
             <div className="cartao__cabecalho">
               <div>
                 <h2 className="cartao__titulo">Investimento</h2>
-                <p className="cartao__descricao">Valor investido por mês em {new Date().getFullYear()}</p>
+                <p className="cartao__descricao">Valor investido por dia · {periodo}</p>
               </div>
             </div>
 
             <div className={styles.barras}>
-              <InvestmentChart transacoes={transacoes} />
+              <InvestmentChart transacoes={filtradas} mes={mes} />
             </div>
           </section>
 
@@ -173,7 +197,7 @@ export function PrincipalPage() {
 
             {ultimas.length === 0 ? (
               <p className={styles.vazio}>
-                Nenhuma transação ainda. Clique em <strong>Nova transação</strong> para começar.
+                Nenhuma transação neste mês. Clique em <strong>Nova transação</strong> para começar.
               </p>
             ) : (
               <ul className={styles.lista}>
