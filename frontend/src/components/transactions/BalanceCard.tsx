@@ -4,19 +4,19 @@ import { formatarMoeda } from '../../utils/formatters'
 
 interface BalanceCardProps {
   saldo: number
-  /** Saídas maiores que as entradas. */
+  /** Saídas totais maiores que as entradas totais. */
   negativo: boolean
   className?: string
 }
 
-/** Destaque do saldo atual, com o mascote do DinControl. */
+/** Destaque do saldo geral (todas as transações), com o mascote do DinControl. */
 export function BalanceCard({ saldo, negativo, className }: BalanceCardProps) {
   return (
     <section className={['cartao', styles.saldo, className].filter(Boolean).join(' ')}>
       <div className={styles.info}>
         <div className={styles.rotulo}>
           <Icone nome="carteira" />
-          Saldo atual
+          Saldo geral
         </div>
 
         <div

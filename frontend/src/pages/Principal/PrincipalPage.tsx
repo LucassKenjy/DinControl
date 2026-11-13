@@ -86,7 +86,9 @@ export function PrincipalPage() {
   }, [carregarDashboard])
 
   const { entradas, saidas, investimentos } = calcularTotais(filtradas)
-  const saldo = entradas - saidas
+  // O saldo é geral: considera todas as transações, não só as do mês de referência.
+  const totaisGerais = useMemo(() => calcularTotais(transacoes), [transacoes])
+  const saldo = totaisGerais.entradas - totaisGerais.saidas
 
   const ultimas = useMemo(
     () =>
@@ -126,7 +128,7 @@ export function PrincipalPage() {
           <p aria-live="polite">Resumo de {periodo}</p>
         </section>
         <div className={styles.grade}>
-          <BalanceCard className={styles['area-saldo']} saldo={saldo} negativo={saidas > entradas} />
+          <BalanceCard className={styles['area-saldo']} saldo={saldo} negativo={saldo < 0} />
 
           <section className={styles['area-resumo']} aria-label="Entrada e saída">
             <Indicador id="totalEntrada" rotulo="Entradas" valor={entradas} icone="seta-entrada" variante="entrada" />
